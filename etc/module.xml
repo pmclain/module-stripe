@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/mit-license.php
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2016
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+  <module name="Pmclain_Stripe" setup_version="0.0.1">
+    <sequence>
+      <module name="Magento_Customer"/>
+      <module name="Magento_Payment"/>
+      <module name="Magento_Checkout"/>
+      <module name="Magento_Catalog"/>
+      <module name="Magento_Quote"/>
+    </sequence>
+  </module>
+</config>
