@@ -61,6 +61,7 @@ class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
     $this->paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
     $this->configMock = $this->getMockBuilder(Config::class)
       ->disableOriginalConstructor()
+      ->setMethods(['getCurrency'])
       ->getMock();
     $this->paymentMock = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
@@ -119,7 +120,7 @@ class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
     $expectedResult = [
       PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00),
       PaymentDataBuilder::ORDER_ID => '000000101',
-      PaymentDataBuilder::CURRENCY => 'usd',
+      PaymentDataBuilder::CURRENCY => 'USD',
       PaymentDataBuilder::SOURCE => 'token_number',
       PaymentDataBuilder::CAPTURE => 'false'
     ];
@@ -149,6 +150,10 @@ class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
       ->method('getOrderIncrementId')
       ->willReturn('000000101');
 
+    $this->configMock->expects($this->once())
+      ->method('getCurrency')
+      ->willReturn('USD');
+
     $this->assertEquals(
       $expectedResult,
       $this->builder->build($buildSubject)
@@ -159,7 +164,7 @@ class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
     $expectedResult = [
       PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00),
       PaymentDataBuilder::ORDER_ID => '000000101',
-      PaymentDataBuilder::CURRENCY => 'usd',
+      PaymentDataBuilder::CURRENCY => 'USD',
       PaymentDataBuilder::SOURCE => [
         'exp_month' => '01',
         'exp_year' => '18',
@@ -206,6 +211,10 @@ class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
     $this->orderMock->expects($this->once())
       ->method('getOrderIncrementId')
       ->willReturn('000000101');
+
+    $this->configMock->expects($this->once())
+      ->method('getCurrency')
+      ->willReturn('USD');
 
     $this->assertEquals(
       $expectedResult,
