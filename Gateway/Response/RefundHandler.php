@@ -13,9 +13,13 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
+namespace Pmclain\Stripe\Gateway\Response;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Magento\Sales\Model\Order\Payment;
+
+class RefundHandler extends VoidHandler
+{
+  protected function shouldCloseParentTransaction(Payment $orderPayment) {
+    return !(bool)$orderPayment->getCreditmemo()->getInvoice()->canRefund();
+  }
+}

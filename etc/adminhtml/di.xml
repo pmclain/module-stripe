@@ -15,14 +15,12 @@
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-  <module name="Pmclain_Stripe" setup_version="0.0.1">
-    <sequence>
-      <module name="Magento_Customer"/>
-      <module name="Magento_Payment"/>
-      <module name="Magento_Checkout"/>
-      <module name="Magento_Catalog"/>
-      <module name="Magento_Quote"/>
-    </sequence>
-  </module>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+  <type name="Pmclain\Stripe\Block\Info">
+    <arguments>
+      <argument name="data" xsi:type="array">
+        <item xsi:type="string" name="is_secure_mode">0</item>
+      </argument>
+    </arguments>
+  </type>
 </config>

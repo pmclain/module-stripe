@@ -1,4 +1,5 @@
-<?php
+<?xml version="1.0"?>
+<!--
 /**
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
@@ -13,9 +14,9 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
-
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+  <event name="payment_method_assign_data">
+    <observer name="pmclain_stripe_data_assign" instance="Pmclain\Stripe\Observer\DataAssignObserver" />
+  </event>
+</config>

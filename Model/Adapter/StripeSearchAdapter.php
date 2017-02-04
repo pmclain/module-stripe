@@ -14,8 +14,9 @@
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+namespace Pmclain\Stripe\Model\Adapter;
+
+class StripeSearchAdapter
+{
+  
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GPL v3 License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://www.gnu.org/licenses/gpl.txt
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2017
+ * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+  <body>
+    <referenceBlock name="checkout.root">
+      <arguments>
+        <argument name="jsLayout" xsi:type="array">
+          <item name="components" xsi:type="array">
+            <item name="checkout" xsi:type="array">
+              <item name="children" xsi:type="array">
+                <item name="steps" xsi:type="array">
+                  <item name="children" xsi:type="array">
+                    <item name="billing-step" xsi:type="array">
+                      <item name="component" xsi:type="string">uiComponent</item>
+                      <item name="children" xsi:type="array">
+                        <item name="payment" xsi:type="array">
+                          <item name="children" xsi:type="array">
+                            <item name="renders" xsi:type="array">
+                              <!-- merge payment method renders here -->
+                              <item name="children" xsi:type="array">
+                                <item name="pmclain_stripe" xsi:type="array">
+                                  <item name="component" xsi:type="string">Pmclain_Stripe/js/view/payment/pmclain_stripe</item>
+                                  <item name="methods" xsi:type="array">
+                                    <item name="pcmalin_stripe" xsi:type="array">
+                                      <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                    </item>
+                                  </item>
+                                </item>
+                              </item>
+                            </item>
+                          </item>
+                        </item>
+                      </item>
+                    </item>
+                  </item>
+                </item>
+              </item>
+            </item>
+          </item>
+        </argument>
+      </arguments>
+    </referenceBlock>
+  </body>
+</page>

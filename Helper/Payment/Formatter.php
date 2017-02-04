@@ -13,9 +13,14 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
+namespace Pmclain\Stripe\Helper\Payment;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Magento\Payment\Helper\Formatter as PaymentFormatter;
+
+trait Formatter {
+  public function formatPrice($price) {
+    $price = sprintf('%.2F', $price);
+
+    return str_replace('.', '', $price);
+  }
+}

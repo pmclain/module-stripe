@@ -13,9 +13,21 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
+namespace Pmclain\Stripe\Block;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Magento\Framework\Phrase;
+use Magento\Payment\Block\ConfigurableInfo;
+
+class Info extends ConfigurableInfo
+{
+  /**
+   * Returns label
+   *
+   * @param string $field
+   * @return Phrase
+   */
+  protected function getLabel($field)
+  {
+    return __($field);
+  }
+}

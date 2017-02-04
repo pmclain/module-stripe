@@ -13,9 +13,15 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
+namespace Pmclain\Stripe\Gateway\Request;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Magento\Payment\Gateway\Request\BuilderInterface;
+
+class SettlementDataBuilder implements BuilderInterface
+{
+  const SUBMIT_FOR_SETTLEMENT = 'capture';
+
+  public function build(array $subject) {
+    return [self::SUBMIT_FOR_SETTLEMENT => true];
+  }
+}

@@ -13,9 +13,16 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
+namespace Pmclain\Stripe\Gateway\Http\Client;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
+
+class TransactionRefund extends AbstractTransaction
+{
+  protected function process(array $data) {
+    return $this->adapter->refund(
+      $data['transaction_id'],
+      $data[PaymentDataBuilder::AMOUNT]
+    );
+  }
+}

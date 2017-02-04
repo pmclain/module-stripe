@@ -13,9 +13,13 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
+namespace Pmclain\Stripe\Model\Adminhtml\Source;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Magento\Payment\Model\Source\Cctype as PaymentCctype;
+
+class Cctype extends PaymentCctype
+{
+  public function getAllowedTypes() {
+    return ['VI', 'MC', 'AE', 'DI', 'JCB', 'DN'];
+  }
+}

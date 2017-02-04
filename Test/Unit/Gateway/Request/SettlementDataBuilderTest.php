@@ -12,10 +12,17 @@
  * @package   Pmclain_Stripe
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
- */
+ */namespace Pmclain\Stripe\Test\Unit\Gateway\Request;
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-  \Magento\Framework\Component\ComponentRegistrar::MODULE,
-  'Pmclain_Stripe',
-  __DIR__
-);
+use Pmclain\Stripe\Gateway\Request\SettlementDataBuilder;
+
+class SettlementDataBuilderTest extends \PHPUnit_Framework_TestCase
+{
+  public function testBuild() {
+    $builder = new SettlementDataBuilder();
+    $this->assertEquals(
+      [SettlementDataBuilder::SUBMIT_FOR_SETTLEMENT => true],
+      $builder->build([])
+    );
+  }
+}
