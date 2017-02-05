@@ -36,7 +36,7 @@
                                 <item name="pmclain_stripe" xsi:type="array">
                                   <item name="component" xsi:type="string">Pmclain_Stripe/js/view/payment/pmclain_stripe</item>
                                   <item name="methods" xsi:type="array">
-                                    <item name="pcmalin_stripe" xsi:type="array">
+                                    <item name="pmclain_stripe" xsi:type="array">
                                       <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                     </item>
                                   </item>
