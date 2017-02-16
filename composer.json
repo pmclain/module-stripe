@@ -2,7 +2,6 @@
   "name": "pmclain/module-stripe",
   "description": "Stripe Payments for Magento 2",
   "type": "magento2-module",
-  "version": "0.0.1",
   "license": [
     "OSL-3.0",
     "ASL-3.0"
