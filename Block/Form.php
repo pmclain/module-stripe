@@ -38,4 +38,15 @@ class Form extends Cc
   public function useCcv() {
     return $this->gatewayConfig->isCcvEnabled();
   }
+
+  /**
+   * Check if vault enabled
+   * @return bool
+   */
+  public function isVaultEnabled()
+  {
+    $storeId = $this->_storeManager->getStore()->getId();
+    $vaultPayment = $this->getVaultPayment();
+    return $vaultPayment->isActive($storeId);
+  }
 }

@@ -27,6 +27,8 @@
         <can_authorize>1</can_authorize>
         <can_capture>1</can_capture>
         <can_capture_partial>1</can_capture_partial>
+        <can_authorize_vault>1</can_authorize_vault>
+        <can_capture_vault>1</can_capture_vault>
         <can_use_internal>1</can_use_internal>
         <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
         <can_refund>1</can_refund>
@@ -40,6 +42,10 @@
         <cctypes_stripe_mapper><![CDATA[{"american-express":"AE","discover":"DI","jcb":"JCB","mastercard":"MC","master-card":"MC","visa":"VI","maestro":"MI","diners-club":"DN","unionpay":"CUP"}]]></cctypes_stripe_mapper>
         <order_status>processing</order_status>
       </pmclain_stripe>
+      <pmclain_stripe_vault>
+        <model>StripeCreditCardVaultFacade</model>
+        <title>Stored Cards (Stripe)</title>
+      </pmclain_stripe_vault>
     </payment>
   </default>
 </config>

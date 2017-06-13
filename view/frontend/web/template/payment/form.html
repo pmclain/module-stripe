@@ -18,6 +18,17 @@
 
     <form class="form" data-bind="attr: {'id': getCode() + '-form'}">
       <!-- ko template: 'Magento_Payment/payment/cc-form' --><!-- /ko -->
+      <!-- ko if: (isVaultEnabled())-->
+      <div class="field choice">
+        <input type="checkbox"
+               name="vault[is_enabled]"
+               class="checkbox"
+               data-bind="attr: {'id': getCode() + '_enable_vault'}, checked: vaultEnabler.isActivePaymentTokenEnabler"/>
+        <label class="label" data-bind="attr: {'for': getCode() + '_enable_vault'}">
+          <span><!-- ko i18n: 'Save for later use.'--><!-- /ko --></span>
+        </label>
+      </div>
+      <!-- /ko -->
     </form>
 
     <div class="checkout-agreements-block">

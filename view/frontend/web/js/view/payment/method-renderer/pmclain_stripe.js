@@ -7,10 +7,10 @@ define(
     'Magento_Checkout/js/model/payment/additional-validators',
     'Magento_Payment/js/model/credit-card-validation/validator',
     'Magento_Checkout/js/action/redirect-on-success',
+    'Magento_Vault/js/view/payment/vault-enabler',
     'stripejs'
-
   ],
-  function ($, Component, placeOrderAction, fullScreenLoader, additionalValidators, validator, redirectOnSuccessAction) {
+  function ($, Component, placeOrderAction, fullScreenLoader, additionalValidators, validator, redirectOnSuccessAction, VaultEnabler) {
     'use strict';
 
     return Component.extend({
@@ -21,6 +21,9 @@ define(
       initialize: function() {
         this._super();
         Stripe.setPublishableKey(this.getPublishableKey());
+        this.vaultEnabler = new VaultEnabler();
+        debugger;
+        this.vaultEnabler.setPaymentCode(this.getVaultCode());
       },
 
       placeOrder: function(data, event) {
@@ -92,7 +95,13 @@ define(
       },
 
       getData: function() {
-        return {
+        var data = this._super();
+
+        debugger;
+
+        this.vaultEnabler.visitAdditionalData(data);
+
+        var oldData = {
           'method': this.item.method,
           'additional_data': {
             'cc_last4': this.creditCardNumber().slice(-4),
@@ -102,6 +111,8 @@ define(
             'cc_exp_month': this.creditCardExpMonth()
           }
         };
+
+        return data;
       },
 
       getPublishableKey: function () {
@@ -111,6 +122,14 @@ define(
       validate: function() {
         var $form = $('#' + this.getCode() + '-form');
         return $form.validation() && $form.validation('isValid');
+      },
+
+      isVaultEnabled: function () {
+        return this.vaultEnabler.isVaultEnabled();
+      },
+
+      getVaultCode: function () {
+        return window.checkoutConfig.payment[this.getCode()].vaultCode;
       }
 
     });
