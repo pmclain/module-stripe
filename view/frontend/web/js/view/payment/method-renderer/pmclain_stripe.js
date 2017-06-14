@@ -22,7 +22,6 @@ define(
         this._super();
         Stripe.setPublishableKey(this.getPublishableKey());
         this.vaultEnabler = new VaultEnabler();
-        debugger;
         this.vaultEnabler.setPaymentCode(this.getVaultCode());
       },
 
@@ -97,20 +96,11 @@ define(
       getData: function() {
         var data = this._super();
 
-        debugger;
+        data.additional_data.cc_last4 = this.creditCardNumber().slice(-4);
+        delete data.additional_data.cc_number;
+        data.additional_data.cc_token = this.token;
 
         this.vaultEnabler.visitAdditionalData(data);
-
-        var oldData = {
-          'method': this.item.method,
-          'additional_data': {
-            'cc_last4': this.creditCardNumber().slice(-4),
-            'cc_token': this.token,
-            'cc_type': this.creditCardType(),
-            'cc_exp_year': this.creditCardExpYear(),
-            'cc_exp_month': this.creditCardExpMonth()
-          }
-        };
 
         return data;
       },

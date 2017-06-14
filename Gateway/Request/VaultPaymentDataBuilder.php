@@ -24,7 +24,7 @@ use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Stripe\Customer;
 
-class PaymentDataBuilder implements BuilderInterface
+class VaultPaymentDataBuilder implements BuilderInterface
 {
   use Formatter;
   
@@ -56,31 +56,20 @@ class PaymentDataBuilder implements BuilderInterface
     $paymentDataObject = $this->subjectReader->readPayment($subject);
     $payment = $paymentDataObject->getPayment();
     $order = $paymentDataObject->getOrder();
+
+    $extensionAttributes = $payment->getExtensionAttributes();
+    $paymentToken = $extensionAttributes->getVaultPaymentToken();
+
+    $stripeCustomerId = $this->getStripeCustomerId();
     
     $result = [
       self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
       self::ORDER_ID => $order->getOrderIncrementId(),
       self::CURRENCY => $this->config->getCurrency(),
-      self::SOURCE => $this->getPaymentSource($payment),
-      self::CAPTURE => 'false'
+      self::SOURCE => $paymentToken->getGatewayToken(),
+      self::CAPTURE => 'false',
+      self::CUSTOMER => $stripeCustomerId->getValue()
     ];
-
-    if($this->isSavePaymentInformation($paymentDataObject)) {
-      $stripeCustomerId = $this->getStripeCustomerId();
-      if ($stripeCustomerId->getValue()) {
-        $stripeCustomer = Customer::retrieve($stripeCustomerId->getValue());
-        try {
-          $card = $stripeCustomer->sources->create([
-            'source' => $this->getPaymentSource($payment)
-          ]);
-        }catch (\Exception $e) {
-          throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
-        }
-
-        $result[self::CUSTOMER] = $stripeCustomerId->getValue();
-        $result[self::SOURCE] = $card->id;
-      }
-    }
 
     return $result;
   }
@@ -105,24 +94,5 @@ class PaymentDataBuilder implements BuilderInterface
     ]);
 
     return $result->id;
-  }
-
-  protected function isSavePaymentInformation($paymentDataObject) {
-    $payment = $paymentDataObject->getPayment();
-
-    return $payment->getAdditionalInformation('is_active_payment_token_enabler');
-  }
-
-  protected function getPaymentSource($payment) {
-    if($token = $payment->getAdditionalInformation('cc_token')) {
-      return $token;
-    }
-    return [
-      'exp_month' => $payment->getCcExpMonth(),
-      'exp_year' => $payment->getCcExpYear(),
-      'number' => $payment->getCcNumber(),
-      'object' => 'card',
-      'cvc' => $payment->getCcCid(),
-    ];
   }
 }

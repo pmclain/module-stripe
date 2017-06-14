@@ -120,7 +120,7 @@
   <type name="Magento\Payment\Gateway\Command\CommandManagerPool">
     <arguments>
       <argument name="executors" xsi:type="array">
-        <item name="stripe" xsi:type="string">StripeCommandManager</item>
+        <item name="pmclain_stripe" xsi:type="string">StripeCommandManager</item>
       </argument>
     </arguments>
   </type>
@@ -138,10 +138,9 @@
   <virtualType name="StripeAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
     <arguments>
       <argument name="builders" xsi:type="array">
-        <item name="customer" xsi:type="string">Pmclain\Stripe\Gateway\Request\CustomerDataBuilder</item>
         <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
-        <item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>
+        <!--<item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>-->
       </argument>
     </arguments>
   </virtualType>
@@ -192,8 +191,7 @@
   <virtualType name="StripeVaultAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
     <arguments>
       <argument name="builders" xsi:type="array">
-        <item name="customer" xsi:type="string">Pmclain\Stripe\Gateway\Request\CustomerDataBuilder</item>
-        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder</item>
+        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultPaymentDataBuilder</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
       </argument>
     </arguments>
@@ -254,6 +252,16 @@
         <item name="txn_id" xsi:type="string">Pmclain\Stripe\Gateway\Response\TransactionIdHandler</item>
         <item name="card_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\CardDetailsHandler</item>
         <item name="vault_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\VaultDetailsHandler</item>
+      </argument>
+    </arguments>
+  </virtualType>
+  <virtualType name="StripeVaultAuthorizationHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+    <arguments>
+      <argument name="handlers" xsi:type="array">
+        <item name="payment_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\PaymentDetailsHandler</item>
+        <item name="txn_id" xsi:type="string">Pmclain\Stripe\Gateway\Response\TransactionIdHandler</item>
+        <item name="card_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\CardDetailsHandler</item>
+        <!--<item name="vault_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\VaultDetailsHandler</item>-->
       </argument>
     </arguments>
   </virtualType>
