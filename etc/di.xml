@@ -191,7 +191,7 @@
   <virtualType name="StripeVaultAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
     <arguments>
       <argument name="builders" xsi:type="array">
-        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultPaymentDataBuilder</item>
+        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
       </argument>
     </arguments>

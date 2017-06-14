@@ -16,23 +16,30 @@
 namespace Pmclain\Stripe\Block;
 
 use Pmclain\Stripe\Gateway\Config\Config as GatewayConfig;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Block\Form\Cc;
 use Magento\Payment\Model\Config;
+use Magento\Payment\Helper\Data as Helper;
+use Pmclain\Stripe\Model\Ui\ConfigProvider;
 
 class Form extends Cc
 {
+  /** @var GatewayConfig $gatewayConfig */
   protected $gatewayConfig;
+
+  /** @var Helper $paymentDataHelper */
+  private $paymentDataHelper;
 
   public function __construct(
     Context $context,
     Config $paymentConfig,
     GatewayConfig $gatewayConfig,
+    Helper $helper,
     array $data = []
   ) {
     parent::__construct($context, $paymentConfig, $data);
     $this->gatewayConfig = $gatewayConfig;
+    $this->paymentDataHelper = $helper;
   }
 
   public function useCcv() {
@@ -48,5 +55,14 @@ class Form extends Cc
     $storeId = $this->_storeManager->getStore()->getId();
     $vaultPayment = $this->getVaultPayment();
     return $vaultPayment->isActive($storeId);
+  }
+
+  /**
+   * Get configured vault payment for Braintree
+   * @return VaultPaymentInterface
+   */
+  private function getVaultPayment()
+  {
+    return $this->paymentDataHelper->getMethodInstance(ConfigProvider::CC_VAULT_CODE);
   }
 }

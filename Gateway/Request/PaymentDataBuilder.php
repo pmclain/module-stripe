@@ -35,10 +35,10 @@ class PaymentDataBuilder implements BuilderInterface
   const CAPTURE = 'capture';
   const CUSTOMER = 'customer';
   
-  private $config;
-  private $subjectReader;
-  private $customerSession;
-  private $customerRepository;
+  protected $config;
+  protected $subjectReader;
+  protected $customerSession;
+  protected $customerRepository;
   
   public function __construct(
     Config $config,

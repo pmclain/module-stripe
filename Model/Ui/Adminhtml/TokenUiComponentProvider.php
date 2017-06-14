@@ -17,6 +17,7 @@ namespace Pmclain\Stripe\Model\Ui\Adminhtml;
 
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
+use Magento\Framework\View\Element\Template;
 use Magento\Vault\Model\Ui\TokenUiComponentInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentInterfaceFactory;
@@ -63,7 +64,7 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
           'code' => ConfigProvider::CC_VAULT_CODE,
           TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
           TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $paymentToken->getPublicHash(),
-          'template' => 'Pmclain_Stripe::form/vault.phtml' //TODO: template and layouts do not yet exist
+          'template' => 'Pmclain_Stripe::form/vault.phtml'
         ],
         'name' => Template::class
       ]
