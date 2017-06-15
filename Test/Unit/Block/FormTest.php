@@ -16,29 +16,61 @@
 namespace Pmclain\Stripe\Test\Unit\Block;
 
 use Pmclain\Stripe\Block\Form;
+use \PHPUnit_Framework_MockObject_MockObject as MockObject;
+use Magento\Payment\Helper\Data;
+use Pmclain\Stripe\Gateway\Config\Config as GatewayConfig;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Payment\Model\MethodInterface;
 
 class FormTest extends \PHPUnit_Framework_TestCase
 {
-  private $context;
-  private $paymentConfig;
-  private $gatewayConfig;
+  /** @var  GatewayConfig|MockObject */
+  private $gatewayConfigMock;
 
+  /** @var  Data|MockObject */
+  private $helperMock;
+
+  /** @var  StoreManagerInterface|MockObject */
+  private $storeManagerMock;
+
+  /** @var  StoreInterface|MockObject */
+  private $storeMock;
+
+  /** @var  MethodInterface|MockObject */
+  private $paymentMethodMock;
+
+  /** @var  Form */
   private $block;
 
   protected function setUp() {
-    $this->context = $this->getMockBuilder('Magento\Framework\View\Element\Template\Context')
+    $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+
+    $this->gatewayConfigMock = $this->getMockBuilder(GatewayConfig::class)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->paymentConfig = $this->getMockBuilder('Magento\Payment\Model\Config')
+    $this->helperMock = $this->getMockBuilder(Data::class)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->gatewayConfig = $this->getMockBuilder('Pmclain\Stripe\Gateway\Config\Config')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->storeManagerMock = $this->getMockBuilder(StoreManagerInterface::class)
+      ->getMockForAbstractClass();
 
-    $this->block = new Form($this->context, $this->paymentConfig, $this->gatewayConfig);
+    $this->storeMock = $this->getMockBuilder(StoreInterface::class)
+      ->getMockForAbstractClass();
+
+    $this->paymentMethodMock = $this->getMockBuilder(MethodInterface::class)
+      ->getMockForAbstractClass();
+
+    $this->block = $objectManager->getObject(
+      Form::class,
+      [
+        'gatewayConfig' => $this->gatewayConfigMock,
+        'paymentDataHelper' => $this->helperMock,
+        '_storeManager' => $this->storeManagerMock,
+      ]
+    );
   }
 
   /**
@@ -48,7 +80,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
    * @dataProvider providerTestUseCcv
    **/
   public function testUseCcv($config, $expectedResult) {
-    $this->gatewayConfig->expects($this->once())
+    $this->gatewayConfigMock->expects($this->once())
       ->method('isCcvEnabled')
       ->will($this->returnValue($config));
 
@@ -60,5 +92,25 @@ class FormTest extends \PHPUnit_Framework_TestCase
       [true, true],
       [false, false]
     ];
+  }
+
+  public function testIsVaultEnabled() {
+    $this->storeManagerMock->expects($this->once())
+      ->method('getStore')
+      ->willReturn($this->storeMock);
+
+    $this->storeMock->expects($this->once())
+      ->method('getId')
+      ->willReturn(1);
+
+    $this->helperMock->expects($this->once())
+      ->method('getMethodInstance')
+      ->willReturn($this->paymentMethodMock);
+
+    $this->paymentMethodMock->expects($this->once())
+      ->method('isActive')
+      ->willReturn(true);
+
+    $this->block->isVaultEnabled();
   }
 }
