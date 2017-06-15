@@ -17,7 +17,6 @@
 namespace Pmclain\Stripe\Block;
 
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
-use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
@@ -27,7 +26,7 @@ use Magento\Framework\View\Element\Template\Context;
 class Payment extends Template
 {
   /**
-   * @var ConfigProviderInterface
+   * @var ConfigProvider
    */
   private $config;
 
@@ -35,12 +34,12 @@ class Payment extends Template
    * Constructor
    *
    * @param Context $context
-   * @param ConfigProviderInterface $config
+   * @param ConfigProvider $config
    * @param array $data
    */
   public function __construct(
     Context $context,
-    ConfigProviderInterface $config,
+    ConfigProvider $config,
     array $data = []
   ) {
     parent::__construct($context, $data);

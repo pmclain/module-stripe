@@ -40,4 +40,13 @@
       </argument>
     </arguments>
   </virtualType>
+  <virtualType name="StripeAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+    <arguments>
+      <argument name="builders" xsi:type="array">
+        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Admin</item>
+        <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
+        <!--<item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>-->
+      </argument>
+    </arguments>
+  </virtualType>
 </config>

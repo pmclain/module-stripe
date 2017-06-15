@@ -16,7 +16,6 @@
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Config\Config;
-use Pmclain\Stripe\Observer\DataAssignObserver;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Pmclain\Stripe\Helper\Payment\Formatter;
@@ -34,12 +33,26 @@ class PaymentDataBuilder implements BuilderInterface
   const CURRENCY = 'currency';
   const CAPTURE = 'capture';
   const CUSTOMER = 'customer';
-  
+
+  /** @var Config  */
   protected $config;
+
+  /** @var SubjectReader  */
   protected $subjectReader;
+
+  /** @var Session  */
   protected $customerSession;
+
+  /** @var CustomerRepositoryInterface  */
   protected $customerRepository;
-  
+
+  /**
+   * PaymentDataBuilder constructor.
+   * @param Config $config
+   * @param SubjectReader $subjectReader
+   * @param Session $customerSession
+   * @param CustomerRepositoryInterface $customerRepository
+   */
   public function __construct(
     Config $config,
     SubjectReader $subjectReader,
@@ -51,7 +64,12 @@ class PaymentDataBuilder implements BuilderInterface
     $this->customerSession = $customerSession;
     $this->customerRepository = $customerRepository;
   }
-  
+
+  /**
+   * @param array $subject
+   * @return array
+   * @throws \Magento\Framework\Validator\Exception
+   */
   public function build(array $subject) {
     $paymentDataObject = $this->subjectReader->readPayment($subject);
     $payment = $paymentDataObject->getPayment();
@@ -85,6 +103,9 @@ class PaymentDataBuilder implements BuilderInterface
     return $result;
   }
 
+  /**
+   * @return \Magento\Framework\Api\AttributeInterface|mixed|null
+   */
   protected function getStripeCustomerId() {
     $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
     $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
@@ -99,6 +120,10 @@ class PaymentDataBuilder implements BuilderInterface
     return $stripeCustomerId;
   }
 
+  /**
+   * @param string $email
+   * @return mixed|null
+   */
   protected function createNewStripeCustomer($email) {
     $result = Customer::create([
       'description' => 'Customer for ' . $email,
@@ -107,12 +132,20 @@ class PaymentDataBuilder implements BuilderInterface
     return $result->id;
   }
 
+  /**
+   * @param $paymentDataObject
+   * @return mixed
+   */
   protected function isSavePaymentInformation($paymentDataObject) {
     $payment = $paymentDataObject->getPayment();
 
     return $payment->getAdditionalInformation('is_active_payment_token_enabler');
   }
 
+  /**
+   * @param $payment
+   * @return array
+   */
   protected function getPaymentSource($payment) {
     if($token = $payment->getAdditionalInformation('cc_token')) {
       return $token;

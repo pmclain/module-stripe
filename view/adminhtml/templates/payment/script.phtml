@@ -13,6 +13,25 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
-?>
 
-<div>&nbsp;</div>
+/** @var Pmclain\Stripe\Block\Payment $block */
+
+$code = $block->escapeHtml($block->getCode());
+?>
+<script>
+  //<![CDATA[
+  require(
+    [
+      'Pmclain_Stripe/js/stripe',
+      'jquery',
+      'domReady!'
+    ], function(PmStripe, $) {
+      var config = <?php /* @noEscape */ echo $block->getPaymentConfig(); ?>,
+        payment,
+        form = $('#payment_form_<?php /* @noEscape */ echo $code; ?>');
+
+      config.active = form.length > 0 && !form.is(':hidden');
+      payment = new PmStripe(config);
+    });
+  //]]>
+</script>

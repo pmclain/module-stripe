@@ -29,12 +29,12 @@
         <argument name="template" xsi:type="string">Magento_Vault::form/vault.phtml</argument>
       </action>
     </referenceBlock>
-    <!--<referenceBlock name="content">
+    <referenceBlock name="content">
       <block name="pmclain_stripe_payment_script"
              as="pmclain_stripe_payment_script"
              template="Pmclain_Stripe::payment/script.phtml"
              class="Pmclain\Stripe\Block\Payment"
              after="billing_method"/>
-    </referenceBlock>-->
+    </referenceBlock>
   </body>
 </page>

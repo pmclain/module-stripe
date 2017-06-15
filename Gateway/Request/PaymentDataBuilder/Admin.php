@@ -13,16 +13,16 @@
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
  */
-namespace Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault;
+namespace Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
-use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault;
+use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Pmclain\Stripe\Gateway\Config\Config;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Backend\Model\Session\Quote;
 
-class Admin extends Vault
+class Admin extends PaymentDataBuilder
 {
   /** @var Quote $adminSession */
   private $adminSession;
