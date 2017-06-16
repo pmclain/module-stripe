@@ -7,6 +7,8 @@ collecting all payments.
 transactions.
 * Stored customer card information can be used for orders created in the
 frontend or backend.
+* Stored cards deleted by customer in Magento are also removed from the
+corresponding Stripe customer profile.
 * New payments can be authorize or authorize and capture.
 * Authorized payments can be captured online during invoice creation.
 * Full and partial refund support when creating credit memos.
