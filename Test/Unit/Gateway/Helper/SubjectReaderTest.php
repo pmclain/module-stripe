@@ -25,7 +25,9 @@ class SubjectReaderTest extends \PHPUnit_Framework_TestCase
   private $subjectReader;
 
   protected function setUp() {
-    $this->subjectReader = new SubjectReader();
+    $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+
+    $this->subjectReader = $objectManager->getObject(SubjectReader::class);
   }
 
   /**

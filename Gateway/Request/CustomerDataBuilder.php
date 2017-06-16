@@ -16,8 +16,9 @@
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Magento\Payment\Gateway\Request\BuilderInterface;
+use Magento\Customer\Model\Session;
+use Magento\Customer\Api\CustomerRepositoryInterface;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
-use Pmclain\Stripe\Model\Adapter\StripeAdapter;
 use Stripe\Customer;
 
 class CustomerDataBuilder implements BuilderInterface
@@ -31,26 +32,75 @@ class CustomerDataBuilder implements BuilderInterface
 
   private $subjectReader;
   private $adapter;
+  private $customerSession;
+
+  /** @var CustomerRepositoryInterface */
+  private $customerRepository;
 
   public function __construct(
-    SubjectReader $subjectReader
+    SubjectReader $subjectReader,
+    Session $customerSession,
+    CustomerRepositoryInterface $customerRepository
   ) {
     $this->subjectReader = $subjectReader;
+    $this->customerSession = $customerSession;
+    $this->customerRepository = $customerRepository;
   }
 
   public function build(array $subject) {
     $paymentDataObject = $this->subjectReader->readPayment($subject);
+
+    if(!$this->isSavePaymentInformation($paymentDataObject)) {
+      return false;
+    }
+    $stripeCustomerId = $this->getStripeCustomerId();
+
+
+
     $order = $paymentDataObject->getOrder();
     $billingAddress = $order->getBillingAddress();
 
-    return [
-      self::CUSTOMER => [
-        self::FIRST_NAME => $billingAddress->getFirstName(),
-        self::LAST_NAME => $billingAddress->getLastName(),
-        self::COMPANY => $billingAddress->getCompany(),
-        self::PHONE => $billingAddress->getTelephone(),
-        self::EMAIL => $billingAddress->getEmail()
-      ]
-    ];
+    return false;
+  }
+
+  protected function isSavePaymentInformation($paymentDataObject) {
+    $payment = $paymentDataObject->getPayment();
+    $additionalInfo = $payment->getAdditionalInformation();
+
+    if(isset($additionalInfo['is_active_payment_token_enabler'])) {
+      return $additionalInfo['is_active_payment_token_enabler'];
+    }
+
+    return false;
+  }
+
+  protected function getStripeCustomerId() {
+    if(!$this->customerSession->isLoggedIn()) {
+      return false;
+    }
+
+    $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
+    $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
+
+    if(!$stripeCustomerId) {
+      $stripeCustomerId = $this->createNewStripeCustomer($customer->getEmail());
+      $customer->setCustomAttribute('stripe_customer_id', $stripeCustomerId);
+
+      $this->customerRepository->save($customer);
+    }
+
+    return $stripeCustomerId;
+  }
+
+  protected function createNewStripeCustomer($email) {
+    $result = Customer::create([
+      'description' => 'Customer for ' . $email,
+    ]);
+
+    return $result->id;
+  }
+
+  protected function verifyStripeCustomer($stripeCustomerId) {
+
   }
 }

@@ -1,0 +1,42 @@
+<?php
+use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GPL v3 License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://www.gnu.org/licenses/gpl.txt
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2017
+ * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
+ */
+
+/** @var \Magento\Framework\View\Element\Template $block */
+$details = $block->getData(TokenUiComponentProviderInterface::COMPONENT_DETAILS);
+$icon = $block->getData('icons')[$details['type']];
+$id = $block->escapeHtml($block->getData('id'));
+?>
+<div data-mage-init='{
+        "Pmclain_Stripe/js/vault": {
+            "container": "payment_<?php /* @noEscape */ echo $id; ?>",
+            "publicHash": "<?php echo $block->escapeHtml($block->getData(TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH)); ?>",
+            "code": "<?php echo $block->escapeHtml($block->getData('code')); ?>",
+            "nonceUrl": "<?php echo $block->escapeUrl($block->getData('nonceUrl')); ?>"
+        }
+    }' id="payment_<?php /* @noEscape */ echo $id;?>" class="admin__field">
+  <div class="admin__field-control control">
+    <input type="radio" id="token_switcher_<?php /* @noEscape */ echo $id; ?>" name="payment[token_switcher]"/>
+    <img src="<?php echo $block->escapeUrl($icon['url']); ?>"
+         width="<?php echo $block->escapeHtml($icon['width']); ?>"
+         height="<?php echo $block->escapeHtml($icon['height']); ?>"
+         class="payment-icon" >
+    <span><?php echo $block->escapeHtml(__('ending'));?></span>
+    <span><?php echo $block->escapeHtml($details['maskedCC']); ?></span>
+    (<span><?php echo $block->escapeHtml(__('expires'));?></span>:
+    <span><?php echo $block->escapeHtml($details['expirationDate']); ?></span>)
+  </div>
+</div>

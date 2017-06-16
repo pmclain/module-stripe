@@ -37,4 +37,11 @@
       </argument>
     </arguments>
   </type>
+  <type name="Magento\Vault\Model\Ui\TokensConfigProvider">
+    <arguments>
+      <argument name="tokenUiComponentProviders" xsi:type="array">
+        <item name="pmclain_stripe" xsi:type="object">Pmclain\Stripe\Model\Ui\TokenUiComponentProvider</item>
+      </argument>
+    </arguments>
+  </type>
 </config>

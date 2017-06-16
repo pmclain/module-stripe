@@ -71,6 +71,11 @@
           <label>Payment from Applicable Countries</label>
           <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
         </field>
+        <field id="pmclain_stripe_vault_active" translate="label" type="select" sortOrder="125" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Allow Stored Credit Cards</label>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+          <config_path>payment/pmclain_stripe_vault/active</config_path>
+        </field>
         <field id="specificcountry" translate="label" type="multiselect" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Payment from Specific Countries</label>
           <source_model>Magento\Directory\Model\Config\Source\Country</source_model>

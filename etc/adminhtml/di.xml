@@ -23,4 +23,30 @@
       </argument>
     </arguments>
   </type>
+  <type name="Magento\Vault\Model\Ui\Adminhtml\TokensConfigProvider">
+    <arguments>
+      <argument name="tokenUiComponentProviders" xsi:type="array">
+        <item name="pmclain_stripe" xsi:type="object">Pmclain\Stripe\Model\Ui\Adminhtml\TokenUiComponentProvider</item>
+      </argument>
+    </arguments>
+  </type>
+
+  <!-- Admin Payment Config -->
+  <virtualType name="StripeVaultAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+    <arguments>
+      <argument name="builders" xsi:type="array">
+        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault\Admin</item>
+        <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
+      </argument>
+    </arguments>
+  </virtualType>
+  <virtualType name="StripeAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+    <arguments>
+      <argument name="builders" xsi:type="array">
+        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Admin</item>
+        <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
+        <!--<item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>-->
+      </argument>
+    </arguments>
+  </virtualType>
 </config>

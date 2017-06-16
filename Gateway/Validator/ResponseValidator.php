@@ -22,6 +22,9 @@ class ResponseValidator extends GeneralResponseValidator
       parent::getResponseValidators(),
       [
         function ($response) {
+          if(isset($response['error'])) {
+            return [false, [$response['message']]];
+          }
           return [
             in_array(
               $response['status'],

@@ -19,4 +19,7 @@
   <event name="payment_method_assign_data">
     <observer name="pmclain_stripe_data_assign" instance="Pmclain\Stripe\Observer\DataAssignObserver" />
   </event>
+  <event name="vault_payment_token_save_commit_after">
+    <observer name="pmclain_stripe_vault_payment_token_save_commit_after" instance="Pmclain\Stripe\Observer\VaultTokenObserver" />
+  </event>
 </config>

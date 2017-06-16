@@ -23,6 +23,7 @@ use Magento\Store\Model\ScopeInterface;
 class ConfigProvider implements ConfigProviderInterface
 {
   const CODE = 'pmclain_stripe';
+  const CC_VAULT_CODE = 'pmclain_stripe_vault';
 
   protected $_config;
   protected $_encryptor;
@@ -40,7 +41,8 @@ class ConfigProvider implements ConfigProviderInterface
     return [
       'payment' => [
         self::CODE => [
-          'publishableKey' => $this->getPublishableKey()
+          'publishableKey' => $this->getPublishableKey(),
+          'vaultCode' => self::CC_VAULT_CODE,
         ]
       ]
     ];

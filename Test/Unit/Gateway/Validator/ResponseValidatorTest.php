@@ -129,8 +129,7 @@ class ResponseValidatorTest extends \PHPUnit_Framework_TestCase
         ['response' => $invalid],
         'isValid' => false,
         [
-          __('Stripe error response.'),
-          __('Wrong transaction status')
+          __('Stripe error response.')
         ]
       ]
     ];

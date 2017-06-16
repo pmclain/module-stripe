@@ -7,10 +7,10 @@ define(
     'Magento_Checkout/js/model/payment/additional-validators',
     'Magento_Payment/js/model/credit-card-validation/validator',
     'Magento_Checkout/js/action/redirect-on-success',
+    'Magento_Vault/js/view/payment/vault-enabler',
     'stripejs'
-
   ],
-  function ($, Component, placeOrderAction, fullScreenLoader, additionalValidators, validator, redirectOnSuccessAction) {
+  function ($, Component, placeOrderAction, fullScreenLoader, additionalValidators, validator, redirectOnSuccessAction, VaultEnabler) {
     'use strict';
 
     return Component.extend({
@@ -21,6 +21,8 @@ define(
       initialize: function() {
         this._super();
         Stripe.setPublishableKey(this.getPublishableKey());
+        this.vaultEnabler = new VaultEnabler();
+        this.vaultEnabler.setPaymentCode(this.getVaultCode());
       },
 
       placeOrder: function(data, event) {
@@ -92,16 +94,15 @@ define(
       },
 
       getData: function() {
-        return {
-          'method': this.item.method,
-          'additional_data': {
-            'cc_last4': this.creditCardNumber().slice(-4),
-            'cc_token': this.token,
-            'cc_type': this.creditCardType(),
-            'cc_exp_year': this.creditCardExpYear(),
-            'cc_exp_month': this.creditCardExpMonth()
-          }
-        };
+        var data = this._super();
+
+        data.additional_data.cc_last4 = this.creditCardNumber().slice(-4);
+        delete data.additional_data.cc_number;
+        data.additional_data.cc_token = this.token;
+
+        this.vaultEnabler.visitAdditionalData(data);
+
+        return data;
       },
 
       getPublishableKey: function () {
@@ -111,6 +112,14 @@ define(
       validate: function() {
         var $form = $('#' + this.getCode() + '-form');
         return $form.validation() && $form.validation('isValid');
+      },
+
+      isVaultEnabled: function () {
+        return this.vaultEnabler.isVaultEnabled();
+      },
+
+      getVaultCode: function () {
+        return window.checkoutConfig.payment[this.getCode()].vaultCode;
       }
 
     });

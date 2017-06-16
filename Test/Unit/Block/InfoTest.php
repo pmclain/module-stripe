@@ -16,20 +16,22 @@
 namespace Pmclain\Stripe\Test\Unit\Block;
 
 use Pmclain\Stripe\Block\Info;
-use Magento\Framework\Phrase;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Gateway\ConfigInterface;
 
 class InfoTest extends \PHPUnit_Framework_TestCase
 {
   public function testGetLabel() {
+    $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+
     $context = $this->getMockBuilder(Context::class)
       ->disableOriginalConstructor()
       ->getMock();
     $config = $this->getMockBuilder(ConfigInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
-    $block = new Info($context, $config);
+
+    $block = $objectManager->getObject(Info::class);
 
     $reflection = new \ReflectionClass(get_class($block));
     $method = $reflection->getMethod('getLabel');

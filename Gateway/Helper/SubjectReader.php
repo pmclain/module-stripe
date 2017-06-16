@@ -15,17 +15,26 @@
  */
 namespace Pmclain\Stripe\Gateway\Helper;
 
-use Magento\Quote\Model\Quote;
 use Magento\Payment\Gateway\Helper;
-use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 
 class SubjectReader
 {
+  /**
+   * @param array $subject
+   * @return array
+   */
   public function readResponseObject(array $subject) {
     $response = Helper\SubjectReader::readResponse($subject);
 
     if(!is_object($response['object'])) {
       throw new \InvalidArgumentException('Response object does not exist');
+    }
+
+    if($response['object'] instanceof \Stripe\Error\Card) {
+      return [
+        'error' => true,
+        'message' => __($response['object']->getMessage())
+      ];
     }
 
     return $response['object']->__toArray();
