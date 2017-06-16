@@ -19,7 +19,6 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
-use Pmclain\Stripe\Model\Adapter\StripeAdapter;
 use Stripe\Customer;
 
 class CustomerDataBuilder implements BuilderInterface

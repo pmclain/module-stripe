@@ -36,7 +36,7 @@ class Vault extends PaymentDataBuilder
       self::CURRENCY => $this->config->getCurrency(),
       self::SOURCE => $paymentToken->getGatewayToken(),
       self::CAPTURE => 'false',
-      self::CUSTOMER => $stripeCustomerId->getValue()
+      self::CUSTOMER => $stripeCustomerId
     ];
 
     return $result;

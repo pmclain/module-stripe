@@ -43,6 +43,7 @@ class GeneralResponseValidator extends AbstractValidator
       if(!$validationResult[0]) {
         $isValid = $validationResult[0];
         $errorMessages = array_merge($errorMessages, $validationResult[1]);
+        break;
       }
     }
 
@@ -52,6 +53,12 @@ class GeneralResponseValidator extends AbstractValidator
   protected function getResponseValidators() {
     return [
       function ($response) {
+        if(isset($response['error'])) {
+          return [
+            false,
+            [$response['message']]
+          ];
+        }
         return [
           $response['status'] === 'succeeded',
           [__('Stripe error response.')]

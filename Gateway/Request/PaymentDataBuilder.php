@@ -21,7 +21,6 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Stripe\Customer;
 
 class PaymentDataBuilder implements BuilderInterface
 {
@@ -33,6 +32,7 @@ class PaymentDataBuilder implements BuilderInterface
   const CURRENCY = 'currency';
   const CAPTURE = 'capture';
   const CUSTOMER = 'customer';
+  const SAVE_IN_VAULT = 'save_in_vault';
 
   /** @var Config  */
   protected $config;
@@ -45,6 +45,7 @@ class PaymentDataBuilder implements BuilderInterface
 
   /** @var CustomerRepositoryInterface  */
   protected $customerRepository;
+
 
   /**
    * PaymentDataBuilder constructor.
@@ -83,20 +84,11 @@ class PaymentDataBuilder implements BuilderInterface
       self::CAPTURE => 'false'
     ];
 
-    if($this->isSavePaymentInformation($paymentDataObject)) {
+    if($this->isSavePaymentInformation($payment)) {
       $stripeCustomerId = $this->getStripeCustomerId();
-      if ($stripeCustomerId->getValue()) {
-        $stripeCustomer = Customer::retrieve($stripeCustomerId->getValue());
-        try {
-          $card = $stripeCustomer->sources->create([
-            'source' => $this->getPaymentSource($payment)
-          ]);
-        }catch (\Exception $e) {
-          throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
-        }
-
-        $result[self::CUSTOMER] = $stripeCustomerId->getValue();
-        $result[self::SOURCE] = $card->id;
+      if ($stripeCustomerId) {
+        $result[self::CUSTOMER] = $stripeCustomerId;
+        $result[self::SAVE_IN_VAULT] = true;
       }
     }
 
@@ -104,7 +96,7 @@ class PaymentDataBuilder implements BuilderInterface
   }
 
   /**
-   * @return \Magento\Framework\Api\AttributeInterface|mixed|null
+   * @return string
    */
   protected function getStripeCustomerId() {
     $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
@@ -115,30 +107,35 @@ class PaymentDataBuilder implements BuilderInterface
       $customer->setCustomAttribute('stripe_customer_id', $stripeCustomerId);
 
       $this->customerRepository->save($customer);
+
+      return $stripeCustomerId;
     }
 
-    return $stripeCustomerId;
+    return $stripeCustomerId->getValue();
   }
 
   /**
-   * @param string $email
-   * @return mixed|null
+   * @param $email
+   * @return string|null
+   * @throws \Magento\Framework\Validator\Exception
    */
   protected function createNewStripeCustomer($email) {
-    $result = Customer::create([
-      'description' => 'Customer for ' . $email,
-    ]);
+    try {
+      $result = Customer::create([
+        'description' => 'Customer for ' . $email,
+      ]);
+    }catch (\Exception $e) {
+      throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
+    }
 
     return $result->id;
   }
 
   /**
-   * @param $paymentDataObject
+   * @param \Magento\Payment\Model\InfoInterface $payment
    * @return mixed
    */
-  protected function isSavePaymentInformation($paymentDataObject) {
-    $payment = $paymentDataObject->getPayment();
-
+  protected function isSavePaymentInformation($payment) {
     return $payment->getAdditionalInformation('is_active_payment_token_enabler');
   }
 
