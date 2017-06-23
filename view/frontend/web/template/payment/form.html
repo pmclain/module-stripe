@@ -17,7 +17,9 @@
     </div>
 
     <form class="form" data-bind="attr: {'id': getCode() + '-form'}">
-      <!-- ko template: 'Magento_Payment/payment/cc-form' --><!-- /ko -->
+      <div id="stripe-card-element" afterRender="initStripeElement">
+        <!-- a Stripe Element will be inserted here. -->
+      </div>
       <!-- ko if: (isVaultEnabled())-->
       <div class="field choice">
         <input type="checkbox"

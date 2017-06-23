@@ -15,14 +15,31 @@ define(
 
     return Component.extend({
       defaults: {
-        template: 'Pmclain_Stripe/payment/form'
+        template: 'Pmclain_Stripe/payment/form',
+        stripe: null,
+        stripeCardElement: null,
+        stripeCard: null,
+        token: null
       },
 
       initialize: function() {
         this._super();
-        Stripe.setPublishableKey(this.getPublishableKey());
+        this.stripe = Stripe(this.getPublishableKey());
         this.vaultEnabler = new VaultEnabler();
         this.vaultEnabler.setPaymentCode(this.getVaultCode());
+      },
+
+      initStripeElement: function() {
+        var self = this;
+        self.stripeCardElement = self.stripe.elements();
+        self.stripeCard = self.stripeCardElement.create('card', {
+          style: {
+            base: {
+              fontSize: '20px'
+            }
+          }
+        });
+        self.stripeCard.mount('#stripe-card-element');
       },
 
       placeOrder: function(data, event) {
@@ -64,20 +81,13 @@ define(
       createToken: function() {
         var self = this;
 
-        var cardInfo = {
-          number: this.creditCardNumber(),
-          exp_month: this.creditCardExpMonth(),
-          exp_year: this.creditCardExpYear(),
-          cvc: this.creditCardVerificationNumber()
-        };
-
         var deffer = $.Deferred();
 
-        Stripe.card.createToken(cardInfo, function(status, response) {
+        self.stripe.createToken(self.stripeCard).then(function(response) {
           if (response.error) {
             deffer.reject(response.error.message);
           }else {
-            self.token = response.id;
+            self.token = response.token;
             deffer.resolve();
           }
         });
@@ -96,9 +106,15 @@ define(
       getData: function() {
         var data = this._super();
 
-        data.additional_data.cc_last4 = this.creditCardNumber().slice(-4);
-        delete data.additional_data.cc_number;
-        data.additional_data.cc_token = this.token;
+        if (this.token) {
+          var card = this.token.card;
+
+          data.additional_data.cc_exp_month = card.exp_month;
+          data.additional_data.cc_exp_year = card.exp_year;
+          data.additional_data.cc_last4 = card.last4;
+          data.additional_data.cc_type = card.brand;
+          data.additional_data.cc_token = this.token.id;
+        }
 
         this.vaultEnabler.visitAdditionalData(data);
 
