@@ -47,7 +47,7 @@ class Admin extends PaymentDataBuilder
   }
 
   /**
-   * @return \Magento\Framework\Api\AttributeInterface|mixed|null
+   * @return string
    */
   protected function getStripeCustomerId() {
     $customer = $this->customerRepository->getById($this->adminSession->getCustomerId());
@@ -58,8 +58,10 @@ class Admin extends PaymentDataBuilder
       $customer->setCustomAttribute('stripe_customer_id', $stripeCustomerId);
 
       $this->customerRepository->save($customer);
+
+      return $stripeCustomerId;
     }
 
-    return $stripeCustomerId;
+    return $stripeCustomerId->getValue();
   }
 }
