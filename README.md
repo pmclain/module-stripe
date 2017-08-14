@@ -14,9 +14,22 @@ corresponding Stripe customer profile.
 * Full and partial refund support when creating credit memos.
 
 ## Installation
+#### Composer
 In your Magento 2 root directory run  
 `composer require pmclain/module-stripe`  
-`bin/magento setup:upgrade`
+`bin/magento setup:upgrade`  
+
+#### Manual
+The module can be installed without Composer by downloading the desired
+release from https://github.com/pmclain/module-stripe/releases and placing
+the contents in `app/code/Pmclain/Stripe/` With the module files in place,
+run `bin/magento setup:upgrade`
+
+## Magento Version Requirements
+|Release|Magento Version|
+|---|---|
+|>=0.0.4|2.1.x|
+|<=0.0.3|2.0.x|
 
 ## Configuration
 The configuration can be found in the Magento 2 admin panel under  
