@@ -21,6 +21,7 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Stripe\Customer;
 
 class PaymentDataBuilder implements BuilderInterface
 {
