@@ -18,7 +18,9 @@ define([
       active: false,
       scriptLoaded: false,
       stripe: null,
-      selectedCardType: null,
+      stripeCardElement: null,
+      stripeCard: null,
+      token: null,
       imports: {
         onActiveChange: 'active'
       }
@@ -35,8 +37,7 @@ define([
       this._super()
         .observe([
           'active',
-          'scriptLoaded',
-          'selectedCardType'
+          'scriptLoaded'
         ]);
 
       // re-init payment method events
@@ -47,7 +48,6 @@ define([
       domObserver.get('#' + self.container, function () {
         if (self.scriptLoaded()) {
           self.$selector.off('submit');
-          self.initStripe();
         }
       });
 
@@ -97,27 +97,20 @@ define([
       var state = self.scriptLoaded;
 
       $('body').trigger('processStart');
-      require(['https://js.stripe.com/v2/'], function () {
+      require(['https://js.stripe.com/v3/'], function () {
         state(true);
-        self.stripe = window.Stripe;
-        self.initStripe();
+        self.stripe = window.Stripe(self.publishableKey);
+        self.stripeCardElement = self.stripe.elements();
+        self.stripeCard = self.stripeCardElement.create('card', {
+          style: {
+            base: {
+              fontSize: '20px'
+            }
+          }
+        });
+        self.stripeCard.mount('#stripe-card-element');
         $('body').trigger('processStop');
       });
-    },
-
-    initStripe: function() {
-      var self = this;
-
-      try {
-        $('body').trigger('processStart');
-
-        self.stripe.setPublishableKey(this.publishableKey);
-
-        $('body').trigger('processStop');
-      }catch(e) {
-        $('body').trigger('processStop');
-        self.error(e.message);
-      }
     },
 
     /**
@@ -178,22 +171,24 @@ define([
       var container = $('#' + this.container);
 
       var cardInfo = {
-        number: container.find('#' + this.code + '_cc_number').val(),
-        exp_month: container.find('#' + this.code + '_expiration').val(),
-        exp_year: container.find('#' + this.code + '_expiration_yr').val(),
-        cvc: container.find('#' + this.code + '_cc_cid').val()
+        number: container.find('#' + self.code + '_cc_number').val(),
+
+        exp_month: container.find('#' + self.code + '_expiration').val(),
+        exp_year: container.find('#' + self.code + '_expiration_yr').val(),
+        cvc: container.find('#' + self.code + '_cc_cid').val()
       };
 
       var defer = $.Deferred();
 
-      this.stripe.card.createToken(cardInfo, function(status, response) {
+      self.stripe.createToken(self.stripeCard).then(function(response) {
         if (response.error) {
-          defer.reject(response.error.message);
+          deffer.reject(response.error.message);
         }else {
-          container.find('#' + self.code + '_cc_number').val('');
-          container.find('#' + self.code + '_cc_last4').val(cardInfo.number.slice(-4));
-          delete cardInfo.number;
-          $('#' + self.container).find('#' + self.code + '_cc_token').val(response.id);
+          var card = response.token.card;
+          container.find('#' + self.code + '_expiration').val(card.exp_month);
+          container.find('#' + self.code + '_expiration_yr').val(card.exp_year);
+          container.find('#' + self.code + '_cc_type').val(card.brand);
+          container.find('#' + self.code + '_cc_token').val(response.token.id);
           defer.resolve();
         }
       });

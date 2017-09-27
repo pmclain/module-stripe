@@ -1,7 +1,7 @@
 var config = {
   map: {
     '*': {
-      stripejs: 'https://js.stripe.com/v2/'
+      stripejs: 'https://js.stripe.com/v3/'
     }
   }
 };
