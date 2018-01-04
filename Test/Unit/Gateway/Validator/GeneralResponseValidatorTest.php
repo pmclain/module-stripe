@@ -21,7 +21,7 @@ use Pmclain\Stripe\Gateway\Validator\GeneralResponseValidator;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class GeneralResponseValidatorTest extends \PHPUnit_Framework_TestCase
+class GeneralResponseValidatorTest extends \PHPUnit\Framework\TestCase
 {
   /** @var GeneralResponseValidator */
   private $responseValidator;
@@ -60,7 +60,7 @@ class GeneralResponseValidatorTest extends \PHPUnit_Framework_TestCase
   public function testValidate(array $validationSubject, $isValid, $messages)
   {
     /** @var ResultInterface|MockObject $resultMock */
-    $resultMock = $this->getMock(ResultInterface::class);
+    $resultMock = $this->createMock(ResultInterface::class);
 
     $this->subjectReaderMock->expects($this->once())
       ->method('readResponseObject')

@@ -21,7 +21,7 @@ use Magento\Sales\Model\Order\Payment;
 use Pmclain\Stripe\Gateway\Config\Config;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 
-class CardDetailsHandlerTest extends \PHPUnit_Framework_TestCase
+class CardDetailsHandlerTest extends \PHPUnit\Framework\TestCase
 {
   /** @var CardDetailsHandler */
   private $cardHandler;

@@ -21,7 +21,7 @@ use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
 use Magento\Payment\Model\CcConfigProvider;
 
-class CardRendererTest extends \PHPUnit_Framework_TestCase
+class CardRendererTest extends \PHPUnit\Framework\TestCase
 {
   /** @var  PaymentTokenInterface|MockObject */
   private $paymentTokenMock;

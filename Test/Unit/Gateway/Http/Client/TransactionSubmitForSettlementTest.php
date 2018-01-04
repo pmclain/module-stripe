@@ -21,7 +21,7 @@ use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 use Psr\Log\LoggerInterface;
 
-class TransactionSubmitForSettlementTest extends \PHPUnit_Framework_TestCase
+class TransactionSubmitForSettlementTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var TransactionSubmitForSettlement
@@ -84,7 +84,7 @@ class TransactionSubmitForSettlementTest extends \PHPUnit_Framework_TestCase
   }
   
   private function getTransferObjectMock() {
-    $mock = $this->getMock(TransferInterface::class);
+    $mock = $this->createMock(TransferInterface::class);
     $mock->expects($this->once())
       ->method('getBody')
       ->willReturn(

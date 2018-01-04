@@ -29,7 +29,7 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory;
 use Pmclain\Stripe\Model\Adapter\StripeAdapter;
 
-class CaptureStrategyCommandTest extends \PHPUnit_Framework_TestCase
+class CaptureStrategyCommandTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var CaptureStrategyCommand

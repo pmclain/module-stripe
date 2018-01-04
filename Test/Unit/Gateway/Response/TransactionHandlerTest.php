@@ -20,11 +20,11 @@ use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class TransactionHandlerTest extends \PHPUnit_Framework_TestCase
+class TransactionHandlerTest extends \PHPUnit\Framework\TestCase
 {
   public function testHandle() {
     $transactionId = 'ch_19Rjix2eZvKYlo2C5VFbcuXf';
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $paymentInfo = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
       ->getMock();

@@ -22,7 +22,7 @@ use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Model\Order\Payment;
 use Pmclain\Stripe\Helper\Payment\Formatter;
 
-class RefundDataBuilderTest extends \PHPUnit_Framework_TestCase
+class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   use Formatter;
 
@@ -45,7 +45,7 @@ class RefundDataBuilderTest extends \PHPUnit_Framework_TestCase
   }
 
   public function testBuild() {
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $paymentMock = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
       ->getMock();
@@ -78,7 +78,7 @@ class RefundDataBuilderTest extends \PHPUnit_Framework_TestCase
   }
 
   public function testBuildNullAmount() {
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $paymentMock = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
       ->getMock();

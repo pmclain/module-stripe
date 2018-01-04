@@ -19,7 +19,7 @@ use Pmclain\Stripe\Block\Info;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Gateway\ConfigInterface;
 
-class InfoTest extends \PHPUnit_Framework_TestCase
+class InfoTest extends \PHPUnit\Framework\TestCase
 {
   public function testGetLabel() {
     $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);

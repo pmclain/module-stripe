@@ -23,7 +23,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Payment\Model\MethodInterface;
 
-class FormTest extends \PHPUnit_Framework_TestCase
+class FormTest extends \PHPUnit\Framework\TestCase
 {
   /** @var  GatewayConfig|MockObject */
   private $gatewayConfigMock;

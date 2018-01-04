@@ -19,7 +19,7 @@ use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class VoidDataBuilderTest extends \PHPUnit_Framework_TestCase
+class VoidDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var VoidDataBuilder
@@ -44,7 +44,7 @@ class VoidDataBuilderTest extends \PHPUnit_Framework_TestCase
    * @dataProvider testBuildDataProvider
    */
   public function testBuild($parentTransId, $lastTransId) {
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $buildSubject = ['payment' => $paymentDataObject];
     $paymentMock = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
