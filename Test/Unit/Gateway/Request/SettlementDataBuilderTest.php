@@ -16,7 +16,7 @@
 
 use Pmclain\Stripe\Gateway\Request\SettlementDataBuilder;
 
-class SettlementDataBuilderTest extends \PHPUnit_Framework_TestCase
+class SettlementDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   public function testBuild() {
     $builder = new SettlementDataBuilder();

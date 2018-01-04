@@ -21,7 +21,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Invoice;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 
-class RefundHandlerTest extends \PHPUnit_Framework_TestCase
+class RefundHandlerTest extends \PHPUnit\Framework\TestCase
 {
   public function testShouldCloseParentTransaction() {
     $subjectReader = $this->getMockBuilder(SubjectReader::class)

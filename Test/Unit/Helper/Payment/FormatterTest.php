@@ -16,7 +16,7 @@
 
 use Pmclain\Stripe\Helper\Payment\Formatter;
 
-class FormatterTest extends \PHPUnit_Framework_TestCase
+class FormatterTest extends \PHPUnit\Framework\TestCase
 {
   use Formatter;
 

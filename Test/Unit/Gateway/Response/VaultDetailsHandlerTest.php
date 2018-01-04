@@ -28,7 +28,7 @@ use Pmclain\Stripe\Gateway\Config\Config;
 use Magento\Sales\Api\Data\OrderPaymentExtension;
 use Magento\Sales\Api\Data\OrderPaymentExtensionInterfaceFactory;
 
-class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
+class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
 {
   /** @var PaymentDataObject|MockObject */
   private $paymentDataObjectMock;
@@ -78,6 +78,7 @@ class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
       ->getMock();
 
     $this->cardMock = $this->getMockBuilder(Card::class)
+      ->setMethods(['__toArray'])
       ->getMock();
 
     $this->paymentMock = $this->getMockBuilder(Payment::class)
@@ -99,6 +100,7 @@ class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
 
     $this->extensionAttributeMock = $this->getMockBuilder(OrderPaymentExtension::class)
       ->disableOriginalConstructor()
+      ->setMethods(['setVaultPaymentToken'])
       ->getmock();
 
     $this->extensionAttributeFactoryMock = $this->getMockBuilder(OrderPaymentExtensionInterfaceFactory::class)

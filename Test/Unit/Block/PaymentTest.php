@@ -19,7 +19,7 @@ use Pmclain\Stripe\Block\Payment;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
 
-class PaymentTest extends \PHPUnit_Framework_TestCase
+class PaymentTest extends \PHPUnit\Framework\TestCase
 {
   /** @var  ConfigProvider|MockObject */
   private $configProviderMock;

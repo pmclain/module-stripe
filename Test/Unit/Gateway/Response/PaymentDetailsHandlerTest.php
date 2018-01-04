@@ -21,7 +21,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 
-class PaymentDetailsHandlerTest extends \PHPUnit_Framework_TestCase
+class PaymentDetailsHandlerTest extends \PHPUnit\Framework\TestCase
 {
   const TRANSACTION_ID = 'txn_19PbvF2eZvKYlo2C0HCaOJw2';
 

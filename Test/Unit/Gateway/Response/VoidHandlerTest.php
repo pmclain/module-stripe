@@ -20,11 +20,11 @@ use Pmclain\Stripe\Gateway\Response\VoidHandler;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class VoidHandlerTest extends \PHPUnit_Framework_TestCase
+class VoidHandlerTest extends \PHPUnit\Framework\TestCase
 {
   public function testHandle() {
     $transactionId = 'ch_19Rjix2eZvKYlo2C5VFbcuXf';
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $payment = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
       ->getMock();

@@ -20,7 +20,7 @@ use Magento\Sales\Model\Order\Payment;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Pmclain\Stripe\Helper\Payment\Formatter;
 
-class CaptureDataBuilderTest extends \PHPUnit_Framework_TestCase
+class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   use Formatter;
 
@@ -45,7 +45,7 @@ class CaptureDataBuilderTest extends \PHPUnit_Framework_TestCase
   private $subjectReaderMock;
 
   protected function setUp() {
-    $this->paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $this->paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $this->payment = $this->getMockBuilder(Payment::class)
       ->disableOriginalConstructor()
       ->getMock();

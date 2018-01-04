@@ -31,7 +31,7 @@ use Magento\Framework\Api\AttributeInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
 
 
-class VaultTest extends \PHPUnit_Framework_TestCase
+class VaultTest extends \PHPUnit\Framework\TestCase
 {
   /** @var SubjectReader|MockObject */
   private $subjectReaderMock;

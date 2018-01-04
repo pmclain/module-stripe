@@ -18,7 +18,7 @@ use Pmclain\Stripe\Gateway\Config\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends \PHPUnit\Framework\TestCase
 {
   const METHOD_CODE = 'pmclain_stripe';
 
@@ -33,7 +33,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
   private $scopeConfigMock;
 
   protected function setUp() {
-    $this->scopeConfigMock = $this->getMock(ScopeConfigInterface::class);
+    $this->scopeConfigMock = $this->createMock(ScopeConfigInterface::class);
 
     $this->model = new Config($this->scopeConfigMock, self::METHOD_CODE);
   }

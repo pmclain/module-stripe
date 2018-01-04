@@ -22,7 +22,7 @@ use Pmclain\Stripe\Gateway\Validator\ResponseValidator\Authorize;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class AuthorizeTest extends \PHPUnit_Framework_TestCase
+class AuthorizeTest extends \PHPUnit\Framework\TestCase
 {
   /** @var Authorize */
   private $responseValidator;
@@ -61,7 +61,7 @@ class AuthorizeTest extends \PHPUnit_Framework_TestCase
   public function testValidate(array $response, $isValid, $messages)
   {
     /** @var ResultInterface|MockObject $resultMock */
-    $resultMock = $this->getMock(ResultInterface::class);
+    $resultMock = $this->createMock(ResultInterface::class);
     $outcome = $this->getMockBuilder(\stdClass::class)
       ->setMethods(['__toArray'])
       ->getMock();

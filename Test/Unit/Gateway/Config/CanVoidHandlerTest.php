@@ -12,7 +12,8 @@
  * @package   Pmclain_Stripe
  * @copyright Copyright (c) 2017
  * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
- */namespace Pmclain\Stripe\Test\Unit\Gateway\Config;
+ */
+namespace Pmclain\Stripe\Test\Unit\Gateway\Config;
 
 use Pmclain\Stripe\Gateway\Config\CanVoidHandler;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
@@ -20,10 +21,10 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class CanVoidHandlerTest extends \PHPUnit_Framework_TestCase
+class CanVoidHandlerTest extends \PHPUnit\Framework\TestCase
 {
   public function testHandleNotOrderPayment() {
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $subject = ['payment' => $paymentDataObject];
 
     $subjectReader = $this->getMockBuilder(SubjectReader::class)
@@ -34,7 +35,7 @@ class CanVoidHandlerTest extends \PHPUnit_Framework_TestCase
       ->method('readPayment')
       ->willReturn($paymentDataObject);
 
-    $paymentMock = $this->getMock(InfoInterface::class);
+    $paymentMock = $this->createMock(InfoInterface::class);
 
     $paymentDataObject->expects(static::once())
       ->method('getPayment')
@@ -46,7 +47,7 @@ class CanVoidHandlerTest extends \PHPUnit_Framework_TestCase
   }
 
   public function testHandleSomeAmountWasPaid() {
-    $paymentDataObject = $this->getMock(PaymentDataObjectInterface::class);
+    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
     $subject = ['payment' => $paymentDataObject];
 
     $subjectReader = $this->getMockBuilder(SubjectReader::class)

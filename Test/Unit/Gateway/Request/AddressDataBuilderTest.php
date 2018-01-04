@@ -20,7 +20,7 @@ use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\AddressAdapterInterface;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 
-class AddressDataBuilderTest extends \PHPUnit_Framework_TestCase
+class AddressDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var PaymentDataObjectInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,8 +43,8 @@ class AddressDataBuilderTest extends \PHPUnit_Framework_TestCase
   private $subjectReaderMock;
 
   protected function setUp() {
-    $this->paymentDataObjectMock = $this->getMock(PaymentDataObjectInterface::class);
-    $this->orderMock = $this->getMock(OrderAdapterInterface::class);
+    $this->paymentDataObjectMock = $this->createMock(PaymentDataObjectInterface::class);
+    $this->orderMock = $this->createMock(OrderAdapterInterface::class);
     $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
       ->disableOriginalConstructor()
       ->getMock();
@@ -163,7 +163,7 @@ class AddressDataBuilderTest extends \PHPUnit_Framework_TestCase
    */
   private function getAddressMock($addressData)
   {
-    $addressMock = $this->getMock(AddressAdapterInterface::class);
+    $addressMock = $this->createMock(AddressAdapterInterface::class);
 
     $addressMock->expects($this->once())
       ->method('getFirstname')

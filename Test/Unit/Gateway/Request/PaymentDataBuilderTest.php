@@ -28,7 +28,7 @@ use Magento\Customer\Model\Session;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Api\AttributeInterface;
 
-class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
+class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   use Formatter;
 
@@ -115,7 +115,7 @@ class PaymentDataBuilderTest extends \PHPUnit_Framework_TestCase
     $this->attributeInterfaceMock = $this->getMockBuilder(AttributeInterface::class)
       ->getMockForAbstractClass();
 
-    $this->orderMock = $this->getMock(OrderAdapterInterface::class);
+    $this->orderMock = $this->createMock(OrderAdapterInterface::class);
 
     $this->builder = $objectManager->getObject(
       PaymentDataBuilder::class,

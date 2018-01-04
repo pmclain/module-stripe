@@ -18,7 +18,7 @@ use Pmclain\Stripe\Model\Adminhtml\Source\Cctype as CcTypeSource;
 use Pmclain\Stripe\Helper\CcType;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
-class CcTypeTest extends \PHPUnit_Framework_TestCase
+class CcTypeTest extends \PHPUnit\Framework\TestCase
 {
   /** @var ObjectManager */
   private $objectManager;
