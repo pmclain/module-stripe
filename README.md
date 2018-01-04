@@ -24,15 +24,16 @@ The module can be installed without Composer by downloading the desired
 release from https://github.com/pmclain/module-stripe/releases and placing
 the contents in `app/code/Pmclain/Stripe/`  
 The module depends on the Stripe PHP-SDK which should be added to your
-project via composer by running `composer require stripe/stripe-php:3.7.0`
+project via composer by running `composer require stripe/stripe-php:5.2.0`
 With the module files in place and the Stripe SDK installed,
 run `bin/magento setup:upgrade`
 
 ## Magento Version Requirements
-|Release|Magento Version|
-|---|---|
-|>=0.0.4|2.1.x|
-|<=0.0.3|2.0.x|
+| Release | Magento Version |
+| ------- | --------------- |
+| 1.x.x   | 2.2.x           | 
+| 1.x.x   | 2.1.x           |
+| 0.0.3   | 2.0.x           |
 
 ## Configuration
 The configuration can be found in the Magento 2 admin panel under  
