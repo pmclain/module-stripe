@@ -24,7 +24,7 @@ cd magento2
 
 # add composer package under test, composer require will trigger update/install
 composer config minimum-stability dev
-composer config repositories.travis_to_test git git@github.com:pmclain/module-stripe.git
+composer config repositories.travis_to_test git https://github.com/pmclain/module-stripe.git
 composer require pmclain/module-stripe:dev-master#$TRAVIS_COMMIT
 
 # prepare for test suite
