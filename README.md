@@ -42,4 +42,4 @@ The configuration can be found in the Magento 2 admin panel under
 Store->Configuration->Sales->Payment Methods->Stripe
 
 ## License
-GNU GENERAL PUBLIC LICENSE Version 3
+Open Software License v3.0
