@@ -3,15 +3,15 @@
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
  *
- * This source file is subject to the GPL v3 License
+ * This source file is subject to the OSL 3.0 License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl.txt
+ * https://opensource.org/licenses/osl-3.0.php
  *
  * @category  Pmclain
  * @package   Pmclain_Stripe
- * @copyright Copyright (c) 2017
- * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
  */
 namespace Pmclain\Stripe\Test\Unit\Block;
 
@@ -19,7 +19,7 @@ use Pmclain\Stripe\Block\Payment;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
 
-class PaymentTest extends \PHPUnit_Framework_TestCase
+class PaymentTest extends \PHPUnit\Framework\TestCase
 {
   /** @var  ConfigProvider|MockObject */
   private $configProviderMock;

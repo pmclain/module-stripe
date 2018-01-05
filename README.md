@@ -1,4 +1,6 @@
 # Magento 2 Stripe Integration
+[![Build Status](https://travis-ci.org/pmclain/module-stripe.svg?branch=master)](https://travis-ci.org/pmclain/module-stripe)  
+
 Accept credit card payments through the Stripe payment gateway.
 
 * Securely accept customer payments using the Stripe.js tokenization when
@@ -40,4 +42,4 @@ The configuration can be found in the Magento 2 admin panel under
 Store->Configuration->Sales->Payment Methods->Stripe
 
 ## License
-GNU GENERAL PUBLIC LICENSE Version 3
+Open Software License v3.0

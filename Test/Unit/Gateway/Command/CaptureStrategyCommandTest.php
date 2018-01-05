@@ -3,16 +3,17 @@
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
  *
- * This source file is subject to the GPL v3 License
+ * This source file is subject to the OSL 3.0 License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl.txt
+ * https://opensource.org/licenses/osl-3.0.php
  *
  * @category  Pmclain
  * @package   Pmclain_Stripe
- * @copyright Copyright (c) 2017
- * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
- */namespace Pmclain\Stripe\Test\Unit\Gateway\Command;
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+namespace Pmclain\Stripe\Test\Unit\Gateway\Command;
 
 use Pmclain\Stripe\Gateway\Command\CaptureStrategyCommand;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
@@ -29,7 +30,7 @@ use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory;
 use Pmclain\Stripe\Model\Adapter\StripeAdapter;
 
-class CaptureStrategyCommandTest extends \PHPUnit_Framework_TestCase
+class CaptureStrategyCommandTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var CaptureStrategyCommand

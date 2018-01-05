@@ -3,15 +3,15 @@
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
  *
- * This source file is subject to the GPL v3 License
+ * This source file is subject to the OSL 3.0 License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl.txt
+ * https://opensource.org/licenses/osl-3.0.php
  *
  * @category  Pmclain
  * @package   Pmclain_Stripe
- * @copyright Copyright (c) 2017
- * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
  */
 namespace Pmclain\Stripe\Test\Unit\Gateway\Response;
 
@@ -28,7 +28,7 @@ use Pmclain\Stripe\Gateway\Config\Config;
 use Magento\Sales\Api\Data\OrderPaymentExtension;
 use Magento\Sales\Api\Data\OrderPaymentExtensionInterfaceFactory;
 
-class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
+class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
 {
   /** @var PaymentDataObject|MockObject */
   private $paymentDataObjectMock;
@@ -78,6 +78,7 @@ class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
       ->getMock();
 
     $this->cardMock = $this->getMockBuilder(Card::class)
+      ->setMethods(['__toArray'])
       ->getMock();
 
     $this->paymentMock = $this->getMockBuilder(Payment::class)
@@ -99,6 +100,7 @@ class VaultDetailsHandlerTest extends \PHPUnit_Framework_TestCase
 
     $this->extensionAttributeMock = $this->getMockBuilder(OrderPaymentExtension::class)
       ->disableOriginalConstructor()
+      ->setMethods(['setVaultPaymentToken'])
       ->getmock();
 
     $this->extensionAttributeFactoryMock = $this->getMockBuilder(OrderPaymentExtensionInterfaceFactory::class)

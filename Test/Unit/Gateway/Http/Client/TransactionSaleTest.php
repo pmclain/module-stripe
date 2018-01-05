@@ -3,16 +3,17 @@
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
  *
- * This source file is subject to the GPL v3 License
+ * This source file is subject to the OSL 3.0 License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl.txt
+ * https://opensource.org/licenses/osl-3.0.php
  *
  * @category  Pmclain
  * @package   Pmclain_Stripe
- * @copyright Copyright (c) 2017
- * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
- */namespace Pmclain\Stripe\Test\Unit\Gateway\Http\Client;
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+namespace Pmclain\Stripe\Test\Unit\Gateway\Http\Client;
 
 use Pmclain\Stripe\Gateway\Http\Client\TransactionSale;
 use Pmclain\Stripe\Model\Adapter\StripeAdapter;
@@ -20,7 +21,7 @@ use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 use Psr\Log\LoggerInterface;
 
-class TransactionSaleTest extends \PHPUnit_Framework_TestCase
+class TransactionSaleTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var TransactionSale
@@ -100,7 +101,7 @@ class TransactionSaleTest extends \PHPUnit_Framework_TestCase
   }
 
   private function getTransferObjectMock() {
-    $transferObjectMock = $this->getMock(TransferInterface::class);
+    $transferObjectMock = $this->createMock(TransferInterface::class);
     $transferObjectMock->expects($this->once())
       ->method('getBody')
       ->willReturn($this->getTransferData());

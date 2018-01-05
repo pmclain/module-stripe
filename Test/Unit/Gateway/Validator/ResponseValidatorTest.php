@@ -3,16 +3,17 @@
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
  *
- * This source file is subject to the GPL v3 License
+ * This source file is subject to the OSL 3.0 License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl.txt
+ * https://opensource.org/licenses/osl-3.0.php
  *
  * @category  Pmclain
  * @package   Pmclain_Stripe
- * @copyright Copyright (c) 2017
- * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
- */namespace Pmclain\Stripe\Test\Unit\Gateway\Validator;
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+namespace Pmclain\Stripe\Test\Unit\Gateway\Validator;
 
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
@@ -20,7 +21,7 @@ use Pmclain\Stripe\Gateway\Validator\ResponseValidator;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
-class ResponseValidatorTest extends \PHPUnit_Framework_TestCase
+class ResponseValidatorTest extends \PHPUnit\Framework\TestCase
 {
   /** @var ResponseValidator */
   private $responseValidator;
@@ -83,7 +84,7 @@ class ResponseValidatorTest extends \PHPUnit_Framework_TestCase
   public function testValidate(array $validationSubject, $isValid, $messages)
   {
     /** @var ResultInterface|MockObject $result */
-    $result = $this->getMock(ResultInterface::class);
+    $result = $this->createMock(ResultInterface::class);
 
     $this->subjectReader->expects($this->once())
       ->method('readResponseObject')

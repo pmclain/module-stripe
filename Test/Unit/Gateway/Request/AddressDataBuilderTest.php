@@ -3,16 +3,17 @@
  * Pmclain_Stripe extension
  * NOTICE OF LICENSE
  *
- * This source file is subject to the GPL v3 License
+ * This source file is subject to the OSL 3.0 License
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl.txt
+ * https://opensource.org/licenses/osl-3.0.php
  *
  * @category  Pmclain
  * @package   Pmclain_Stripe
- * @copyright Copyright (c) 2017
- * @license   https://www.gnu.org/licenses/gpl.txt GPL v3 License
- */namespace Pmclain\Stripe\Test\Unit\Gateway\Request;
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+namespace Pmclain\Stripe\Test\Unit\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Request\AddressDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
@@ -20,7 +21,7 @@ use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\AddressAdapterInterface;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 
-class AddressDataBuilderTest extends \PHPUnit_Framework_TestCase
+class AddressDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
   /**
    * @var PaymentDataObjectInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,8 +44,8 @@ class AddressDataBuilderTest extends \PHPUnit_Framework_TestCase
   private $subjectReaderMock;
 
   protected function setUp() {
-    $this->paymentDataObjectMock = $this->getMock(PaymentDataObjectInterface::class);
-    $this->orderMock = $this->getMock(OrderAdapterInterface::class);
+    $this->paymentDataObjectMock = $this->createMock(PaymentDataObjectInterface::class);
+    $this->orderMock = $this->createMock(OrderAdapterInterface::class);
     $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
       ->disableOriginalConstructor()
       ->getMock();
@@ -163,7 +164,7 @@ class AddressDataBuilderTest extends \PHPUnit_Framework_TestCase
    */
   private function getAddressMock($addressData)
   {
-    $addressMock = $this->getMock(AddressAdapterInterface::class);
+    $addressMock = $this->createMock(AddressAdapterInterface::class);
 
     $addressMock->expects($this->once())
       ->method('getFirstname')
