@@ -8,9 +8,20 @@ define(
     'Magento_Payment/js/model/credit-card-validation/validator',
     'Magento_Checkout/js/action/redirect-on-success',
     'Magento_Vault/js/view/payment/vault-enabler',
+    'Magento_Checkout/js/model/quote',
     'stripejs'
   ],
-  function ($, Component, placeOrderAction, fullScreenLoader, additionalValidators, validator, redirectOnSuccessAction, VaultEnabler) {
+  function (
+      $,
+      Component,
+      placeOrderAction,
+      fullScreenLoader,
+      additionalValidators,
+      validator,
+      redirectOnSuccessAction,
+      VaultEnabler,
+      quote
+  ) {
     'use strict';
 
     return Component.extend({
@@ -33,6 +44,7 @@ define(
         var self = this;
         self.stripeCardElement = self.stripe.elements();
         self.stripeCard = self.stripeCardElement.create('card', {
+          hidePostalCode: true,
           style: {
             base: {
               fontSize: '20px'
@@ -83,7 +95,7 @@ define(
 
         var deffer = $.Deferred();
 
-        self.stripe.createToken(self.stripeCard).then(function(response) {
+        self.stripe.createToken(self.stripeCard, this.getAddressData()).then(function(response) {
           if (response.error) {
             deffer.reject(response.error.message);
           }else {
@@ -136,8 +148,31 @@ define(
 
       getVaultCode: function () {
         return window.checkoutConfig.payment[this.getCode()].vaultCode;
-      }
+      },
 
+      getAddressData: function () {
+        var billingAddress = quote.billingAddress();
+
+        var stripeData = {
+          name: billingAddress.firstname + ' ' + billingAddress.lastname,
+          address_country: billingAddress.countryId,
+          address_line1: billingAddress.street[0]
+        };
+
+        if (billingAddress.street.length === 2) {
+          stripeData.address_line2 = billingAddress.street[1];
+        }
+
+        if (billingAddress.hasOwnProperty('postcode')) {
+          stripeData.address_zip = billingAddress.postcode;
+        }
+
+        if (billingAddress.hasOwnProperty('regionCode')) {
+          stripeData.address_state = billingAddress.regionCode;
+        }
+
+        return stripeData;
+      }
     });
   }
 );
