@@ -3,6 +3,7 @@
 
 Accept credit card payments through the Stripe payment gateway.
 
+* Supports Magento Instant Purchase for One Click Checkout
 * Securely accept customer payments using the Stripe.js tokenization when
 collecting all payments.
 * Provide customers option of storing payment information for future 
