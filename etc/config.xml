@@ -45,6 +45,9 @@
       <pmclain_stripe_vault>
         <model>StripeCreditCardVaultFacade</model>
         <title>Stored Cards (Stripe)</title>
+        <instant_purchase>
+          <supported>1</supported>
+        </instant_purchase>
       </pmclain_stripe_vault>
     </payment>
   </default>
