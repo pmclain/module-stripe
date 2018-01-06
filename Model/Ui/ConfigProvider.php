@@ -17,8 +17,8 @@ namespace Pmclain\Stripe\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Store\Model\ScopeInterface;
+use Pmclain\Stripe\Gateway\Config\Config;
 
 class ConfigProvider implements ConfigProviderInterface
 {
@@ -26,14 +26,11 @@ class ConfigProvider implements ConfigProviderInterface
   const CC_VAULT_CODE = 'pmclain_stripe_vault';
 
   protected $_config;
-  protected $_encryptor;
 
   public function __construct(
-    ScopeConfigInterface $configInterface,
-    EncryptorInterface $encryptorInterface
+    ScopeConfigInterface $configInterface
   ){
     $this->_config = $configInterface;
-    $this->_encryptor = $encryptorInterface;
   }
 
   public function getConfig()
@@ -50,18 +47,13 @@ class ConfigProvider implements ConfigProviderInterface
 
   public function getPublishableKey() {
     if ($this->_isTestMode()) {
-      return $this->_getEncryptedConfig('test_publishable_key');
+      return $this->_getConfig(Config::KEY_TEST_PUBLISHABLE_KEY);
     }
-    return $this->_getEncryptedConfig('live_publishable_key');
+    return $this->_getConfig(Config::KEY_LIVE_PUBLISHABLE_KEY);
   }
 
   protected function _isTestMode() {
-    return $this->_getConfig('test_mode');
-  }
-
-  protected function _getEncryptedConfig($value) {
-    $config = $this->_getConfig($value);
-    return $this->_encryptor->decrypt($config);
+    return $this->_getConfig(Config::KEY_ENVIRONMENT);
   }
 
   protected function _getConfig($value) {
