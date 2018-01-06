@@ -11,16 +11,32 @@ addons:
   hosts:
       - magento2.travis
 language: php
-php:
-  - 7.1
+matrix:
+  include:
+    - php: 7.1
+      env:
+        - MAGENTO_VERSION=2.2.2
+        - TEST_SUITE=unit
+    - php: 7.1
+      env:
+        - MAGENTO_VERSION=2.2.2
+        - TEST_SUITE=integration
+    - php: 7.0
+      env:
+        - MAGENTO_VERSION=2.2.2
+        - TEST_SUITE=unit
+    - php: 7.0
+      env:
+        - MAGENTO_VERSION=2.2.2
+        - TEST_SUITE=integration
 env:
   global:
     - COMPOSER_BIN_DIR=~/bin
-  matrix:
-    - TEST_SUITE=unit
+    - STRIPE_MOCK_VERSION=0.5.0
 cache:
   apt: true
   directories:
     - $HOME/.composer/cache
+    - stripe-mock
 before_script: ./.travis/before_script.sh
 script: phpunit -c magento2/dev/tests/$TEST_SUITE
