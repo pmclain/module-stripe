@@ -20,26 +20,21 @@ use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\Refund;
 use Pmclain\Stripe\Gateway\Config\Config;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
 class StripeAdapter
 {
   private $config;
 
-  protected $encryptor;
-
   public function __construct(
-    Config $config,
-    EncryptorInterface $encryptorInterface
+    Config $config
   ) {
-    $this->encryptor = $encryptorInterface;
     $this->config = $config;
     $this->initCredentials();
   }
 
   protected function initCredentials() {
-    Stripe::setApiKey($this->encryptor->decrypt($this->config->getSecretKey()));
+    Stripe::setApiKey($this->config->getSecretKey());
   }
 
   public function refund($transactionId, $amount = null) {

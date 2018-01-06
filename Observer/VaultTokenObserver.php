@@ -19,7 +19,6 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Stripe\Stripe;
 use Stripe\Customer;
 
@@ -31,22 +30,17 @@ class VaultTokenObserver implements ObserverInterface
   /** @var Config */
   private $config;
 
-  /** @var EncryptorInterface */
-  private $encryptor;
-
   public function __construct(
     Config $config,
-    EncryptorInterface $encryptor,
     CustomerRepositoryInterface $customerRepository
   ) {
-    $this->encryptor = $encryptor;
     $this->config = $config;
     $this->customerRepository = $customerRepository;
     $this->initCredentials();
   }
 
   protected function initCredentials() {
-    Stripe::setApiKey($this->encryptor->decrypt($this->config->getSecretKey()));
+    Stripe::setApiKey($this->config->getSecretKey());
   }
 
   public function execute(Observer $observer) {
