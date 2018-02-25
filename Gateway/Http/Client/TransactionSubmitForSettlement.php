@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Http\Client;
 
 use Magento\Sales\Model\Order\Payment;
@@ -21,10 +22,15 @@ use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
 class TransactionSubmitForSettlement extends AbstractTransaction
 {
-  protected function process(array $data) {
-    return $this->adapter->submitForSettlement(
-      $data[CaptureDataBuilder::TRANSACTION_ID],
-      $data[PaymentDataBuilder::AMOUNT]
-    );
-  }
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    protected function process(array $data)
+    {
+        return $this->adapter->submitForSettlement(
+            $data[CaptureDataBuilder::TRANSACTION_ID],
+            $data[PaymentDataBuilder::AMOUNT]
+        );
+    }
 }

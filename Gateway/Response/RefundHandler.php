@@ -13,13 +13,19 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Response;
 
 use Magento\Sales\Model\Order\Payment;
 
 class RefundHandler extends VoidHandler
 {
-  protected function shouldCloseParentTransaction(Payment $orderPayment) {
-    return !(bool)$orderPayment->getCreditmemo()->getInvoice()->canRefund();
-  }
+    /**
+     * @param Payment $orderPayment
+     * @return bool
+     */
+    protected function shouldCloseParentTransaction(Payment $orderPayment)
+    {
+        return !(bool)$orderPayment->getCreditmemo()->getInvoice()->canRefund();
+    }
 }

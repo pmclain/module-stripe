@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
@@ -24,44 +25,53 @@ use Magento\Backend\Model\Session\Quote;
 
 class Admin extends PaymentDataBuilder
 {
-  /** @var Quote $adminSession */
-  private $adminSession;
+    /** @var Quote $adminSession */
+    private $adminSession;
 
-  /**
-   * Admin constructor.
-   * @param Config $config
-   * @param SubjectReader $subjectReader
-   * @param Session $customerSession
-   * @param CustomerRepositoryInterface $customerRepository
-   * @param Quote $session
-   */
-  public function __construct(
-    Config $config,
-    SubjectReader $subjectReader,
-    Session $customerSession,
-    CustomerRepositoryInterface $customerRepository,
-    Quote $session
-  ) {
-    parent::__construct($config, $subjectReader, $customerSession, $customerRepository);
-    $this->adminSession = $session;
-  }
-
-  /**
-   * @return string
-   */
-  protected function getStripeCustomerId() {
-    $customer = $this->customerRepository->getById($this->adminSession->getCustomerId());
-    $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
-
-    if(!$stripeCustomerId) {
-      $stripeCustomerId = $this->createNewStripeCustomer($customer->getEmail());
-      $customer->setCustomAttribute('stripe_customer_id', $stripeCustomerId);
-
-      $this->customerRepository->save($customer);
-
-      return $stripeCustomerId;
+    /**
+     * Admin constructor.
+     * @param Config $config
+     * @param SubjectReader $subjectReader
+     * @param Session $customerSession
+     * @param CustomerRepositoryInterface $customerRepository
+     * @param Quote $session
+     */
+    public function __construct(
+        Config $config,
+        SubjectReader $subjectReader,
+        Session $customerSession,
+        CustomerRepositoryInterface $customerRepository,
+        Quote $session
+    ) {
+        parent::__construct(
+            $config,
+            $subjectReader,
+            $customerSession,
+            $customerRepository
+        );
+        $this->adminSession = $session;
     }
 
-    return $stripeCustomerId->getValue();
-  }
+    /**
+     * @return string
+     */
+    protected function getStripeCustomerId()
+    {
+        $customer = $this->customerRepository->getById($this->adminSession->getCustomerId());
+        $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
+
+        if (!$stripeCustomerId) {
+            $stripeCustomerId = $this->createNewStripeCustomer($customer->getEmail());
+            $customer->setCustomAttribute(
+                'stripe_customer_id',
+                $stripeCustomerId
+            );
+
+            $this->customerRepository->save($customer);
+
+            return $stripeCustomerId;
+        }
+
+        return $stripeCustomerId->getValue();
+    }
 }

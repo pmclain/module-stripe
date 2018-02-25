@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Config\Config;
@@ -27,141 +28,154 @@ use Magento\Framework\App\ObjectManager;
 
 class PaymentDataBuilder implements BuilderInterface
 {
-  use Formatter;
-  
-  const AMOUNT = 'amount';
-  const SOURCE = 'source';
-  const ORDER_ID = 'description';
-  const CURRENCY = 'currency';
-  const CAPTURE = 'capture';
-  const CUSTOMER = 'customer';
-  const SAVE_IN_VAULT = 'save_in_vault';
+    use Formatter;
 
-  /** @var Config  */
-  protected $config;
+    const AMOUNT = 'amount';
+    const SOURCE = 'source';
+    const ORDER_ID = 'description';
+    const CURRENCY = 'currency';
+    const CAPTURE = 'capture';
+    const CUSTOMER = 'customer';
+    const SAVE_IN_VAULT = 'save_in_vault';
 
-  /** @var SubjectReader  */
-  protected $subjectReader;
+    /** @var Config */
+    protected $config;
 
-  /** @var Session  */
-  protected $customerSession;
+    /** @var SubjectReader */
+    protected $subjectReader;
 
-  /** @var CustomerRepositoryInterface  */
-  protected $customerRepository;
+    /** @var Session */
+    protected $customerSession;
 
-  /** @var LoggerInterface */
-  protected $logger;
+    /** @var CustomerRepositoryInterface */
+    protected $customerRepository;
 
-  /**
-   * PaymentDataBuilder constructor.
-   * @param Config $config
-   * @param SubjectReader $subjectReader
-   * @param Session $customerSession
-   * @param CustomerRepositoryInterface $customerRepository
-   * @param LoggerInterface $logger
-   */
-  public function __construct(
-    Config $config,
-    SubjectReader $subjectReader,
-    Session $customerSession,
-    CustomerRepositoryInterface $customerRepository,
-    LoggerInterface $logger = null
-  ) {
-    $this->config = $config;
-    $this->subjectReader = $subjectReader;
-    $this->customerSession = $customerSession;
-    $this->customerRepository = $customerRepository;
-    $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
-  }
+    /** @var LoggerInterface */
+    protected $logger;
 
-  /**
-   * @param array $subject
-   * @return array
-   * @throws \Magento\Framework\Validator\Exception
-   */
-  public function build(array $subject) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $payment = $paymentDataObject->getPayment();
-    $order = $paymentDataObject->getOrder();
-    
-    $result = [
-      self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
-      self::ORDER_ID => $order->getOrderIncrementId(),
-      self::CURRENCY => $this->config->getCurrency(),
-      self::SOURCE => $this->getPaymentSource($payment),
-      self::CAPTURE => 'false'
-    ];
-
-    if($this->isSavePaymentInformation($payment)) {
-      $stripeCustomerId = $this->getStripeCustomerId();
-      if ($stripeCustomerId) {
-        $result[self::CUSTOMER] = $stripeCustomerId;
-        $result[self::SAVE_IN_VAULT] = true;
-      }
+    /**
+     * PaymentDataBuilder constructor.
+     * @param Config $config
+     * @param SubjectReader $subjectReader
+     * @param Session $customerSession
+     * @param CustomerRepositoryInterface $customerRepository
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        Config $config,
+        SubjectReader $subjectReader,
+        Session $customerSession,
+        CustomerRepositoryInterface $customerRepository,
+        LoggerInterface $logger = null
+    ) {
+        $this->config = $config;
+        $this->subjectReader = $subjectReader;
+        $this->customerSession = $customerSession;
+        $this->customerRepository = $customerRepository;
+        $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
-    return $result;
-  }
+    /**
+     * @param array $subject
+     * @return array
+     * @throws \Magento\Framework\Validator\Exception
+     */
+    public function build(array $subject)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $payment = $paymentDataObject->getPayment();
+        $order = $paymentDataObject->getOrder();
 
-  /**
-   * @return string
-   */
-  protected function getStripeCustomerId() {
-    $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
-    $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
+        $result = [
+            self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
+            self::ORDER_ID => $order->getOrderIncrementId(),
+            self::CURRENCY => $this->config->getCurrency(),
+            self::SOURCE => $this->getPaymentSource($payment),
+            self::CAPTURE => 'false'
+        ];
 
-    if(!$stripeCustomerId) {
-      $stripeCustomerId = $this->createNewStripeCustomer($customer->getEmail());
-      $customer->setCustomAttribute('stripe_customer_id', $stripeCustomerId);
+        if ($this->isSavePaymentInformation($payment)) {
+            $stripeCustomerId = $this->getStripeCustomerId();
+            if ($stripeCustomerId) {
+                $result[self::CUSTOMER] = $stripeCustomerId;
+                $result[self::SAVE_IN_VAULT] = true;
+            }
+        }
 
-      $this->customerRepository->save($customer);
-
-      return $stripeCustomerId;
+        return $result;
     }
 
-    return $stripeCustomerId->getValue();
-  }
+    /**
+     * @return \Magento\Framework\Api\AttributeInterface|mixed|null|string
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\State\InputMismatchException
+     * @throws \Magento\Framework\Validator\Exception
+     */
+    protected function getStripeCustomerId()
+    {
+        $customer = $this->customerRepository->getById($this->customerSession->getCustomerId());
+        $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
 
-  /**
-   * @param $email
-   * @return string|null
-   * @throws \Magento\Framework\Validator\Exception
-   */
-  protected function createNewStripeCustomer($email) {
-    try {
-      $result = Customer::create([
-        'description' => 'Customer for ' . $email,
-      ]);
-    }catch (\Exception $e) {
-      $this->logger->critical($e);
-      throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
+        if (!$stripeCustomerId) {
+            $stripeCustomerId = $this->createNewStripeCustomer($customer->getEmail());
+            $customer->setCustomAttribute(
+                'stripe_customer_id',
+                $stripeCustomerId
+            );
+
+            $this->customerRepository->save($customer);
+
+            return $stripeCustomerId;
+        }
+
+        return $stripeCustomerId->getValue();
     }
 
-    return $result->id;
-  }
+    /**
+     * @param $email
+     * @return string|null
+     * @throws \Magento\Framework\Validator\Exception
+     */
+    protected function createNewStripeCustomer($email)
+    {
+        try {
+            $result = Customer::create([
+                'description' => 'Customer for ' . $email,
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->critical($e);
+            throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
+        }
 
-  /**
-   * @param \Magento\Payment\Model\InfoInterface $payment
-   * @return mixed
-   */
-  protected function isSavePaymentInformation($payment) {
-    return $payment->getAdditionalInformation('is_active_payment_token_enabler');
-  }
-
-  /**
-   * @param $payment
-   * @return array
-   */
-  protected function getPaymentSource($payment) {
-    if($token = $payment->getAdditionalInformation('cc_token')) {
-      return $token;
+        return $result->id;
     }
-    return [
-      'exp_month' => $payment->getCcExpMonth(),
-      'exp_year' => $payment->getCcExpYear(),
-      'number' => $payment->getCcNumber(),
-      'object' => 'card',
-      'cvc' => $payment->getCcCid(),
-    ];
-  }
+
+    /**
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @return mixed
+     */
+    protected function isSavePaymentInformation($payment)
+    {
+        return $payment->getAdditionalInformation('is_active_payment_token_enabler');
+    }
+
+    /**
+     * @param $payment
+     * @return array
+     */
+    protected function getPaymentSource($payment)
+    {
+        if ($token = $payment->getAdditionalInformation('cc_token')) {
+            return $token;
+        }
+        return [
+            'exp_month' => $payment->getCcExpMonth(),
+            'exp_year' => $payment->getCcExpYear(),
+            'number' => $payment->getCcNumber(),
+            'object' => 'card',
+            'cvc' => $payment->getCcCid(),
+        ];
+    }
 }

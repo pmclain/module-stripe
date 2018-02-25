@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Observer;
 
 use Magento\Framework\Event\Observer;
@@ -20,20 +21,20 @@ use Magento\Payment\Observer\AbstractDataAssignObserver;
 
 class DataAssignObserver extends AbstractDataAssignObserver
 {
-  /**
-   * @param Observer $observer
-   * @return void
-   */
-  public function execute(Observer $observer)
-  {
-    $method = $this->readMethodArgument($observer);
-    $data = $this->readDataArgument($observer);
-    $paymentInfo = $method->getInfoInstance();
-    if (key_exists('cc_token', $data->getDataByKey('additional_data'))) {
-      $paymentInfo->setAdditionalInformation(
-        'cc_token',
-        $data->getDataByKey('additional_data')['cc_token']
-      );
+    /**
+     * @param Observer $observer
+     * @return void
+     */
+    public function execute(Observer $observer)
+    {
+        $method = $this->readMethodArgument($observer);
+        $data = $this->readDataArgument($observer);
+        $paymentInfo = $method->getInfoInstance();
+        if (key_exists('cc_token', $data->getDataByKey('additional_data'))) {
+            $paymentInfo->setAdditionalInformation(
+                'cc_token',
+                $data->getDataByKey('additional_data')['cc_token']
+            );
+        }
     }
-  }
 }

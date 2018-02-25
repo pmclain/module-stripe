@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
@@ -21,20 +22,32 @@ use Magento\Sales\Model\Order\Payment;
 
 class VoidDataBuilder implements BuilderInterface
 {
-  private $subjectReader;
+    /**
+     * @var SubjectReader
+     */
+    private $subjectReader;
 
-  public function __construct(
-    SubjectReader $subjectReader
-  ) {
-    $this->subjectReader = $subjectReader;
-  }
+    /**
+     * VoidDataBuilder constructor.
+     * @param SubjectReader $subjectReader
+     */
+    public function __construct(
+        SubjectReader $subjectReader
+    ) {
+        $this->subjectReader = $subjectReader;
+    }
 
-  public function build(array $subject) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $payment = $paymentDataObject->getPayment();
+    /**
+     * @param array $subject
+     * @return array
+     */
+    public function build(array $subject)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $payment = $paymentDataObject->getPayment();
 
-    return [
-      'transaction_id' => $payment->getParentTransactionId() ?: $payment->getLastTransId()
-    ];
-  }
+        return [
+            'transaction_id' => $payment->getParentTransactionId() ?: $payment->getLastTransId()
+        ];
+    }
 }

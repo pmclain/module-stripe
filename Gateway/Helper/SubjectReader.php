@@ -13,54 +13,76 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Helper;
 
 use Magento\Payment\Gateway\Helper;
 
 class SubjectReader
 {
-  /**
-   * @param array $subject
-   * @return array
-   */
-  public function readResponseObject(array $subject) {
-    $response = Helper\SubjectReader::readResponse($subject);
+    /**
+     * @param array $subject
+     * @return array
+     */
+    public function readResponseObject(array $subject)
+    {
+        $response = Helper\SubjectReader::readResponse($subject);
 
-    if(!is_object($response['object'])) {
-      throw new \InvalidArgumentException('Response object does not exist');
+        if (!is_object($response['object'])) {
+            throw new \InvalidArgumentException('Response object does not exist');
+        }
+
+        if ($response['object'] instanceof \Stripe\Error\Card) {
+            return [
+                'error' => true,
+                'message' => __($response['object']->getMessage())
+            ];
+        }
+
+        return $response['object']->__toArray();
     }
 
-    if($response['object'] instanceof \Stripe\Error\Card) {
-      return [
-        'error' => true,
-        'message' => __($response['object']->getMessage())
-      ];
+    /**
+     * @param array $subject
+     * @return \Magento\Payment\Gateway\Data\PaymentDataObjectInterface
+     */
+    public function readPayment(array $subject)
+    {
+        return Helper\SubjectReader::readPayment($subject);
     }
 
-    return $response['object']->__toArray();
-  }
+    /**
+     * @param array $subject
+     * @return mixed
+     */
+    public function readTransaction(array $subject)
+    {
+        if (!is_object($subject['object'])) {
+            throw new \InvalidArgumentException('Response object does not exist');
+        }
 
-  public function readPayment(array $subject) {
-    return Helper\SubjectReader::readPayment($subject);
-  }
-
-  public function readTransaction(array $subject) {
-    if(!is_object($subject['object'])) {
-      throw new \InvalidArgumentException('Response object does not exist');
+        return $subject['object']->__toArray();
     }
 
-    return $subject['object']->__toArray();
-  }
-
-  public function readAmount(array $subject) {
-    return Helper\SubjectReader::readAmount($subject);
-  }
-
-  public function readCustomerId(array $subject) {
-    if(!isset($subject['customer_id'])) {
-      throw new \InvalidArgumentException('The customerId field does not exist');
+    /**
+     * @param array $subject
+     * @return mixed
+     */
+    public function readAmount(array $subject)
+    {
+        return Helper\SubjectReader::readAmount($subject);
     }
 
-    return (int) $subject['customer_id'];
-  }
+    /**
+     * @param array $subject
+     * @return int
+     */
+    public function readCustomerId(array $subject)
+    {
+        if (!isset($subject['customer_id'])) {
+            throw new \InvalidArgumentException('The customerId field does not exist');
+        }
+
+        return (int)$subject['customer_id'];
+    }
 }

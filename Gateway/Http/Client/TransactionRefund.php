@@ -13,16 +13,22 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Http\Client;
 
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
 class TransactionRefund extends AbstractTransaction
 {
-  protected function process(array $data) {
-    return $this->adapter->refund(
-      $data['transaction_id'],
-      $data[PaymentDataBuilder::AMOUNT]
-    );
-  }
+    /**
+     * @param array $data
+     * @return \Stripe\ApiOperations\ApiResource
+     */
+    protected function process(array $data)
+    {
+        return $this->adapter->refund(
+            $data['transaction_id'],
+            $data[PaymentDataBuilder::AMOUNT]
+        );
+    }
 }

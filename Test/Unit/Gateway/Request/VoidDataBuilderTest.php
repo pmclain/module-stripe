@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Test\Unit\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Request\VoidDataBuilder;
@@ -22,61 +23,64 @@ use Magento\Sales\Model\Order\Payment;
 
 class VoidDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
-  /**
-   * @var VoidDataBuilder
-   */
-  private $builder;
+    /**
+     * @var VoidDataBuilder
+     */
+    private $builder;
 
-  /**
-   * @var SubjectReader|\PHPUnit_Framework_MockObject_MockObject
-   */
-  private $subjectReader;
+    /**
+     * @var SubjectReader|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $subjectReader;
 
-  protected function setUp() {
-    $this->subjectReader = $this->getMockBuilder(SubjectReader::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    protected function setUp()
+    {
+        $this->subjectReader = $this->getMockBuilder(SubjectReader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->builder = new VoidDataBuilder($this->subjectReader);
-  }
-
-  /**
-   *
-   * @dataProvider testBuildDataProvider
-   */
-  public function testBuild($parentTransId, $lastTransId) {
-    $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
-    $buildSubject = ['payment' => $paymentDataObject];
-    $paymentMock = $this->getMockBuilder(Payment::class)
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->subjectReader->expects($this->once())
-      ->method('readPayment')
-      ->with($buildSubject)
-      ->willReturn($paymentDataObject);
-    $paymentDataObject->expects($this->once())
-      ->method('getPayment')
-      ->willReturn($paymentMock);
-    $paymentMock->expects($this->once())
-      ->method('getParentTransactionId')
-      ->willReturn($parentTransId);
-    if(!$parentTransId) {
-      $paymentMock->expects($this->once())
-        ->method('getLastTransId')
-        ->willReturn($lastTransId);
+        $this->builder = new VoidDataBuilder($this->subjectReader);
     }
 
-    $this->assertEquals(
-      ['transaction_id' => $parentTransId?:$lastTransId],
-      $this->builder->build($buildSubject)
-    );
-  }
+    /**
+     *
+     * @dataProvider testBuildDataProvider
+     */
+    public function testBuild($parentTransId, $lastTransId)
+    {
+        $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
+        $buildSubject = ['payment' => $paymentDataObject];
+        $paymentMock = $this->getMockBuilder(Payment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-  public function testBuildDataProvider() {
-    return [
-      ['ch_19RZmz2eZvKYlo2CktQObIT0', null],
-      [false, 'ch_19RZmz2eZvKYlo2CktQObIT0']
-    ];
-  }
+        $this->subjectReader->expects($this->once())
+            ->method('readPayment')
+            ->with($buildSubject)
+            ->willReturn($paymentDataObject);
+        $paymentDataObject->expects($this->once())
+            ->method('getPayment')
+            ->willReturn($paymentMock);
+        $paymentMock->expects($this->once())
+            ->method('getParentTransactionId')
+            ->willReturn($parentTransId);
+        if (!$parentTransId) {
+            $paymentMock->expects($this->once())
+                ->method('getLastTransId')
+                ->willReturn($lastTransId);
+        }
+
+        $this->assertEquals(
+            ['transaction_id' => $parentTransId ?: $lastTransId],
+            $this->builder->build($buildSubject)
+        );
+    }
+
+    public function testBuildDataProvider()
+    {
+        return [
+            ['ch_19RZmz2eZvKYlo2CktQObIT0', null],
+            [false, 'ch_19RZmz2eZvKYlo2CktQObIT0']
+        ];
+    }
 }

@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Model\Adapter;
 
 use Stripe\Customer;
@@ -24,71 +25,102 @@ use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
 class StripeAdapter
 {
-  private $config;
+    /**
+     * @var Config
+     */
+    private $config;
 
-  public function __construct(
-    Config $config
-  ) {
-    $this->config = $config;
-    $this->initCredentials();
-  }
-
-  protected function initCredentials() {
-    Stripe::setApiKey($this->config->getSecretKey());
-  }
-
-  public function refund($transactionId, $amount = null) {
-    return Refund::create([
-      'charge' => $transactionId,
-      'amount' => $amount
-    ]);
-  }
-
-  public function sale($attributes) {
-    if(isset($attributes[PaymentDataBuilder::SAVE_IN_VAULT])) {
-      unset($attributes[PaymentDataBuilder::SAVE_IN_VAULT]);
-      $attributes = $this->_saveCustomerCard($attributes);
-
-      if($attributes instanceof \Stripe\Error\Card) {
-        return $attributes;
-      }
+    /**
+     * StripeAdapter constructor.
+     * @param Config $config
+     */
+    public function __construct(
+        Config $config
+    ) {
+        $this->config = $config;
+        $this->initCredentials();
     }
-    try {
-      return Charge::create($attributes);
-    }catch (\Stripe\Error\Card $e) {
-      return $e;
+
+    protected function initCredentials()
+    {
+        Stripe::setApiKey($this->config->getSecretKey());
     }
-  }
 
-  public function submitForSettlement($transactionId, $amount = null) {
-    $charge = Charge::retrieve($transactionId);
-    return $charge->capture(['amount' => $amount]);
-  }
-
-  public function void($transactionId) {
-    return Refund::create(['charge' => $transactionId]);
-  }
-
-  /**
-   * @param $attributes
-   * @return \Exception|\Stripe\Error\Card|array
-   * @throws \Magento\Framework\Validator\Exception
-   */
-  protected function _saveCustomerCard($attributes) {
-    try {
-      $stripeCustomer = Customer::retrieve($attributes[PaymentDataBuilder::CUSTOMER]);
-
-      $card = $stripeCustomer->sources->create([
-        'source' => $attributes[PaymentDataBuilder::SOURCE]
-      ]);
-
-      $attributes[PaymentDataBuilder::SOURCE] = $card->id;
-
-      return $attributes;
-    }catch (\Stripe\Error\Card $e) {
-      return $e;
-    }catch (\Exception $e) {
-      throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
+    /**
+     * @param $transactionId
+     * @param null $amount
+     * @return \Stripe\ApiOperations\ApiResource
+     */
+    public function refund($transactionId, $amount = null)
+    {
+        return Refund::create([
+            'charge' => $transactionId,
+            'amount' => $amount,
+        ]);
     }
-  }
+
+    /**
+     * @param $attributes
+     * @return array|\Exception|\Stripe\ApiOperations\ApiResource|\Stripe\Error\Card
+     */
+    public function sale($attributes)
+    {
+        if (isset($attributes[PaymentDataBuilder::SAVE_IN_VAULT])) {
+            unset($attributes[PaymentDataBuilder::SAVE_IN_VAULT]);
+            $attributes = $this->saveCustomerCard($attributes);
+
+            if ($attributes instanceof \Stripe\Error\Card) {
+                return $attributes;
+            }
+        }
+        try {
+            return Charge::create($attributes);
+        } catch (\Stripe\Error\Card $e) {
+            return $e;
+        }
+    }
+
+    /**
+     * @param $transactionId
+     * @param null $amount
+     * @return mixed
+     */
+    public function submitForSettlement($transactionId, $amount = null)
+    {
+        $charge = Charge::retrieve($transactionId);
+        return $charge->capture(['amount' => $amount]);
+    }
+
+    /**
+     * @param $transactionId
+     * @return \Stripe\ApiOperations\ApiResource
+     */
+    public function void($transactionId)
+    {
+        return Refund::create(['charge' => $transactionId]);
+    }
+
+    /**
+     * @param $attributes
+     * @return \Exception|\Stripe\Error\Card|array
+     * @throws \Magento\Framework\Validator\Exception
+     */
+    protected function saveCustomerCard($attributes)
+    {
+        try {
+            $stripeCustomer = Customer::retrieve($attributes[PaymentDataBuilder::CUSTOMER]);
+
+            $card = $stripeCustomer->sources->create([
+                'source' => $attributes[PaymentDataBuilder::SOURCE]
+            ]);
+
+            $attributes[PaymentDataBuilder::SOURCE] = $card->id;
+
+            return $attributes;
+        } catch (\Stripe\Error\Card $e) {
+            return $e;
+        } catch (\Exception $e) {
+            throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
+        }
+    }
 }

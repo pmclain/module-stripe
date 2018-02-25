@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Http\Client;
 
 use Pmclain\Stripe\Model\Adapter\StripeAdapter;
@@ -26,60 +27,89 @@ use Magento\Framework\App\ObjectManager;
 
 abstract class AbstractTransaction implements ClientInterface
 {
-  protected $logger;
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
-  protected $customLogger;
+    /**
+     * @var Logger
+     */
+    protected $customLogger;
 
-  protected $adapter;
+    /**
+     * @var StripeAdapter
+     */
+    protected $adapter;
 
-  protected $config;
+    /**
+     * @var Config
+     */
+    protected $config;
 
-  public function __construct(
-    LoggerInterface $logger,
-    Logger $customLogger,
-    StripeAdapter $adapter,
-    Config $config = null
-  ) {
-    $this->logger = $logger;
-    $this->customLogger = $customLogger;
-    $this->adapter = $adapter;
-    $this->config = $config ?: ObjectManager::getInstance()->get(Config::class);
-  }
-
-  public function placeRequest(
-    TransferInterface $transferObject
-  ) {
-    $data = $transferObject->getBody();
-    $log = [
-      'request' => $data,
-      'client' => static::class
-    ];
-    $response['object'] = [];
-
-    try {
-      $response['object'] = $this->process($data);
-    }catch (\Exception $e) {
-      $message = __($e->getMessage() ?: 'Sorry, but something went wrong.');
-      $this->logger->critical($e);
-      throw new ClientException($message);
-    }finally {
-      if ($response['object'] instanceof \Stripe\Error\Base
-          || $response['object'] instanceof \Stripe\StripeObject
-      ) {
-        $log['response'] = $response['object']->__toString();
-      } else {
-        $log['response'] = $response['object'];
-      }
-
-      if ($this->config->isDebugOn()) {
-        $this->logger->warning(var_export($log, true));
-      }
-
-      $this->customLogger->debug($log);
+    /**
+     * AbstractTransaction constructor.
+     * @param LoggerInterface $logger
+     * @param Logger $customLogger
+     * @param StripeAdapter $adapter
+     * @param Config $config
+     */
+    public function __construct(
+        LoggerInterface $logger,
+        Logger $customLogger,
+        StripeAdapter $adapter,
+        Config $config = null
+    ) {
+        $this->logger = $logger;
+        $this->customLogger = $customLogger;
+        $this->adapter = $adapter;
+        $this->config = $config ?: ObjectManager::getInstance()->get(Config::class);
     }
 
-    return $response;
-  }
+    /**
+     * @param TransferInterface $transferObject
+     * @return mixed
+     * @throws ClientException
+     */
+    public function placeRequest(
+        TransferInterface $transferObject
+    )
+    {
+        $data = $transferObject->getBody();
+        $log = [
+            'request' => $data,
+            'client' => static::class
+        ];
+        $response['object'] = [];
 
-  abstract protected function process(array $data);
+        try {
+            $response['object'] = $this->process($data);
+        } catch (\Exception $e) {
+            $message = __($e->getMessage() ?: 'Sorry, but something went wrong.');
+            $this->logger->critical($e);
+            throw new ClientException($message);
+        } finally {
+            if ($response['object'] instanceof \Stripe\Error\Base
+                || $response['object'] instanceof \Stripe\StripeObject
+            ) {
+                $log['response'] = $response['object']->__toString();
+            } else {
+                $log['response'] = $response['object'];
+            }
+
+            if ($this->config->isDebugOn()) {
+                $this->logger->warning(var_export($log, true));
+            }
+
+            $this->customLogger->debug($log);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    abstract protected function process(array $data);
 }

@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Model\Ui\Adminhtml;
 
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
@@ -28,48 +29,56 @@ use Magento\Framework\UrlInterface;
  */
 class TokenUiComponentProvider implements TokenUiComponentProviderInterface
 {
-  /**
-   * @var TokenUiComponentInterfaceFactory
-   */
-  private $componentFactory;
+    /**
+     * @var TokenUiComponentInterfaceFactory
+     */
+    private $componentFactory;
 
-  /**
-   * @var \Magento\Framework\UrlInterface
-   */
-  private $urlBuilder;
+    /**
+     * @var \Magento\Framework\UrlInterface
+     */
+    private $urlBuilder;
 
-  /**
-   * @param TokenUiComponentInterfaceFactory $componentFactory
-   * @param UrlInterface $urlBuilder
-   */
-  public function __construct(
-    TokenUiComponentInterfaceFactory $componentFactory,
-    UrlInterface $urlBuilder
-  ) {
-    $this->componentFactory = $componentFactory;
-    $this->urlBuilder = $urlBuilder;
-  }
+    /**
+     * @var DecoderInterface
+     */
+    private $jsonDecoder;
 
-  /**
-   * Get UI component for token
-   * @param PaymentTokenInterface $paymentToken
-   * @return TokenUiComponentInterface
-   */
-  public function getComponentForToken(PaymentTokenInterface $paymentToken)
-  {
-    $jsonDetails = json_decode($paymentToken->getTokenDetails() ?: '{}', true);
-    $component = $this->componentFactory->create(
-      [
-        'config' => [
-          'code' => ConfigProvider::CC_VAULT_CODE,
-          TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
-          TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $paymentToken->getPublicHash(),
-          'template' => 'Pmclain_Stripe::form/vault.phtml'
-        ],
-        'name' => Template::class
-      ]
-    );
+    /**
+     * @param TokenUiComponentInterfaceFactory $componentFactory
+     * @param UrlInterface $urlBuilder
+     * @param DecoderInterface $decoder
+     */
+    public function __construct(
+        TokenUiComponentInterfaceFactory $componentFactory,
+        UrlInterface $urlBuilder,
+        DecoderInterface $decoder
+    ) {
+        $this->componentFactory = $componentFactory;
+        $this->urlBuilder = $urlBuilder;
+    }
 
-    return $component;
-  }
+    /**
+     * Get UI component for token
+     * @param PaymentTokenInterface $paymentToken
+     * @return TokenUiComponentInterface
+     */
+    public function getComponentForToken(PaymentTokenInterface $paymentToken)
+    {
+        $jsonDetails = $this->jsonDecoder->decode($paymentToken->getTokenDetails() ?: '{}');
+
+        $component = $this->componentFactory->create(
+            [
+                'config' => [
+                    'code' => ConfigProvider::CC_VAULT_CODE,
+                    TokenUiComponentProviderInterface::COMPONENT_DETAILS => $jsonDetails,
+                    TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH => $paymentToken->getPublicHash(),
+                    'template' => 'Pmclain_Stripe::form/vault.phtml',
+                ],
+                'name' => Template::class,
+            ]
+        );
+
+        return $component;
+    }
 }

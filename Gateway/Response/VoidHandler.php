@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Response;
 
 use Magento\Sales\Model\Order\Payment;
@@ -20,15 +21,29 @@ use Pmclain\Stripe\Gateway\Response\TransactionIdHandler;
 
 class VoidHandler extends TransactionIdHandler
 {
-  protected function setTransactionId(Payment $orderPayment, $transaction) {
-    return;
-  }
+    /**
+     * @param Payment $orderPayment
+     * @param $transaction
+     */
+    protected function setTransactionId(Payment $orderPayment, $transaction)
+    {
+        return;
+    }
 
-  protected function shouldCloseTransaction() {
-    return true;
-  }
+    /**
+     * @return bool
+     */
+    protected function shouldCloseTransaction()
+    {
+        return true;
+    }
 
-  protected function shouldCloseParentTransaction(Payment $orderPayment) {
-    return true;
-  }
+    /**
+     * @param Payment $orderPayment
+     * @return bool
+     */
+    protected function shouldCloseParentTransaction(Payment $orderPayment)
+    {
+        return true;
+    }
 }

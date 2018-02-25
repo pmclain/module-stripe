@@ -13,15 +13,21 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Magento\Payment\Gateway\Request\BuilderInterface;
 
 class SettlementDataBuilder implements BuilderInterface
 {
-  const SUBMIT_FOR_SETTLEMENT = 'capture';
+    const SUBMIT_FOR_SETTLEMENT = 'capture';
 
-  public function build(array $subject) {
-    return [self::SUBMIT_FOR_SETTLEMENT => true];
-  }
+    /**
+     * @param array $subject
+     * @return array
+     */
+    public function build(array $subject)
+    {
+        return [self::SUBMIT_FOR_SETTLEMENT => true];
+    }
 }

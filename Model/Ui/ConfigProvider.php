@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
@@ -22,41 +23,67 @@ use Pmclain\Stripe\Gateway\Config\Config;
 
 class ConfigProvider implements ConfigProviderInterface
 {
-  const CODE = 'pmclain_stripe';
-  const CC_VAULT_CODE = 'pmclain_stripe_vault';
+    const CODE = 'pmclain_stripe';
+    const CC_VAULT_CODE = 'pmclain_stripe_vault';
 
-  protected $_config;
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $config;
 
-  public function __construct(
-    ScopeConfigInterface $configInterface
-  ){
-    $this->_config = $configInterface;
-  }
-
-  public function getConfig()
-  {
-    return [
-      'payment' => [
-        self::CODE => [
-          'publishableKey' => $this->getPublishableKey(),
-          'vaultCode' => self::CC_VAULT_CODE,
-        ]
-      ]
-    ];
-  }
-
-  public function getPublishableKey() {
-    if ($this->_isTestMode()) {
-      return $this->_getConfig(Config::KEY_TEST_PUBLISHABLE_KEY);
+    /**
+     * ConfigProvider constructor.
+     * @param ScopeConfigInterface $configInterface
+     */
+    public function __construct(
+        ScopeConfigInterface $configInterface
+    ) {
+        $this->config = $configInterface;
     }
-    return $this->_getConfig(Config::KEY_LIVE_PUBLISHABLE_KEY);
-  }
 
-  protected function _isTestMode() {
-    return $this->_getConfig(Config::KEY_ENVIRONMENT);
-  }
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return [
+            'payment' => [
+                self::CODE => [
+                    'publishableKey' => $this->getPublishableKey(),
+                    'vaultCode' => self::CC_VAULT_CODE,
+                ],
+            ],
+        ];
+    }
 
-  protected function _getConfig($value) {
-    return $this->_config->getValue('payment/pmclain_stripe/' . $value, ScopeInterface::SCOPE_STORE);
-  }
+    /**
+     * @return string
+     */
+    public function getPublishableKey()
+    {
+        if ($this->isTestMode()) {
+            return $this->getStoreConfig(Config::KEY_TEST_PUBLISHABLE_KEY);
+        }
+        return $this->getStoreConfig(Config::KEY_LIVE_PUBLISHABLE_KEY);
+    }
+
+    /**
+     * @return int
+     */
+    protected function isTestMode()
+    {
+        return (int)$this->getStoreConfig(Config::KEY_ENVIRONMENT);
+    }
+
+    /**
+     * @param string $value
+     * @return mixed
+     */
+    protected function getStoreConfig($value)
+    {
+        return $this->config->getValue(
+            'payment/pmclain_stripe/' . $value,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
 }

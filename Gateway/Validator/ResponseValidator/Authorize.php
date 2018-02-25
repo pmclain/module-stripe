@@ -13,23 +13,28 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Validator\ResponseValidator;
 
 use Pmclain\Stripe\Gateway\Validator\ResponseValidator;
 
 class Authorize extends ResponseValidator
 {
-  protected function getResponseValidators() {
-    return array_merge(
-      parent::getResponseValidators(),
-      [
-        function ($response) {
-          return [
-            $response['outcome']->__toArray()['network_status'] === 'approved_by_network',
-            [__('Transaction has been declined')]
-          ];
-        }
-      ]
-    );
-  }
+    /**
+     * @return array
+     */
+    protected function getResponseValidators()
+    {
+        return array_merge(
+            parent::getResponseValidators(),
+            [
+                function ($response) {
+                    return [
+                        $response['outcome']->__toArray()['network_status'] === 'approved_by_network',
+                        [__('Transaction has been declined')]
+                    ];
+                }
+            ]
+        );
+    }
 }

@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
@@ -22,37 +23,50 @@ use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Model\Order\Payment;
 
-class RefundDataBuilder implements BuilderInterface {
-  use Formatter;
+class RefundDataBuilder implements BuilderInterface
+{
+    use Formatter;
 
-  private $subjectReader;
+    /**
+     * @var SubjectReader
+     */
+    private $subjectReader;
 
-  public function __construct(
-    SubjectReader $subjectReader
-  ) {
-    $this->subjectReader = $subjectReader;
-  }
-
-  public function build(array $subject) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $payment = $paymentDataObject->getPayment();
-    $amount = null;
-
-    try {
-      $amount = $this->formatPrice($this->subjectReader->readAmount($subject));
-    }catch (\InvalidArgumentException $e) {
-      //nothing
+    /**
+     * RefundDataBuilder constructor.
+     * @param SubjectReader $subjectReader
+     */
+    public function __construct(
+        SubjectReader $subjectReader
+    ) {
+        $this->subjectReader = $subjectReader;
     }
 
-    $txnId = str_replace(
-      '-' . TransactionInterface::TYPE_CAPTURE,
-      '',
-      $payment->getParentTransactionId()
-    );
+    /**
+     * @param array $subject
+     * @return array
+     */
+    public function build(array $subject)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $payment = $paymentDataObject->getPayment();
+        $amount = null;
 
-    return [
-      'transaction_id' => $txnId,
-      PaymentDataBuilder::AMOUNT => $amount
-    ];
-  }
+        try {
+            $amount = $this->formatPrice($this->subjectReader->readAmount($subject));
+        } catch (\InvalidArgumentException $e) {
+            //nothing
+        }
+
+        $txnId = str_replace(
+            '-' . TransactionInterface::TYPE_CAPTURE,
+            '',
+            $payment->getParentTransactionId()
+        );
+
+        return [
+            'transaction_id' => $txnId,
+            PaymentDataBuilder::AMOUNT => $amount
+        ];
+    }
 }

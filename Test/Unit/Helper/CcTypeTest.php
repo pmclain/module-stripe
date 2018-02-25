@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Test\Unit\Helper;
 
 use Pmclain\Stripe\Model\Adminhtml\Source\Cctype as CcTypeSource;
@@ -21,38 +22,41 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 class CcTypeTest extends \PHPUnit\Framework\TestCase
 {
-  /** @var ObjectManager */
-  private $objectManager;
+    /** @var ObjectManager */
+    private $objectManager;
 
-  /** @var CcType */
-  private $helper;
+    /** @var CcType */
+    private $helper;
 
-  /** @var CcTypeSource|\PHPUnit_Framework_MockObject_MockObject */
-  private $ccTypeSource;
-  
-  protected function setUp() {
-    $this->objectManager = new ObjectManager($this);
+    /** @var CcTypeSource|\PHPUnit_Framework_MockObject_MockObject */
+    private $ccTypeSource;
 
-    $this->ccTypeSource = $this->getMockBuilder(CcTypeSource::class)
-      ->disableOriginalConstructor()
-      ->setMethods(['toOptionArray'])
-      ->getMock();
+    protected function setUp()
+    {
+        $this->objectManager = new ObjectManager($this);
 
-    $this->helper = $this->objectManager->getObject(
-      CcType::class,
-      ['ccTypeSource' => $this->ccTypeSource]
-    );
-  }
+        $this->ccTypeSource = $this->getMockBuilder(CcTypeSource::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['toOptionArray'])
+            ->getMock();
 
-  public function testGetCcTypes() {
-    $this->ccTypeSource->expects($this->once())
-      ->method('toOptionArray')
-      ->willReturn([
-        'label' => 'Visa', 'value' => 'VI'
-      ]);
-    $this->helper->getCcTypes();
-    $this->ccTypeSource->expects($this->never())
-      ->method('toOptionArray');
-    $this->helper->getCcTypes();
-  }
+        $this->helper = $this->objectManager->getObject(
+            CcType::class,
+            ['ccTypeSource' => $this->ccTypeSource]
+        );
+    }
+
+    public function testGetCcTypes()
+    {
+        $this->ccTypeSource->expects($this->once())
+            ->method('toOptionArray')
+            ->willReturn([
+                'label' => 'Visa',
+                'value' => 'VI'
+            ]);
+        $this->helper->getCcTypes();
+        $this->ccTypeSource->expects($this->never())
+            ->method('toOptionArray');
+        $this->helper->getCcTypes();
+    }
 }
