@@ -46,6 +46,8 @@
         <test_publishable_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
         <live_secret_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
         <live_publishable_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+        <verify_3dsecure>0</verify_3dsecure>
+        <threshold_amount>0.00</threshold_amount>
       </pmclain_stripe>
       <pmclain_stripe_vault>
         <model>StripeCreditCardVaultFacade</model>
