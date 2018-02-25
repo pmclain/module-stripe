@@ -42,18 +42,30 @@
         <field id="test_secret_key" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Test Secret Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">1</field>
+          </depends>
         </field>
         <field id="test_publishable_key" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Test Publishable Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">1</field>
+          </depends>
         </field>
         <field id="live_secret_key" translate="label" type="obscure" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Live Secret Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">0</field>
+          </depends>
         </field>
         <field id="live_publishable_key" translate="label" type="obscure" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Live Publishable Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">0</field>
+          </depends>
         </field>
         <field id="currency" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Accepted Currency</label>
