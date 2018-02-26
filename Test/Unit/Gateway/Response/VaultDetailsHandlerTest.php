@@ -145,20 +145,27 @@ class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getPayment')
             ->willReturn($this->paymentMock);
 
-        $this->paymentMock->expects($this->once())
-            ->method('getAdditionalInformation')
-            ->with('is_active_payment_token_enabler')
-            ->willReturn(true);
+        $additionalInfo = [
+            'is_active_token_enabler' => true,
+            'cc_src' => 'src_12323kjhlkh138',
+        ];
 
-        $this->cardMock->expects($this->once())
-            ->method('__toArray')
-            ->willReturn([
-                'id' => 'card_token',
-                'brand' => 'Visa',
-                'last4' => '4444',
-                'exp_month' => '01',
-                'exp_year' => '2018'
-            ]);
+        $this->paymentMock->method('getAdditionalInformation')
+            ->willReturn($this->returnCallback(function ($arg) use ($additionalInfo) {
+                return $additionalInfo[$arg];
+            }));
+
+        $this->paymentMock->method('getCcExpMonth')
+            ->willReturn('01');
+
+        $this->paymentMock->method('getCcExpYear')
+            ->willReturn(date('Y', strtotime('+2 years')));
+
+        $this->paymentMock->method('getCcType')
+            ->willReturn('Visa');
+
+        $this->paymentMock->method('getCcLast4')
+            ->willReturn('4444');
 
         $this->paymentTokenFactoryMock->expects($this->once())
             ->method('create')
