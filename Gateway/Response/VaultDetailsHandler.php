@@ -16,6 +16,7 @@
 
 namespace Pmclain\Stripe\Gateway\Response;
 
+use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Model\InfoInterface;
@@ -78,7 +79,7 @@ class VaultDetailsHandler implements HandlerInterface
             return;
         }
 
-        $paymentToken = $this->getVaultPaymentToken($transaction);
+        $paymentToken = $this->getVaultPaymentToken($payment, $transaction);
         if (null !== $paymentToken) {
             $extensionAttributes = $this->getExtensionAttributes($payment);
             $extensionAttributes->setVaultPaymentToken($paymentToken);
@@ -86,41 +87,43 @@ class VaultDetailsHandler implements HandlerInterface
     }
 
     /**
-     * @param $transaction
+     * @param OrderPaymentInterface $payment
+     * @param array $transaction
      * @return PaymentTokenInterface|null
      */
-    private function getVaultPaymentToken($transaction)
+    private function getVaultPaymentToken($payment, $transaction)
     {
         // Check token existing in gateway response
         $source = $transaction['source']->__toArray();
-        if (!isset($source['id'])) {
+        if (!isset($source['id']) && !$payment->getAdditionalInformation('cc_src')) {
             return null;
         }
 
         /** @var PaymentTokenInterface $paymentToken */
         $paymentToken = $this->paymentTokenFactory->create();
-        $paymentToken->setGatewayToken($source['id']);
-        $paymentToken->setExpiresAt($this->getExpirationDate($source));
+        $paymentToken->setGatewayToken($payment->getAdditionalInformation('cc_src') ?: $source['id']);
+        $paymentToken->setExpiresAt($this->getExpirationDate($payment));
 
         $paymentToken->setTokenDetails($this->convertDetailsToJSON([
-            'type' => $this->getCreditCardType($source['brand']),
-            'maskedCC' => $source['last4'],
-            'expirationDate' => $source['exp_month'] . '/' . $source['exp_year']
+            'type' => $this->getCreditCardType($payment->getCcType()),
+            'maskedCC' => $payment->getCcLast4(),
+            'expirationDate' => $payment->getCcExpMonth() . '/' . $payment->getCcExpYear(),
+            'threeDSecure' => $payment->getAdditionalInformation('cc_src') ? true : false,
         ]));
 
         return $paymentToken;
     }
 
     /**
-     * @param array $source
+     * @param OrderPaymentInterface $payment
      * @return string
      */
-    private function getExpirationDate($source)
+    private function getExpirationDate($payment)
     {
         $expDate = new \DateTime(
-            $source['exp_year']
+            $payment->getCcExpYear()
             . '-'
-            . $source['exp_month']
+            . $payment->getCcExpMonth()
             . '-'
             . '01'
             . ' '

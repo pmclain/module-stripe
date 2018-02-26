@@ -17,6 +17,7 @@
 namespace Pmclain\Stripe\Model\Ui;
 
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
+use Pmclain\Stripe\Gateway\Config\Config;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
@@ -45,18 +46,26 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
     private $jsonDecoder;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param TokenUiComponentInterfaceFactory $componentFactory
      * @param UrlInterface $urlBuilder
      * @param DecoderInterface $decoder
+     * @param Config $config
      */
     public function __construct(
         TokenUiComponentInterfaceFactory $componentFactory,
         UrlInterface $urlBuilder,
-        DecoderInterface $decoder
+        DecoderInterface $decoder,
+        Config $config
     ) {
         $this->componentFactory = $componentFactory;
         $this->urlBuilder = $urlBuilder;
         $this->jsonDecoder = $decoder;
+        $this->config = $config;
     }
 
     /**
@@ -67,6 +76,7 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
     public function getComponentForToken(PaymentTokenInterface $paymentToken)
     {
         $jsonDetails = $this->jsonDecoder->decode($paymentToken->getTokenDetails() ?: '{}');
+        $jsonDetails['source'] = $this->getSource($paymentToken);
 
         $component = $this->componentFactory->create(
             [
@@ -80,5 +90,18 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
         );
 
         return $component;
+    }
+
+    /**
+     * @param PaymentTokenInterface $paymentToken
+     * @return string
+     */
+    private function getSource($paymentToken)
+    {
+        if ($this->config->isRequireThreeDSecure()) {
+            return $paymentToken->getGatewayToken();
+        }
+
+        return '';
     }
 }

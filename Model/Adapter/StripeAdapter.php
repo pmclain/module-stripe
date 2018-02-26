@@ -22,6 +22,7 @@ use Stripe\Charge;
 use Stripe\Refund;
 use Pmclain\Stripe\Gateway\Config\Config;
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
+use Pmclain\Stripe\Gateway\Request\ThreeDSecureBuilder;
 
 class StripeAdapter
 {
@@ -72,7 +73,10 @@ class StripeAdapter
             if ($attributes instanceof \Stripe\Error\Card) {
                 return $attributes;
             }
+        } elseif (isset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT])) {
+            unset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT]);
         }
+
         try {
             return Charge::create($attributes);
         } catch (\Stripe\Error\Card $e) {
@@ -110,11 +114,19 @@ class StripeAdapter
         try {
             $stripeCustomer = Customer::retrieve($attributes[PaymentDataBuilder::CUSTOMER]);
 
-            $card = $stripeCustomer->sources->create([
-                'source' => $attributes[PaymentDataBuilder::SOURCE]
-            ]);
+            if (isset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT])) {
+                $stripeCustomer->sources->create([
+                    'source' => $attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT]
+                ]);
 
-            $attributes[PaymentDataBuilder::SOURCE] = $card->id;
+                unset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT]);
+            } else {
+                $card = $stripeCustomer->sources->create([
+                    'source' => $attributes[PaymentDataBuilder::SOURCE]
+                ]);
+
+                $attributes[PaymentDataBuilder::SOURCE] = $card->id;
+            }
 
             return $attributes;
         } catch (\Stripe\Error\Card $e) {

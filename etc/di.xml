@@ -139,6 +139,7 @@
     <arguments>
       <argument name="builders" xsi:type="array">
         <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder</item>
+        <item name="threeDSecure" xsi:type="string">Pmclain\Stripe\Gateway\Request\ThreeDSecureBuilder</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
         <!--<item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>-->
       </argument>
@@ -192,6 +193,7 @@
     <arguments>
       <argument name="builders" xsi:type="array">
         <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault</item>
+        <item name="threeDSecure" xsi:type="string">Pmclain\Stripe\Gateway\Request\ThreeDSecureBuilder</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
       </argument>
     </arguments>
@@ -250,7 +252,6 @@
       <argument name="handlers" xsi:type="array">
         <item name="payment_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\PaymentDetailsHandler</item>
         <item name="txn_id" xsi:type="string">Pmclain\Stripe\Gateway\Response\TransactionIdHandler</item>
-        <item name="card_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\CardDetailsHandler</item>
         <item name="vault_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\VaultDetailsHandler</item>
       </argument>
     </arguments>
@@ -260,8 +261,6 @@
       <argument name="handlers" xsi:type="array">
         <item name="payment_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\PaymentDetailsHandler</item>
         <item name="txn_id" xsi:type="string">Pmclain\Stripe\Gateway\Response\TransactionIdHandler</item>
-        <item name="card_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\CardDetailsHandler</item>
-        <!--<item name="vault_details" xsi:type="string">Pmclain\Stripe\Gateway\Response\VaultDetailsHandler</item>-->
       </argument>
     </arguments>
   </virtualType>

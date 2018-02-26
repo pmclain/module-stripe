@@ -31,6 +31,8 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const KEY_ALLOW_SPECIFIC = 'allowspecific';
     const KEY_SPECIFIC_COUNTRY = 'specificcountry';
     const KEY_DEBUG = 'debug';
+    const KEY_VERIFY_3D_SECURE = 'verify_3dsecure';
+    const KEY_3D_SECURE_THRESHOLD = 'threshold_amount';
 
     /**
      * @return array
@@ -123,5 +125,21 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function isDebugOn()
     {
         return (bool)$this->getValue(self::KEY_DEBUG);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequireThreeDSecure()
+    {
+        return (bool)$this->getValue(self::KEY_VERIFY_3D_SECURE);
+    }
+
+    /**
+     * @return float
+     */
+    public function getThreeDSecureThreshold()
+    {
+        return (float)$this->getValue(self::KEY_3D_SECURE_THRESHOLD);
     }
 }

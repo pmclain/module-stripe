@@ -20,6 +20,7 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
+use Magento\Framework\UrlInterface;
 
 class ConfigProvider implements ConfigProviderInterface
 {
@@ -32,13 +33,21 @@ class ConfigProvider implements ConfigProviderInterface
     protected $config;
 
     /**
+     * @var UrlInterface
+     */
+    protected $url;
+
+    /**
      * ConfigProvider constructor.
      * @param ScopeConfigInterface $configInterface
+     * @param UrlInterface $url
      */
     public function __construct(
-        ScopeConfigInterface $configInterface
+        ScopeConfigInterface $configInterface,
+        UrlInterface $url
     ) {
         $this->config = $configInterface;
+        $this->url = $url;
     }
 
     /**
@@ -50,6 +59,9 @@ class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'publishableKey' => $this->getPublishableKey(),
+                    'threeDSecure' => (int)$this->getStoreConfig(Config::KEY_VERIFY_3D_SECURE),
+                    'threeDThreshold' => (float)$this->getStoreConfig(Config::KEY_3D_SECURE_THRESHOLD),
+                    'threeDRedirectUrl' => $this->url->getUrl('pmstripe/threedsecure/redirect'),
                     'vaultCode' => self::CC_VAULT_CODE,
                 ],
             ],

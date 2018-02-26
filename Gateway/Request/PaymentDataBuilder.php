@@ -90,7 +90,7 @@ class PaymentDataBuilder implements BuilderInterface
             self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
             self::ORDER_ID => $order->getOrderIncrementId(),
             self::CURRENCY => $this->config->getCurrency(),
-            self::SOURCE => $this->getPaymentSource($payment),
+            self::SOURCE => $payment->getAdditionalInformation('cc_token'),
             self::CAPTURE => 'false'
         ];
 
@@ -159,23 +159,5 @@ class PaymentDataBuilder implements BuilderInterface
     protected function isSavePaymentInformation($payment)
     {
         return $payment->getAdditionalInformation('is_active_payment_token_enabler');
-    }
-
-    /**
-     * @param $payment
-     * @return array
-     */
-    protected function getPaymentSource($payment)
-    {
-        if ($token = $payment->getAdditionalInformation('cc_token')) {
-            return $token;
-        }
-        return [
-            'exp_month' => $payment->getCcExpMonth(),
-            'exp_year' => $payment->getCcExpYear(),
-            'number' => $payment->getCcNumber(),
-            'object' => 'card',
-            'cvc' => $payment->getCcCid(),
-        ];
     }
 }

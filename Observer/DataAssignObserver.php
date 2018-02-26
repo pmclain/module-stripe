@@ -18,23 +18,55 @@ namespace Pmclain\Stripe\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
+use Magento\Quote\Api\Data\PaymentInterface;
+use Magento\Framework\DataObject;
+use Magento\Payment\Model\InfoInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 class DataAssignObserver extends AbstractDataAssignObserver
 {
     /**
      * @param Observer $observer
      * @return void
+     * @throws LocalizedException
      */
     public function execute(Observer $observer)
     {
-        $method = $this->readMethodArgument($observer);
         $data = $this->readDataArgument($observer);
-        $paymentInfo = $method->getInfoInstance();
-        if (key_exists('cc_token', $data->getDataByKey('additional_data'))) {
-            $paymentInfo->setAdditionalInformation(
-                'cc_token',
-                $data->getDataByKey('additional_data')['cc_token']
-            );
+
+        $additionalData = $data->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
+        if (!is_array($additionalData)) {
+            return;
+        }
+
+        $additionalData = new DataObject($additionalData);
+        $paymentMethod = $this->readMethodArgument($observer);
+
+        $payment = $observer->getPaymentModel();
+        if (!$payment instanceof InfoInterface) {
+            $payment = $paymentMethod->getInfoInstance();
+        }
+
+        if (!$payment instanceof InfoInterface) {
+            throw new LocalizedException(__('Payment model does not provided.'));
+        }
+
+        $payment->setCcLast4($additionalData->getData('cc_last4'));
+        $payment->setCcType($additionalData->getData('cc_type'));
+        $payment->setCcExpMonth($additionalData->getData('cc_exp_month'));
+        $payment->setCcExpYear($additionalData->getData('cc_exp_year'));
+
+        if ($additionalData->getData('cc_token')) {
+            $payment->setAdditionalInformation('cc_token', $additionalData->getData('cc_token'));
+        }
+        if ($additionalData->getData('cc_src')) {
+            $payment->setAdditionalInformation('cc_src', $additionalData->getData('cc_src'));
+        }
+        if ($additionalData->getData('three_d_src')) {
+            $payment->setAdditionalInformation('three_d_src', $additionalData->getData('three_d_src'));
+        }
+        if ($additionalData->getData('three_d_client_secret')) {
+            $payment->setAdditionalInformation('three_d_client_secret', $additionalData->getData('three_d_client_secret'));
         }
     }
 }
