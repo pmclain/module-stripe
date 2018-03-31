@@ -27,7 +27,7 @@ In your Magento 2 root directory run
 | ------- | --------------- |
 | 1.x.x   | 2.2.x           | 
 | 1.x.x   | 2.1.x           |
-| 0.0.3   | 2.0.x           |
+| None    | 2.0.x           |
 
 ## Configuration
 The configuration can be found in the Magento 2 admin panel under  
