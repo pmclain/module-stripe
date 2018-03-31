@@ -9,7 +9,7 @@ define(
     'Magento_Checkout/js/action/redirect-on-success',
     'Magento_Vault/js/view/payment/vault-enabler',
     'Magento_Checkout/js/model/quote',
-    'stripejs'
+    'https://js.stripe.com/v3/'
   ],
   function (
       $,

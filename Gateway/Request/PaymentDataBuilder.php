@@ -22,6 +22,8 @@ use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Stripe\Customer;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\App\ObjectManager;
 
 class PaymentDataBuilder implements BuilderInterface
 {
@@ -47,6 +49,8 @@ class PaymentDataBuilder implements BuilderInterface
   /** @var CustomerRepositoryInterface  */
   protected $customerRepository;
 
+  /** @var LoggerInterface */
+  protected $logger;
 
   /**
    * PaymentDataBuilder constructor.
@@ -54,17 +58,20 @@ class PaymentDataBuilder implements BuilderInterface
    * @param SubjectReader $subjectReader
    * @param Session $customerSession
    * @param CustomerRepositoryInterface $customerRepository
+   * @param LoggerInterface $logger
    */
   public function __construct(
     Config $config,
     SubjectReader $subjectReader,
     Session $customerSession,
-    CustomerRepositoryInterface $customerRepository
+    CustomerRepositoryInterface $customerRepository,
+    LoggerInterface $logger = null
   ) {
     $this->config = $config;
     $this->subjectReader = $subjectReader;
     $this->customerSession = $customerSession;
     $this->customerRepository = $customerRepository;
+    $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
   }
 
   /**
@@ -126,6 +133,7 @@ class PaymentDataBuilder implements BuilderInterface
         'description' => 'Customer for ' . $email,
       ]);
     }catch (\Exception $e) {
+      $this->logger->critical($e);
       throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
     }
 
