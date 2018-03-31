@@ -309,5 +309,18 @@
     </arguments>
   </type>
 
-  <!-- Settlement Reqports?? -->
+  <type name="Magento\Config\Model\Config\TypePool">
+    <arguments>
+      <argument name="sensitive" xsi:type="array">
+        <item name="payment/pmclain_stripe/test_secret_key" xsi:type="string">1</item>
+        <item name="payment/pmclain_stripe/test_publishable_key" xsi:type="string">1</item>
+        <item name="payment/pmclain_stripe/live_secret_key" xsi:type="string">1</item>
+        <item name="payment/pmclain_stripe/live_publishable_key" xsi:type="string">1</item>
+      </argument>
+      <argument name="environment" xsi:type="array">
+        <item name="payment/pmclain_stripe/debug" xsi:type="string">1</item>
+        <item name="payment/pmclain_stripe/test_mode" xsi:type="string">1</item>
+      </argument>
+    </arguments>
+  </type>
 </config>

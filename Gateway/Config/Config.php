@@ -29,6 +29,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
   const KEY_USE_CCV = 'useccv';
   const KEY_ALLOW_SPECIFIC = 'allowspecific';
   const KEY_SPECIFIC_COUNTRY = 'specificcountry';
+  const KEY_DEBUG = 'debug';
 
   /**
    * @return array
@@ -104,5 +105,12 @@ class Config extends \Magento\Payment\Gateway\Config\Config
    */
   public function isTestMode() {
     return (bool) $this->getValue(self::KEY_ENVIRONMENT);
+  }
+
+  /**
+   * @return bool
+   */
+  public function isDebugOn() {
+    return (bool) $this->getValue(self::KEY_DEBUG);
   }
 }

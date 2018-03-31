@@ -41,6 +41,7 @@
         <useccv>1</useccv>
         <cctypes_stripe_mapper><![CDATA[{"american-express":"AE","discover":"DI","jcb":"JCB","mastercard":"MC","master-card":"MC","visa":"VI","maestro":"MI","diners-club":"DN","unionpay":"CUP"}]]></cctypes_stripe_mapper>
         <order_status>processing</order_status>
+        <debug>0</debug>
       </pmclain_stripe>
       <pmclain_stripe_vault>
         <model>StripeCreditCardVaultFacade</model>

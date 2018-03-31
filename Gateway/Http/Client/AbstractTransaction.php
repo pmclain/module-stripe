@@ -21,6 +21,8 @@ use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 use Psr\Log\LoggerInterface;
+use Pmclain\Stripe\Gateway\Config\Config;
+use Magento\Framework\App\ObjectManager;
 
 abstract class AbstractTransaction implements ClientInterface
 {
@@ -30,14 +32,18 @@ abstract class AbstractTransaction implements ClientInterface
 
   protected $adapter;
 
+  protected $config;
+
   public function __construct(
     LoggerInterface $logger,
     Logger $customLogger,
-    StripeAdapter $adapter
+    StripeAdapter $adapter,
+    Config $config = null
   ) {
     $this->logger = $logger;
     $this->customLogger = $customLogger;
     $this->adapter = $adapter;
+    $this->config = $config ?: ObjectManager::getInstance()->get(Config::class);
   }
 
   public function placeRequest(
@@ -54,10 +60,21 @@ abstract class AbstractTransaction implements ClientInterface
       $response['object'] = $this->process($data);
     }catch (\Exception $e) {
       $message = __($e->getMessage() ?: 'Sorry, but something went wrong.');
-      $this->logger->critical($message);
+      $this->logger->critical($e);
       throw new ClientException($message);
     }finally {
-      $log['response'] = (array) $response['object'];
+      if ($response['object'] instanceof \Stripe\Error\Base
+          || $response['object'] instanceof \Stripe\StripeObject
+      ) {
+        $log['response'] = $response['object']->__toString();
+      } else {
+        $log['response'] = $response['object'];
+      }
+
+      if ($this->config->isDebugOn()) {
+        $this->logger->warning(var_export($log, true));
+      }
+
       $this->customLogger->debug($log);
     }
 
