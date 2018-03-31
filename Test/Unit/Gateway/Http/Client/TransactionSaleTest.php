@@ -92,7 +92,6 @@ class TransactionSaleTest extends \PHPUnit\Framework\TestCase
 
     $actualResult = $this->model->placeRequest($this->getTransferObjectMock());
 
-    $this->assertTrue(is_object($actualResult['object']));
     $this->assertEquals(['object' => $response], $actualResult);
   }
 
@@ -110,9 +109,6 @@ class TransactionSaleTest extends \PHPUnit\Framework\TestCase
   }
 
   private function getResponseObject() {
-    $object = new \stdClass();
-    $object->success = true;
-
-    return $object;
+    return ['success' => true];
   }
 }
