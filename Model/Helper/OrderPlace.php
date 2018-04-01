@@ -19,6 +19,10 @@ namespace Pmclain\Stripe\Model\Helper;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Customer\Model\Group;
+use Magento\Checkout\Model\Type\Onepage;
+use Magento\Customer\Model\Session;
+use Magento\Checkout\Helper\Data;
 
 class OrderPlace
 {
@@ -28,12 +32,29 @@ class OrderPlace
     private $cartManagement;
 
     /**
+     * @var Session
+     */
+    private $customerSession;
+
+    /**
+     * @var Data
+     */
+    private $checkoutHelper;
+
+    /**
+     * OrderPlace constructor.
      * @param CartManagementInterface $cartManagement
+     * @param Session $session
+     * @param Data $helper
      */
     public function __construct(
-        CartManagementInterface $cartManagement
+        CartManagementInterface $cartManagement,
+        Session $session,
+        Data $helper
     ) {
         $this->cartManagement = $cartManagement;
+        $this->customerSession = $session;
+        $this->checkoutHelper = $helper;
     }
 
     /**
@@ -46,6 +67,10 @@ class OrderPlace
     public function execute(Quote $quote, $src, $clientSecret)
     {
         $this->validatePaymentInformation($quote->getPayment(), $src, $clientSecret);
+
+        if ($this->getCheckoutMethod($quote) === Onepage::METHOD_GUEST) {
+            $this->prepareGuestQuote($quote);
+        }
 
         $quote->collectTotals();
         $this->cartManagement->placeOrder($quote->getId());
@@ -66,5 +91,41 @@ class OrderPlace
                 __('Your payment information could not be validated. Please try again.')
             );
         }
+    }
+
+    /**
+     * Get checkout method
+     *
+     * @param Quote $quote
+     * @return string
+     */
+    private function getCheckoutMethod(Quote $quote)
+    {
+        if ($this->customerSession->isLoggedIn()) {
+            return Onepage::METHOD_CUSTOMER;
+        }
+        if (!$quote->getCheckoutMethod()) {
+            if ($this->checkoutHelper->isAllowedGuestCheckout($quote)) {
+                $quote->setCheckoutMethod(Onepage::METHOD_GUEST);
+            } else {
+                $quote->setCheckoutMethod(Onepage::METHOD_REGISTER);
+            }
+        }
+
+        return $quote->getCheckoutMethod();
+    }
+
+    /**
+     * Prepare quote for guest checkout order submit
+     *
+     * @param Quote $quote
+     * @return void
+     */
+    private function prepareGuestQuote(Quote $quote)
+    {
+        $quote->setCustomerId(null)
+            ->setCustomerEmail($quote->getBillingAddress()->getEmail())
+            ->setCustomerIsGuest(true)
+            ->setCustomerGroupId(Group::NOT_LOGGED_IN_ID);
     }
 }
