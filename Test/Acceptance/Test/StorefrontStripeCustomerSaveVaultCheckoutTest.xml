@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the OSL 3.0 License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
+    <test name="StorefrontStripeCustomerSaveVaultCheckout">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Checkout via Customer Checkout Save Method in Vault"/>
+            <title value="Customer Checkout"/>
+            <description value="Checkout as customer using Stripe and store method in Vault"/>
+            <severity value="CRITICAL"/>
+            <group value="pmclain_stripe"/>
+        </annotations>
+        <before>
+            <createData entity="SampleStripeConfig" stepKey="createSampleStripeConfig" />
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="simpleuscustomer"/>
+        </before>
+        <after>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <createData entity="DefaultStripeConfig" stepKey="restoreDefaultStripeConfig" />
+            <deleteData createDataKey="simpleuscustomer" stepKey="deleteCustomer" />
+        </after>
+
+        <actionGroup ref="CustomerLoginOnStorefront" stepKey="customerLogin">
+            <argument name="customer" value="$$simpleuscustomer$$" />
+        </actionGroup>
+
+        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="onCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageLoad1"/>
+        <moveMouseOver selector="{{StorefrontCategoryMainSection.ProductItemInfo}}" stepKey="hoverProduct"/>
+        <click selector="{{StorefrontCategoryMainSection.AddToCartBtn}}" stepKey="addToCart"/>
+        <waitForElementVisible selector="{{StorefrontCategoryMainSection.SuccessMsg}}" time="30" stepKey="waitForProductAdded"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
+        <see selector="{{StorefrontMiniCartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
+        <click selector="{{StorefrontMiniCartSection.show}}" stepKey="clickCart"/>
+        <click selector="{{StorefrontMiniCartSection.goToCheckout}}" stepKey="goToCheckout"/>
+        <waitForPageLoad stepKey="waitForPageLoad2"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForCheckoutUiLoad" />
+
+        <waitForElement selector="{{CheckoutShippingMethodsSection.next}}" time="30" stepKey="waitForNextButton"/>
+        <click selector="{{CheckoutShippingMethodsSection.next}}" stepKey="clickNext"/>
+
+        <waitForElement selector="{{CheckoutPaymentSection.stripeMethod}}" time="30" stepKey="waitForStripeMethod" />
+        <click selector="{{CheckoutPaymentSection.stripeMethod}}" stepKey="selectStripePaymentMethod" />
+        <switchToIFrame selector="{{CheckoutPaymentSection.stripeIframe}}" stepKey="switchToStripeIframe" />
+        <waitForElement selector="{{StripeIframe.cardnumber}}" stepKey="waitForIframePaymentForm" />
+        <fillField selector="{{StripeIframe.cardnumber}}" userInput="{{stripeCardValid.number}}" stepKey="enterCardnumber" />
+        <fillField selector="{{StripeIframe.expiry}}" userInput="{{stripeCardValid.expiry}}" stepKey="enterExpiry" />
+        <fillField selector="{{StripeIframe.cvc}}" userInput="{{stripeCardValid.cvc}}" stepKey="enterCvc" />
+        <switchToIFrame stepKey="switchOutOfIframe" />
+        <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton" />
+        <waitForPageLoad stepKey="waitForSuccessPage" />
+
+        <grabTextFrom stepKey="grabOrderNumber" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
+        <see stepKey="seeOrderConfirmation" selector="{{CheckoutSuccessMainSection.success}}" userInput="Your order number is:" />
+
+        <amOnPage url="{{StorefrontCustomerSavedMethodsPage.url}}" stepKey="onStorefrontCustomerSavedMethodsPage" />
+        <waitForPageLoad stepKey="waitForCustomerSavedMethodPage" />
+        <waitForElement selector="{{CustomerSavedMethodsSection.deleteButton}}" stepKey="waitForStoredMethodDeleteButton" time="10" />
+        <see selector="{{CustomerSavedMethodsSection.deleteButton}}" stepKey="seeStoredMethodDeleteButton" />
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin1"/>
+
+        <amOnPage url="{{OrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <fillField selector="{{OrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
+        <click selector="{{OrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <click selector="{{OrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+        <see selector="{{OrderDetailsInformationSection.accountInformation}}" userInput="$$simpleuscustomer.email$$" stepKey="seeAdminOrderEmail"/>
+        <see selector="{{OrderDetailsInformationSection.itemsOrdered}}" userInput="{{_defaultProduct.name}}" stepKey="seeAdminOrderProduct"/>
+    </test>
+</tests>
