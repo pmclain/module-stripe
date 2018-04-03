@@ -9,7 +9,8 @@ define([
   'Magento_Checkout/js/action/redirect-on-success',
   'Magento_Checkout/js/model/quote',
   'Magento_Ui/js/modal/alert',
-  'stripejs'
+  'Magento_Customer/js/customer-data',
+  'https://js.stripe.com/v3/'
 ], function (
     $,
     VaultComponent,
@@ -18,7 +19,8 @@ define([
     fullScreenLoader,
     redirectOnSuccessAction,
     quote,
-    alert
+    alert,
+    customerData
 ) {
   'use strict';
 
@@ -65,6 +67,7 @@ define([
             content: $.mage.__('Your card issue has requested additional verification before completing your order. You will be redirected to the issuer\'s website after closing this notification.'),
             actions: {
               always: function() {
+                customerData.invalidate(['cart']);
                 window.location = response.source.redirect.url;
               }
             }

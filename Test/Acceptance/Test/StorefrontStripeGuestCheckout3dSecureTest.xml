@@ -24,7 +24,7 @@
             <title value="Guest Checkout"/>
             <description value="Should be able to place an order as a Guest using Stripe with 3D Secure."/>
             <severity value="CRITICAL"/>
-            <group value="pmclain_stripe"/>
+            <group value="pmclain_stripe_3ds"/>
         </annotations>
         <before>
             <createData entity="SampleStripeConfig" stepKey="createSampleStripeConfig" />

@@ -11,6 +11,7 @@ define(
     'Magento_Vault/js/view/payment/vault-enabler',
     'Magento_Checkout/js/model/quote',
     'Magento_Ui/js/modal/alert',
+    'Magento_Customer/js/customer-data',
     'https://js.stripe.com/v3/'
   ],
   function (
@@ -24,7 +25,8 @@ define(
       redirectOnSuccessAction,
       VaultEnabler,
       quote,
-      alert
+      alert,
+      customerData
   ) {
     'use strict';
 
@@ -163,6 +165,7 @@ define(
                 content: $.mage.__('Your card issue has requested additional verification before completing your order. You will be redirected to the issuer\'s website after closing this notification.'),
                 actions: {
                   always: function() {
+                    customerData.invalidate(['cart']);
                     window.location = response.source.redirect.url;
                   }
                 }
