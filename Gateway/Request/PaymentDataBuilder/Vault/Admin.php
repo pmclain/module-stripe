@@ -68,8 +68,10 @@ class Admin extends Vault
             );
 
             $this->customerRepository->save($customer);
+
+            return $stripeCustomerId;
         }
 
-        return $stripeCustomerId;
+        return $stripeCustomerId->getValue();
     }
 }

@@ -23,6 +23,7 @@ use Magento\Vault\Model\Ui\TokenUiComponentInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentInterfaceFactory;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\Json\DecoderInterface;
 
 /**
  * Class TokenUiComponentProvider
@@ -56,6 +57,7 @@ class TokenUiComponentProvider implements TokenUiComponentProviderInterface
     ) {
         $this->componentFactory = $componentFactory;
         $this->urlBuilder = $urlBuilder;
+        $this->jsonDecoder = $decoder;
     }
 
     /**
