@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the OSL 3.0 License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="ValidateOrder">
+        <arguments>
+            <argument name="ordernumber" type="string" />
+            <argument name="email" type="string" />
+            <argument name="product" />
+        </arguments>
+
+        <amOnPage url="{{OrdersPage.url}}" stepKey="onOrdersPage"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
+        <fillField selector="{{OrdersGridSection.search}}" userInput="{{ordernumber}}" stepKey="fillOrderNum"/>
+        <click selector="{{OrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
+        <click selector="{{OrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
+        <see selector="{{OrderDetailsInformationSection.accountInformation}}" userInput="{{email}}" stepKey="seeAdminOrderEmail"/>
+        <see selector="{{OrderDetailsInformationSection.itemsOrdered}}" userInput="{{product.name}}" stepKey="seeAdminOrderProduct"/>
+    </actionGroup>
+</actionGroups>

@@ -17,12 +17,12 @@
 -->
 <entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/DataGenerator/etc/dataProfileSchema.xsd">
-    <entity name="stripeCardValid" type="object">
+    <entity name="stripeCardValid" type="stripe_card">
         <data key="number">4111111111111111</data>
         <data key="expiry">03/25</data>
         <data key="cvc">123</data>
     </entity>
-    <entity name="stripe3dCard" type="object">
+    <entity name="stripe3dCard" type="stripe_card">
         <data key="number">4000000000003055</data>
         <data key="expiry">03/25</data>
         <data key="cvc">123</data>
