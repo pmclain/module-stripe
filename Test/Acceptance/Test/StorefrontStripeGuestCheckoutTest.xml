@@ -40,38 +40,26 @@
             <createData entity="DefaultStripeConfig" stepKey="restoreDefaultStripeConfig" />
         </after>
 
-        <amOnPage url="{{StorefrontCategoryPage.url($$createCategory.name$$)}}" stepKey="onCategoryPage"/>
-        <waitForPageLoad stepKey="waitForPageLoad1"/>
-        <moveMouseOver selector="{{StorefrontCategoryMainSection.ProductItemInfo}}" stepKey="hoverProduct"/>
-        <click selector="{{StorefrontCategoryMainSection.AddToCartBtn}}" stepKey="addToCart"/>
-        <waitForElementVisible selector="{{StorefrontCategoryMainSection.SuccessMsg}}" time="30" stepKey="waitForProductAdded"/>
-        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="You added $$createProduct.name$$ to your shopping cart." stepKey="seeAddedToCartMessage"/>
-        <see selector="{{StorefrontMiniCartSection.quantity}}" userInput="1" stepKey="seeCartQuantity"/>
-        <click selector="{{StorefrontMiniCartSection.show}}" stepKey="clickCart"/>
-        <click selector="{{StorefrontMiniCartSection.goToCheckout}}" stepKey="goToCheckout"/>
-        <waitForPageLoad stepKey="waitForPageLoad2"/>
-        <fillField selector="{{GuestCheckoutShippingSection.email}}" userInput="{{CustomerEntityOne.email}}" stepKey="enterEmail"/>
-        <fillField selector="{{GuestCheckoutShippingSection.firstName}}" userInput="{{CustomerEntityOne.firstname}}" stepKey="enterFirstName"/>
-        <fillField selector="{{GuestCheckoutShippingSection.lastName}}" userInput="{{CustomerEntityOne.lastname}}" stepKey="enterLastName"/>
-        <fillField selector="{{GuestCheckoutShippingSection.street}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="enterStreet"/>
-        <fillField selector="{{GuestCheckoutShippingSection.city}}" userInput="{{CustomerAddressSimple.city}}" stepKey="enterCity"/>
-        <selectOption selector="{{GuestCheckoutShippingSection.region}}" userInput="{{CustomerAddressSimple.state}}" stepKey="selectRegion"/>
-        <fillField selector="{{GuestCheckoutShippingSection.postcode}}" userInput="{{CustomerAddressSimple.postcode}}" stepKey="enterPostcode"/>
-        <fillField selector="{{GuestCheckoutShippingSection.telephone}}" userInput="{{CustomerAddressSimple.telephone}}" stepKey="enterTelephone"/>
+        <actionGroup ref="GetToCheckout" stepKey="proceedToCheckout">
+            <argument name="category" value="$$createCategory$$" />
+        </actionGroup>
+
+        <actionGroup ref="CompleteGuestAddressForm" stepKey="completeGuestAddressForm">
+            <argument name="customer" value="CustomerEntityOne" />
+            <argument name="address" value="CustomerAddressSimple" />
+        </actionGroup>
+
         <waitForLoadingMaskToDisappear stepKey="waitForLoadingMask"/>
         <click selector="{{GuestCheckoutShippingSection.firstShippingMethod}}" stepKey="selectFirstShippingMethod"/>
         <waitForElement selector="{{GuestCheckoutShippingSection.next}}" time="30" stepKey="waitForNextButton"/>
         <click selector="{{GuestCheckoutShippingSection.next}}" stepKey="clickNext"/>
-        <waitForElement selector="{{CheckoutPaymentSection.stripeMethod}}" time="30" stepKey="waitForStripeMethod" />
-        <click selector="{{CheckoutPaymentSection.stripeMethod}}" stepKey="selectStripePaymentMethod" />
-        <switchToIFrame selector="{{CheckoutPaymentSection.stripeIframe}}" stepKey="switchToStripeIframe" />
-        <waitForElement selector="{{StripeIframe.cardnumber}}" stepKey="waitForIframePaymentForm" />
-        <fillField selector="{{StripeIframe.cardnumber}}" userInput="{{stripeCardValid.number}}" stepKey="enterCardnumber" />
-        <fillField selector="{{StripeIframe.expiry}}" userInput="{{stripeCardValid.expiry}}" stepKey="enterExpiry" />
-        <fillField selector="{{StripeIframe.cvc}}" userInput="{{stripeCardValid.cvc}}" stepKey="enterCvc" />
-        <switchToIFrame stepKey="switchOutOfIframe" />
+
+        <actionGroup ref="CompleteStripePaymentForm" stepKey="enterPaymentDetails">
+            <argument name="card" value="stripeCardValid" />
+        </actionGroup>
+
         <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton" />
-        <waitForPageLoad stepKey="waitForSuccessPage" />
+        <waitForPageLoad stepKey="waitForSuccessPage" time="60" />
 
         <grabTextFrom selector="{{CheckoutSuccessMainSection.orderNumber}}" stepKey="grabOrderNumber"/>
         <see selector="{{CheckoutSuccessMainSection.success}}" userInput="Your order # is:" stepKey="seeOrderNumber"/>
@@ -79,16 +67,10 @@
 
         <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin1"/>
 
-        <amOnPage url="{{OrdersPage.url}}" stepKey="onOrdersPage"/>
-        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnOrdersPage"/>
-        <fillField selector="{{OrdersGridSection.search}}" userInput="{$grabOrderNumber}" stepKey="fillOrderNum"/>
-        <click selector="{{OrdersGridSection.submitSearch}}" stepKey="submitSearchOrderNum"/>
-        <waitForLoadingMaskToDisappear stepKey="waitForLoadingMaskToDisappearOnSearch"/>
-        <click selector="{{OrdersGridSection.firstRow}}" stepKey="clickOrderRow"/>
-        <see selector="{{OrderDetailsInformationSection.accountInformation}}" userInput="Guest" stepKey="seeAdminOrderGuest"/>
-        <see selector="{{OrderDetailsInformationSection.accountInformation}}" userInput="{{CustomerEntityOne.email}}" stepKey="seeAdminOrderEmail"/>
-        <see selector="{{OrderDetailsInformationSection.billingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="seeAdminOrderBillingAddress"/>
-        <see selector="{{OrderDetailsInformationSection.shippingAddress}}" userInput="{{CustomerAddressSimple.street[0]}}" stepKey="seeAdminOrderShippingAddress"/>
-        <see selector="{{OrderDetailsInformationSection.itemsOrdered}}" userInput="{{_defaultProduct.name}}" stepKey="seeAdminOrderProduct"/>
+        <actionGroup ref="ValidateOrder" stepKey="adminCheckOrder">
+            <argument name="ordernumber" value="$grabOrderNumber" />
+            <argument name="email" value="{{CustomerEntityOne.email}}" />
+            <argument name="product" value="_defaultProduct" />
+        </actionGroup>
     </test>
 </tests>

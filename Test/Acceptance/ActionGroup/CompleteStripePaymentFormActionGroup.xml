@@ -22,6 +22,7 @@
             <argument name="card" />
         </arguments>
 
+        <waitForLoadingMaskToDisappear stepKey="waitForPaymentLoadingMask" />
         <waitForElement selector="{{CheckoutPaymentSection.stripeMethod}}" time="30" stepKey="waitForStripeMethod" />
         <click selector="{{CheckoutPaymentSection.stripeMethod}}" stepKey="selectStripePaymentMethod" />
         <switchToIFrame selector="{{CheckoutPaymentSection.stripeIframe}}" stepKey="switchToStripeIframe" />

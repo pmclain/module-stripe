@@ -17,12 +17,12 @@
 -->
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
-    <test name="StorefrontStripeCustomerSaveVaultCheckout">
+    <test name="StorefrontStripeCustomerSaveVault3dSecureCheckout">
         <annotations>
             <features value="Checkout"/>
             <stories value="Checkout via Customer Checkout Save Method in Vault"/>
             <title value="Customer Checkout"/>
-            <description value="Checkout as customer using Stripe and store method in Vault"/>
+            <description value="Checkout as customer using Stripe 3D Secure and store method in Vault"/>
             <severity value="CRITICAL"/>
             <group value="pmclain_stripe"/>
         </annotations>
@@ -54,10 +54,15 @@
         <click selector="{{CheckoutShippingMethodsSection.next}}" stepKey="clickNext"/>
 
         <actionGroup ref="CompleteStripePaymentForm" stepKey="enterPaymentDetails">
-            <argument name="card" value="stripeCardValid" />
+            <argument name="card" value="stripe3dCard" />
         </actionGroup>
 
         <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton" />
+        <waitForElement selector="{{CheckoutPaymentSection.stripeRedirectNotice}}" stepKey="waitFrom3DSecureNotification" time="30" />
+        <click selector="{{CheckoutPaymentSection.stripeRedirectNotice}}" stepKey="click3DSecureRedirctAccept" />
+
+        <click selector="{{StripeThreeDConfirmation.authorize}}" stepKey="clickAuthorizeButton" />
+
         <waitForPageLoad stepKey="waitForSuccessPage" time="60" />
 
         <grabTextFrom stepKey="grabOrderNumberOne" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
@@ -76,6 +81,11 @@
         <click selector="{{CheckoutPaymentSection.stripeSaved}}" stepKey="selectSavedCard" />
 
         <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton2" />
+        <waitForElement selector="{{CheckoutPaymentSection.stripeRedirectNotice}}" stepKey="waitFrom3DSecureNotification2" time="30" />
+        <click selector="{{CheckoutPaymentSection.stripeRedirectNotice}}" stepKey="click3DSecureRedirctAccept2" />
+
+        <click selector="{{StripeThreeDConfirmation.authorize}}" stepKey="clickAuthorizeButton2" />
+
         <waitForPageLoad stepKey="waitForSuccessPage2" time="60" />
 
         <grabTextFrom stepKey="grabOrderNumberTwo" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
