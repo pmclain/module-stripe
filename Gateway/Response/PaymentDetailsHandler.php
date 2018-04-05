@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Response;
 
 use Pmclain\Stripe\Observer\DataAssignObserver;
@@ -23,40 +24,55 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 
 class PaymentDetailsHandler implements HandlerInterface
 {
-  const RISK_LEVEL = 'risk_level';
-  const SELLER_MESSAGE = 'seller_message';
-  const CAPTURE = 'captured';
-  const TYPE = 'type';
+    const RISK_LEVEL = 'risk_level';
+    const SELLER_MESSAGE = 'seller_message';
+    const CAPTURE = 'captured';
+    const TYPE = 'type';
 
-  protected $additionalInformationMapping = [
-    self::RISK_LEVEL,
-    self::SELLER_MESSAGE,
-    self::CAPTURE,
-    self::TYPE
-  ];
+    /**
+     * @var array
+     */
+    protected $additionalInformationMapping = [
+        self::RISK_LEVEL,
+        self::SELLER_MESSAGE,
+        self::CAPTURE,
+        self::TYPE
+    ];
 
-  private $subjectReader;
+    /**
+     * @var SubjectReader
+     */
+    private $subjectReader;
 
-  public function __construct(
-    SubjectReader $subjectReader
-  ) {
-    $this->subjectReader = $subjectReader;
-  }
-
-  public function handle(array $subject, array $response) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $transaction = $this->subjectReader->readTransaction($response);
-    $payment = $paymentDataObject->getPayment();
-
-    $payment->setCcTransId($transaction['id']);
-    $payment->setLastTransId($transaction['id']);
-
-    $outcome = $transaction['outcome']->__toArray();
-    foreach ($this->additionalInformationMapping as $item) {
-      if(!isset($outcome[$item])) {
-        continue;
-      }
-      $payment->setAdditionalInformation($item, $outcome[$item]);
+    /**
+     * PaymentDetailsHandler constructor.
+     * @param SubjectReader $subjectReader
+     */
+    public function __construct(
+        SubjectReader $subjectReader
+    ) {
+        $this->subjectReader = $subjectReader;
     }
-  }
+
+    /**
+     * @param array $subject
+     * @param array $response
+     */
+    public function handle(array $subject, array $response)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $transaction = $this->subjectReader->readTransaction($response);
+        $payment = $paymentDataObject->getPayment();
+
+        $payment->setCcTransId($transaction['id']);
+        $payment->setLastTransId($transaction['id']);
+
+        $outcome = $transaction['outcome']->__toArray();
+        foreach ($this->additionalInformationMapping as $item) {
+            if (!isset($outcome[$item])) {
+                continue;
+            }
+            $payment->setAdditionalInformation($item, $outcome[$item]);
+        }
+    }
 }

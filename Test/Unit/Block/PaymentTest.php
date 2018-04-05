@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Test\Unit\Block;
 
 use Pmclain\Stripe\Block\Payment;
@@ -21,38 +22,41 @@ use Pmclain\Stripe\Model\Ui\ConfigProvider;
 
 class PaymentTest extends \PHPUnit\Framework\TestCase
 {
-  /** @var  ConfigProvider|MockObject */
-  private $configProviderMock;
+    /** @var  ConfigProvider|MockObject */
+    private $configProviderMock;
 
-  /** @var Payment */
-  private $block;
+    /** @var Payment */
+    private $block;
 
-  protected function setUp() {
-    $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+    protected function setUp()
+    {
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-    $this->configProviderMock = $this->getMockBuilder(ConfigProvider::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->configProviderMock = $this->getMockBuilder(ConfigProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->block = $objectManager->getObject(
-      Payment::class,
-      [
-        'config' => $this->configProviderMock
-      ]
-    );
-  }
+        $this->block = $objectManager->getObject(
+            Payment::class,
+            [
+                'config' => $this->configProviderMock
+            ]
+        );
+    }
 
-  public function testGetPaymentConfig() {
-    $this->configProviderMock->expects($this->once())
-      ->method('getConfig');
+    public function testGetPaymentConfig()
+    {
+        $this->configProviderMock->expects($this->once())
+            ->method('getConfig');
 
-    $this->block->getPaymentConfig();
-  }
+        $this->block->getPaymentConfig();
+    }
 
-  public function testGetCode() {
-    $this->assertEquals(
-      ConfigProvider::CODE,
-      $this->block->getCode()
-    );
-  }
+    public function testGetCode()
+    {
+        $this->assertEquals(
+            ConfigProvider::CODE,
+            $this->block->getCode()
+        );
+    }
 }

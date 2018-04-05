@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Http;
 
 use Magento\Payment\Gateway\Http\TransferBuilder;
@@ -21,17 +22,29 @@ use Magento\Payment\Gateway\Http\TransferInterface;
 
 class TransferFactory implements TransferFactoryInterface
 {
-  private $transferBuilder;
+    /**
+     * @var TransferBuilder
+     */
+    private $transferBuilder;
 
-  public function __construct(
-    TransferBuilder $transferBuilder
-  ) {
-    $this->transferBuilder = $transferBuilder;
-  }
+    /**
+     * TransferFactory constructor.
+     * @param TransferBuilder $transferBuilder
+     */
+    public function __construct(
+        TransferBuilder $transferBuilder
+    ) {
+        $this->transferBuilder = $transferBuilder;
+    }
 
-  public function create(array $request) {
-    return $this->transferBuilder
-      ->setBody($request)
-      ->build();
-  }
+    /**
+     * @param array $request
+     * @return TransferInterface
+     */
+    public function create(array $request)
+    {
+        return $this->transferBuilder
+            ->setBody($request)
+            ->build();
+    }
 }

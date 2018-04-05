@@ -13,64 +13,69 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Stripe\Stripe;
 use Stripe\Customer;
 
 class VaultTokenObserver implements ObserverInterface
 {
-  /** @var CustomerRepositoryInterface */
-  private $customerRepository;
+    /** @var CustomerRepositoryInterface */
+    private $customerRepository;
 
-  /** @var Config */
-  private $config;
+    /** @var Config */
+    private $config;
 
-  /** @var EncryptorInterface */
-  private $encryptor;
-
-  public function __construct(
-    Config $config,
-    EncryptorInterface $encryptor,
-    CustomerRepositoryInterface $customerRepository
-  ) {
-    $this->encryptor = $encryptor;
-    $this->config = $config;
-    $this->customerRepository = $customerRepository;
-    $this->initCredentials();
-  }
-
-  protected function initCredentials() {
-    Stripe::setApiKey($this->encryptor->decrypt($this->config->getSecretKey()));
-  }
-
-  public function execute(Observer $observer) {
-    $token = $observer->getObject();
-    if ($token->getIsActive()) {
-      return;
+    /**
+     * VaultTokenObserver constructor.
+     * @param Config $config
+     * @param CustomerRepositoryInterface $customerRepository
+     */
+    public function __construct(
+        Config $config,
+        CustomerRepositoryInterface $customerRepository
+    ) {
+        $this->config = $config;
+        $this->customerRepository = $customerRepository;
+        $this->initCredentials();
     }
 
-    try {
-      $customer = $this->customerRepository->getById($token->getCustomerId());
-    }catch (\Exception $e) {
-      return;
+    protected function initCredentials()
+    {
+        Stripe::setApiKey($this->config->getSecretKey());
     }
 
-    $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
-    if (!$stripeCustomerId) {
-      return;
-    }
+    /**
+     * @param Observer $observer
+     */
+    public function execute(Observer $observer)
+    {
+        $token = $observer->getObject();
+        if ($token->getIsActive()) {
+            return;
+        }
 
-    try {
-      $stripeCustomer = Customer::retrieve($stripeCustomerId->getValue());
-      $stripeCustomer->sources->retrieve($token->getGatewayToken())->delete();
-    }catch (\Exception $e) {
-      return;
+        try {
+            $customer = $this->customerRepository->getById($token->getCustomerId());
+        } catch (\Exception $e) {
+            return;
+        }
+
+        $stripeCustomerId = $customer->getCustomAttribute('stripe_customer_id');
+        if (!$stripeCustomerId) {
+            return;
+        }
+
+        try {
+            $stripeCustomer = Customer::retrieve($stripeCustomerId->getValue());
+            $stripeCustomer->sources->retrieve($token->getGatewayToken())->delete();
+        } catch (\Exception $e) {
+            return;
+        }
     }
-  }
 }

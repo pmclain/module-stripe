@@ -13,17 +13,19 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Test\Unit\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Request\SettlementDataBuilder;
 
 class SettlementDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
-  public function testBuild() {
-    $builder = new SettlementDataBuilder();
-    $this->assertEquals(
-      [SettlementDataBuilder::SUBMIT_FOR_SETTLEMENT => true],
-      $builder->build([])
-    );
-  }
+    public function testBuild()
+    {
+        $builder = new SettlementDataBuilder();
+        $this->assertEquals(
+            [SettlementDataBuilder::SUBMIT_FOR_SETTLEMENT => true],
+            $builder->build([])
+        );
+    }
 }

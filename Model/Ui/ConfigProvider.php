@@ -13,58 +13,89 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Store\Model\ScopeInterface;
+use Pmclain\Stripe\Gateway\Config\Config;
+use Magento\Framework\UrlInterface;
 
 class ConfigProvider implements ConfigProviderInterface
 {
-  const CODE = 'pmclain_stripe';
-  const CC_VAULT_CODE = 'pmclain_stripe_vault';
+    const CODE = 'pmclain_stripe';
+    const CC_VAULT_CODE = 'pmclain_stripe_vault';
 
-  protected $_config;
-  protected $_encryptor;
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $config;
 
-  public function __construct(
-    ScopeConfigInterface $configInterface,
-    EncryptorInterface $encryptorInterface
-  ){
-    $this->_config = $configInterface;
-    $this->_encryptor = $encryptorInterface;
-  }
+    /**
+     * @var UrlInterface
+     */
+    protected $url;
 
-  public function getConfig()
-  {
-    return [
-      'payment' => [
-        self::CODE => [
-          'publishableKey' => $this->getPublishableKey(),
-          'vaultCode' => self::CC_VAULT_CODE,
-        ]
-      ]
-    ];
-  }
-
-  public function getPublishableKey() {
-    if ($this->_isTestMode()) {
-      return $this->_getEncryptedConfig('test_publishable_key');
+    /**
+     * ConfigProvider constructor.
+     * @param ScopeConfigInterface $configInterface
+     * @param UrlInterface $url
+     */
+    public function __construct(
+        ScopeConfigInterface $configInterface,
+        UrlInterface $url
+    ) {
+        $this->config = $configInterface;
+        $this->url = $url;
     }
-    return $this->_getEncryptedConfig('live_publishable_key');
-  }
 
-  protected function _isTestMode() {
-    return $this->_getConfig('test_mode');
-  }
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return [
+            'payment' => [
+                self::CODE => [
+                    'publishableKey' => $this->getPublishableKey(),
+                    'threeDSecure' => (int)$this->getStoreConfig(Config::KEY_VERIFY_3D_SECURE),
+                    'threeDThreshold' => (float)$this->getStoreConfig(Config::KEY_3D_SECURE_THRESHOLD),
+                    'threeDRedirectUrl' => $this->url->getUrl('pmstripe/threedsecure/redirect'),
+                    'vaultCode' => self::CC_VAULT_CODE,
+                ],
+            ],
+        ];
+    }
 
-  protected function _getEncryptedConfig($value) {
-    $config = $this->_getConfig($value);
-    return $this->_encryptor->decrypt($config);
-  }
+    /**
+     * @return string
+     */
+    public function getPublishableKey()
+    {
+        if ($this->isTestMode()) {
+            return $this->getStoreConfig(Config::KEY_TEST_PUBLISHABLE_KEY);
+        }
+        return $this->getStoreConfig(Config::KEY_LIVE_PUBLISHABLE_KEY);
+    }
 
-  protected function _getConfig($value) {
-    return $this->_config->getValue('payment/pmclain_stripe/' . $value, ScopeInterface::SCOPE_STORE);
-  }
+    /**
+     * @return int
+     */
+    protected function isTestMode()
+    {
+        return (int)$this->getStoreConfig(Config::KEY_ENVIRONMENT);
+    }
+
+    /**
+     * @param string $value
+     * @return mixed
+     */
+    protected function getStoreConfig($value)
+    {
+        return $this->config->getValue(
+            'payment/pmclain_stripe/' . $value,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
 }

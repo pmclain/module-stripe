@@ -13,11 +13,17 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Http\Client;
 
 class TransactionVoid extends AbstractTransaction
 {
-  protected function process(array $data) {
-    return $this->adapter->void($data['transaction_id']);
-  }
+    /**
+     * @param array $data
+     * @return \Stripe\ApiOperations\ApiResource
+     */
+    protected function process(array $data)
+    {
+        return $this->adapter->void($data['transaction_id']);
+    }
 }

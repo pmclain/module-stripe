@@ -13,32 +13,37 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 
-
 class Vault extends PaymentDataBuilder
 {
-  public function build(array $subject) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $payment = $paymentDataObject->getPayment();
-    $order = $paymentDataObject->getOrder();
+    /**
+     * @param array $subject
+     * @return array
+     */
+    public function build(array $subject)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $payment = $paymentDataObject->getPayment();
+        $order = $paymentDataObject->getOrder();
 
-    $extensionAttributes = $payment->getExtensionAttributes();
-    $paymentToken = $extensionAttributes->getVaultPaymentToken();
+        $extensionAttributes = $payment->getExtensionAttributes();
+        $paymentToken = $extensionAttributes->getVaultPaymentToken();
 
-    $stripeCustomerId = $this->getStripeCustomerId();
-    
-    $result = [
-      self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
-      self::ORDER_ID => $order->getOrderIncrementId(),
-      self::CURRENCY => $this->config->getCurrency(),
-      self::SOURCE => $paymentToken->getGatewayToken(),
-      self::CAPTURE => 'false',
-      self::CUSTOMER => $stripeCustomerId
-    ];
+        $stripeCustomerId = $this->getStripeCustomerId();
 
-    return $result;
-  }
+        $result = [
+            self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
+            self::ORDER_ID => $order->getOrderIncrementId(),
+            self::CURRENCY => $this->config->getCurrency(),
+            self::SOURCE => $paymentToken->getGatewayToken(),
+            self::CAPTURE => 'false',
+            self::CUSTOMER => $stripeCustomerId
+        ];
+
+        return $result;
+    }
 }

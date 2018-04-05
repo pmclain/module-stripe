@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the OSL 3.0 License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+-->
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CompleteGuestAddressForm">
+        <arguments>
+            <argument name="customer" />
+            <argument name="address" />
+        </arguments>
+
+        <fillField selector="{{GuestCheckoutShippingSection.email}}" userInput="{{customer.email}}" stepKey="enterEmail"/>
+        <fillField selector="{{GuestCheckoutShippingSection.firstName}}" userInput="{{customer.firstname}}" stepKey="enterFirstName"/>
+        <fillField selector="{{GuestCheckoutShippingSection.lastName}}" userInput="{{customer.lastname}}" stepKey="enterLastName"/>
+        <fillField selector="{{GuestCheckoutShippingSection.street}}" userInput="{{address.street[0]}}" stepKey="enterStreet"/>
+        <fillField selector="{{GuestCheckoutShippingSection.city}}" userInput="{{address.city}}" stepKey="enterCity"/>
+        <selectOption selector="{{GuestCheckoutShippingSection.region}}" userInput="{{address.state}}" stepKey="selectRegion"/>
+        <fillField selector="{{GuestCheckoutShippingSection.postcode}}" userInput="{{address.postcode}}" stepKey="enterPostcode"/>
+        <fillField selector="{{GuestCheckoutShippingSection.telephone}}" userInput="{{address.telephone}}" stepKey="enterTelephone"/>
+    </actionGroup>
+</actionGroups>

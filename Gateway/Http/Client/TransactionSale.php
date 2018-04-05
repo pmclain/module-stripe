@@ -13,11 +13,17 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Http\Client;
 
 class TransactionSale extends AbstractTransaction
 {
-  protected function process(array $data) {
-    return $this->adapter->sale($data);
-  }
+    /**
+     * @param array $data
+     * @return array|\Exception|\Stripe\ApiOperations\ApiResource|\Stripe\Error\Card
+     */
+    protected function process(array $data)
+    {
+        return $this->adapter->sale($data);
+    }
 }

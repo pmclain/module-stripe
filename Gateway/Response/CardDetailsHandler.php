@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Response;
 
 use Pmclain\Stripe\Gateway\Config\Config;
@@ -23,32 +24,48 @@ use Magento\Payment\Gateway\Response\HandlerInterface;
 
 class CardDetailsHandler implements HandlerInterface
 {
-  const CARD_TYPE = 'brand';
-  const CARD_EXP_MONTH = 'exp_month';
-  const CARD_EXP_YEAR = 'exp_year';
-  const CARD_LAST4 = 'last4';
+    const CARD_TYPE = 'brand';
+    const CARD_EXP_MONTH = 'exp_month';
+    const CARD_EXP_YEAR = 'exp_year';
+    const CARD_LAST4 = 'last4';
 
-  private $config;
-  private $subjectReader;
+    /**
+     * @var Config
+     */
+    private $config;
+    /**
+     * @var SubjectReader
+     */
+    private $subjectReader;
 
-  public function __construct(
-    Config $config,
-    SubjectReader $subjectReader
-  ) {
-    $this->config = $config;
-    $this->subjectReader = $subjectReader;
-  }
+    /**
+     * CardDetailsHandler constructor.
+     * @param Config $config
+     * @param SubjectReader $subjectReader
+     */
+    public function __construct(
+        Config $config,
+        SubjectReader $subjectReader
+    ) {
+        $this->config = $config;
+        $this->subjectReader = $subjectReader;
+    }
 
-  public function handle(array $subject, array $response) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $transaction = $this->subjectReader->readTransaction($response);
-    $payment = $paymentDataObject->getPayment();
-    ContextHelper::assertOrderPayment($payment);
+    /**
+     * @param array $subject
+     * @param array $response
+     */
+    public function handle(array $subject, array $response)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $transaction = $this->subjectReader->readTransaction($response);
+        $payment = $paymentDataObject->getPayment();
+        ContextHelper::assertOrderPayment($payment);
 
-    $creditCard = $transaction['source']->__toArray();
-    $payment->setCcLast4($creditCard[self::CARD_LAST4]);
-    $payment->setCcExpMonth($creditCard[self::CARD_EXP_MONTH]);
-    $payment->setCcExpYear($creditCard[self::CARD_EXP_YEAR]);
-    $payment->setCcType($creditCard[self::CARD_TYPE]);
-  }
+        $creditCard = $transaction['source']->__toArray();
+        $payment->setCcLast4($creditCard[self::CARD_LAST4]);
+        $payment->setCcExpMonth($creditCard[self::CARD_EXP_MONTH]);
+        $payment->setCcExpYear($creditCard[self::CARD_EXP_YEAR]);
+        $payment->setCcType($creditCard[self::CARD_TYPE]);
+    }
 }

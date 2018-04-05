@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Block;
 
 use Magento\Framework\Phrase;
@@ -20,14 +21,14 @@ use Magento\Payment\Block\ConfigurableInfo;
 
 class Info extends ConfigurableInfo
 {
-  /**
-   * Returns label
-   *
-   * @param string $field
-   * @return Phrase
-   */
-  protected function getLabel($field)
-  {
-    return __($field);
-  }
+    /**
+     * Returns label
+     *
+     * @param string $field
+     * @return Phrase
+     */
+    protected function getLabel($field)
+    {
+        return __($field);
+    }
 }

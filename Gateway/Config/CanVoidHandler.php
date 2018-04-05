@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Config;
 
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
@@ -21,18 +22,31 @@ use Magento\Sales\Model\Order\Payment;
 
 class CanVoidHandler implements ValueHandlerInterface
 {
-  private $subjectReader;
+    /**
+     * @var SubjectReader
+     */
+    private $subjectReader;
 
-  public function __construct(
-    SubjectReader $subjectReader
-  ) {
-    $this->subjectReader = $subjectReader;
-  }
+    /**
+     * CanVoidHandler constructor.
+     * @param SubjectReader $subjectReader
+     */
+    public function __construct(
+        SubjectReader $subjectReader
+    ) {
+        $this->subjectReader = $subjectReader;
+    }
 
-  public function handle(array $subject, $storeId = NULL) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $payment = $paymentDataObject->getPayment();
+    /**
+     * @param array $subject
+     * @param null $storeId
+     * @return bool
+     */
+    public function handle(array $subject, $storeId = null)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $payment = $paymentDataObject->getPayment();
 
-    return $payment instanceof Payment && !(bool)$payment->getAmountPaid();
-  }
+        return $payment instanceof Payment && !(bool)$payment->getAmountPaid();
+    }
 }

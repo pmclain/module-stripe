@@ -13,25 +13,41 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Helper;
 
 use Pmclain\Stripe\Model\Adminhtml\Source\Cctype as CcTypeSource;
 
 class CcType
 {
-  private $ccTypes = [];
-  private $ccTypeSource;
+    /**
+     * @var array
+     */
+    private $ccTypes = [];
 
-  public function __construct(
-    CcTypeSource $ccTypeSource
-  ) {
-    $this->ccTypeSource = $ccTypeSource;
-  }
+    /**
+     * @var CcTypeSource
+     */
+    private $ccTypeSource;
 
-  public function getCcTypes() {
-    if(!$this->ccTypes) {
-      $this->ccTypes = $this->ccTypeSource->toOptionArray();
+    /**
+     * CcType constructor.
+     * @param CcTypeSource $ccTypeSource
+     */
+    public function __construct(
+        CcTypeSource $ccTypeSource
+    ) {
+        $this->ccTypeSource = $ccTypeSource;
     }
-    return $this->ccTypes;
-  }
+
+    /**
+     * @return array
+     */
+    public function getCcTypes()
+    {
+        if (!$this->ccTypes) {
+            $this->ccTypes = $this->ccTypeSource->toOptionArray();
+        }
+        return $this->ccTypes;
+    }
 }

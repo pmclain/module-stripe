@@ -42,18 +42,30 @@
         <field id="test_secret_key" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Test Secret Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">1</field>
+          </depends>
         </field>
         <field id="test_publishable_key" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Test Publishable Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">1</field>
+          </depends>
         </field>
         <field id="live_secret_key" translate="label" type="obscure" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Live Secret Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">0</field>
+          </depends>
         </field>
         <field id="live_publishable_key" translate="label" type="obscure" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Live Publishable Key</label>
           <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+          <depends>
+            <field id="test_mode">0</field>
+          </depends>
         </field>
         <field id="currency" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Accepted Currency</label>
@@ -84,13 +96,21 @@
           <label>Payment from Specific Countries</label>
           <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
         </field>
-        <field id="min_order_total" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="verify_3dsecure" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>3D Secure Verification</label>
+          <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="threshold_amount" translate="label comment" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Threshold Amount</label>
+          <comment>Minimum amount to require 3D secure verification.</comment>
+        </field>
+        <field id="min_order_total" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Minimum Order Total</label>
         </field>
-        <field id="max_order_total" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="max_order_total" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Maximum Order Total</label>
         </field>
-        <field id="sort_order" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="sort_order" translate="label" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Sort Order</label>
           <frontend_class>validate-number</frontend_class>
         </field>

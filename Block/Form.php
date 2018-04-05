@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Block;
 
 use Pmclain\Stripe\Gateway\Config\Config as GatewayConfig;
@@ -21,48 +22,60 @@ use Magento\Payment\Block\Form\Cc;
 use Magento\Payment\Model\Config;
 use Magento\Payment\Helper\Data as Helper;
 use Pmclain\Stripe\Model\Ui\ConfigProvider;
+use Magento\Vault\Model\VaultPaymentInterface;
 
 class Form extends Cc
 {
-  /** @var GatewayConfig $gatewayConfig */
-  protected $gatewayConfig;
+    /** @var GatewayConfig $gatewayConfig */
+    protected $gatewayConfig;
 
-  /** @var Helper $paymentDataHelper */
-  private $paymentDataHelper;
+    /** @var Helper $paymentDataHelper */
+    private $paymentDataHelper;
 
-  public function __construct(
-    Context $context,
-    Config $paymentConfig,
-    GatewayConfig $gatewayConfig,
-    Helper $helper,
-    array $data = []
-  ) {
-    parent::__construct($context, $paymentConfig, $data);
-    $this->gatewayConfig = $gatewayConfig;
-    $this->paymentDataHelper = $helper;
-  }
+    /**
+     * Form constructor.
+     * @param Context $context
+     * @param Config $paymentConfig
+     * @param GatewayConfig $gatewayConfig
+     * @param Helper $helper
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        Config $paymentConfig,
+        GatewayConfig $gatewayConfig,
+        Helper $helper,
+        array $data = []
+    ) {
+        parent::__construct($context, $paymentConfig, $data);
+        $this->gatewayConfig = $gatewayConfig;
+        $this->paymentDataHelper = $helper;
+    }
 
-  public function useCcv() {
-    return $this->gatewayConfig->isCcvEnabled();
-  }
+    /**
+     * @return bool
+     */
+    public function useCcv()
+    {
+        return $this->gatewayConfig->isCcvEnabled();
+    }
 
-  /**
-   * Check if vault enabled
-   * @return bool
-   */
-  public function isVaultEnabled()
-  {
-    $storeId = $this->_storeManager->getStore()->getId();
-    $vaultPayment = $this->getVaultPayment();
-    return $vaultPayment->isActive($storeId);
-  }
+    /**
+     * Check if vault enabled
+     * @return bool
+     */
+    public function isVaultEnabled()
+    {
+        $storeId = $this->_storeManager->getStore()->getId();
+        $vaultPayment = $this->getVaultPayment();
+        return $vaultPayment->isActive($storeId);
+    }
 
-  /**
-   * Get configured vault payment for Braintree
-   * @return VaultPaymentInterface
-   */
-  private function getVaultPayment()
-  {
-    return $this->paymentDataHelper->getMethodInstance(ConfigProvider::CC_VAULT_CODE);
-  }
+    /**
+     * @return VaultPaymentInterface
+     */
+    private function getVaultPayment()
+    {
+        return $this->paymentDataHelper->getMethodInstance(ConfigProvider::CC_VAULT_CODE);
+    }
 }

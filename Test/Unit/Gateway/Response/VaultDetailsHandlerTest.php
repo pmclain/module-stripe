@@ -13,6 +13,7 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Test\Unit\Gateway\Response;
 
 use Pmclain\Stripe\Gateway\Response\VaultDetailsHandler;
@@ -30,149 +31,158 @@ use Magento\Sales\Api\Data\OrderPaymentExtensionInterfaceFactory;
 
 class VaultDetailsHandlerTest extends \PHPUnit\Framework\TestCase
 {
-  /** @var PaymentDataObject|MockObject */
-  private $paymentDataObjectMock;
+    /** @var PaymentDataObject|MockObject */
+    private $paymentDataObjectMock;
 
-  /** @var Charge|MockObject */
-  private $chargeMock;
+    /** @var Charge|MockObject */
+    private $chargeMock;
 
-  /** @var SubjectReader|MockObject */
-  private $subjectReaderMock;
+    /** @var SubjectReader|MockObject */
+    private $subjectReaderMock;
 
-  /** @var Card|MockObject */
-  private $cardMock;
+    /** @var Card|MockObject */
+    private $cardMock;
 
-  /** @var Payment|MockObject */
-  private $paymentMock;
+    /** @var Payment|MockObject */
+    private $paymentMock;
 
-  /** @var CreditCardTokenFactory|MockObject */
-  private $paymentTokenFactoryMock;
+    /** @var CreditCardTokenFactory|MockObject */
+    private $paymentTokenFactoryMock;
 
-  /** @var PaymentToken|MockObject */
-  private $paymentTokenMock;
+    /** @var PaymentToken|MockObject */
+    private $paymentTokenMock;
 
-  /** @var Config|MockObject */
-  private $configMock;
+    /** @var Config|MockObject */
+    private $configMock;
 
-  /** @var OrderPaymentExtension|MockObject */
-  private $extensionAttributeMock;
+    /** @var OrderPaymentExtension|MockObject */
+    private $extensionAttributeMock;
 
-  /** @var OrderPaymentExtensionInterfaceFactory|MockObject */
-  private $extensionAttributeFactoryMock;
+    /** @var OrderPaymentExtensionInterfaceFactory|MockObject */
+    private $extensionAttributeFactoryMock;
 
-  /** @var  VaultDetailsHandler */
-  private $handler;
+    /** @var  VaultDetailsHandler */
+    private $handler;
 
-  protected function setUp() {
-    $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+    protected function setUp()
+    {
+        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-    $this->paymentDataObjectMock = $this->getMockBuilder(PaymentDataObject::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->paymentDataObjectMock = $this->getMockBuilder(PaymentDataObject::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->chargeMock = $this->getMockBuilder(Charge::class)
-      ->getMock();
+        $this->chargeMock = $this->getMockBuilder(Charge::class)
+            ->getMock();
 
-    $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->cardMock = $this->getMockBuilder(Card::class)
-      ->setMethods(['__toArray'])
-      ->getMock();
+        $this->cardMock = $this->getMockBuilder(Card::class)
+            ->setMethods(['__toArray'])
+            ->getMock();
 
-    $this->paymentMock = $this->getMockBuilder(Payment::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->paymentMock = $this->getMockBuilder(Payment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->paymentTokenFactoryMock = $this->getMockBuilder(CreditCardTokenFactory::class)
-      ->disableOriginalConstructor()
-      ->setMethods(['create'])
-      ->getMock();
+        $this->paymentTokenFactoryMock = $this->getMockBuilder(CreditCardTokenFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
 
-    $this->paymentTokenMock = $this->getMockBuilder(PaymentToken::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->paymentTokenMock = $this->getMockBuilder(PaymentToken::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->configMock = $this->getMockBuilder(Config::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->configMock = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->extensionAttributeMock = $this->getMockBuilder(OrderPaymentExtension::class)
-      ->disableOriginalConstructor()
-      ->setMethods(['setVaultPaymentToken'])
-      ->getmock();
+        $this->extensionAttributeMock = $this->getMockBuilder(OrderPaymentExtension::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['setVaultPaymentToken'])
+            ->getmock();
 
-    $this->extensionAttributeFactoryMock = $this->getMockBuilder(OrderPaymentExtensionInterfaceFactory::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+        $this->extensionAttributeFactoryMock = $this->getMockBuilder(OrderPaymentExtensionInterfaceFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    $this->handler = $objectManager->getObject(
-      VaultDetailsHandler::class,
-      [
-        'subjectReader' => $this->subjectReaderMock,
-        'paymentTokenFactory' => $this->paymentTokenFactoryMock,
-        'config' => $this->configMock,
-        'paymentExtensionFactory' => $this->extensionAttributeFactoryMock,
-      ]
-    );
-  }
+        $this->handler = $objectManager->getObject(
+            VaultDetailsHandler::class,
+            [
+                'subjectReader' => $this->subjectReaderMock,
+                'paymentTokenFactory' => $this->paymentTokenFactoryMock,
+                'config' => $this->configMock,
+                'paymentExtensionFactory' => $this->extensionAttributeFactoryMock,
+            ]
+        );
+    }
 
-  public function testHandle() {
-    $handlingSubject = [
-      'payment' => $this->paymentDataObjectMock,
-      'amount' => 10.00
-    ];
+    public function testHandle()
+    {
+        $handlingSubject = [
+            'payment' => $this->paymentDataObjectMock,
+            'amount' => 10.00
+        ];
 
-    $response = [
-      [$this->chargeMock]
-    ];
+        $response = [
+            [$this->chargeMock]
+        ];
 
-    $this->subjectReaderMock->expects($this->once())
-      ->method('readPayment')
-      ->with($handlingSubject)
-      ->willReturn($this->paymentDataObjectMock);
+        $this->subjectReaderMock->expects($this->once())
+            ->method('readPayment')
+            ->with($handlingSubject)
+            ->willReturn($this->paymentDataObjectMock);
 
-    $this->subjectReaderMock->expects($this->once())
-      ->method('readTransaction')
-      ->with($response)
-      ->willReturn(['source' => $this->cardMock]);
+        $this->subjectReaderMock->expects($this->once())
+            ->method('readTransaction')
+            ->with($response)
+            ->willReturn(['source' => $this->cardMock]);
 
-    $this->paymentDataObjectMock->expects($this->once())
-      ->method('getPayment')
-      ->willReturn($this->paymentMock);
+        $this->paymentDataObjectMock->expects($this->once())
+            ->method('getPayment')
+            ->willReturn($this->paymentMock);
 
-    $this->paymentMock->expects($this->once())
-      ->method('getAdditionalInformation')
-      ->with('is_active_payment_token_enabler')
-      ->willReturn(true);
+        $additionalInfo = [
+            'is_active_token_enabler' => true,
+            'cc_src' => 'src_12323kjhlkh138',
+        ];
 
-    $this->cardMock->expects($this->once())
-      ->method('__toArray')
-      ->willReturn([
-        'id' => 'card_token',
-        'brand' => 'Visa',
-        'last4' => '4444',
-        'exp_month' => '01',
-        'exp_year' => '2018'
-      ]);
+        $this->paymentMock->method('getAdditionalInformation')
+            ->willReturn($this->returnCallback(function ($arg) use ($additionalInfo) {
+                return $additionalInfo[$arg];
+            }));
 
-    $this->paymentTokenFactoryMock->expects($this->once())
-      ->method('create')
-      ->willReturn($this->paymentTokenMock);
+        $this->paymentMock->method('getCcExpMonth')
+            ->willReturn('01');
 
-    $this->configMock->expects($this->once())
-      ->method('getCcTypesMapper')
-      ->willReturn(['visa' => 'VI']);
+        $this->paymentMock->method('getCcExpYear')
+            ->willReturn(date('Y', strtotime('+2 years')));
 
-    $this->paymentMock->expects($this->once())
-      ->method('getExtensionAttributes')
-      ->willReturn($this->extensionAttributeMock);
+        $this->paymentMock->method('getCcType')
+            ->willReturn('Visa');
 
-    $this->extensionAttributeMock->expects($this->once())
-      ->method('setVaultPaymentToken')
-      ->with($this->paymentTokenMock);
+        $this->paymentMock->method('getCcLast4')
+            ->willReturn('4444');
 
-    $this->handler->handle($handlingSubject, $response);
-  }
+        $this->paymentTokenFactoryMock->expects($this->once())
+            ->method('create')
+            ->willReturn($this->paymentTokenMock);
+
+        $this->configMock->expects($this->once())
+            ->method('getCcTypesMapper')
+            ->willReturn(['visa' => 'VI']);
+
+        $this->paymentMock->expects($this->once())
+            ->method('getExtensionAttributes')
+            ->willReturn($this->extensionAttributeMock);
+
+        $this->extensionAttributeMock->expects($this->once())
+            ->method('setVaultPaymentToken')
+            ->with($this->paymentTokenMock);
+
+        $this->handler->handle($handlingSubject, $response);
+    }
 }

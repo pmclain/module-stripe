@@ -13,9 +13,10 @@
  * @copyright Copyright (c) 2017-2018
  * @license   Open Software License (OSL 3.0)
  */
+
 namespace Pmclain\Stripe\Gateway\Request;
 
-use Magento\Braintree\Gateway\Request\PaymentDataBuilder;
+use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
@@ -23,30 +24,43 @@ use Pmclain\Stripe\Helper\Payment\Formatter;
 
 class CaptureDataBuilder implements BuilderInterface
 {
-  use Formatter;
+    use Formatter;
 
-  const TRANSACTION_ID = 'transaction_id';
+    const TRANSACTION_ID = 'transaction_id';
 
-  private $subjectReader;
+    /**
+     * @var SubjectReader
+     */
+    private $subjectReader;
 
-  public function __construct(
-    SubjectReader $subjectReader
-  ) {
-    $this->subjectReader = $subjectReader;
-  }
-
-  public function build(array $subject) {
-    $paymentDataObject = $this->subjectReader->readPayment($subject);
-    $payment = $paymentDataObject->getPayment();
-    $transactionId = $payment->getCcTransId();
-
-    if(!$transactionId) {
-      throw new LocalizedException(__('No Authorization Transaction to capture'));
+    /**
+     * CaptureDataBuilder constructor.
+     * @param SubjectReader $subjectReader
+     */
+    public function __construct(
+        SubjectReader $subjectReader
+    ) {
+        $this->subjectReader = $subjectReader;
     }
 
-    return [
-      self::TRANSACTION_ID => $transactionId,
-      PaymentDataBuilder::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject))
-    ];
-  }
+    /**
+     * @param array $subject
+     * @return array
+     * @throws LocalizedException
+     */
+    public function build(array $subject)
+    {
+        $paymentDataObject = $this->subjectReader->readPayment($subject);
+        $payment = $paymentDataObject->getPayment();
+        $transactionId = $payment->getCcTransId();
+
+        if (!$transactionId) {
+            throw new LocalizedException(__('No Authorization Transaction to capture'));
+        }
+
+        return [
+            self::TRANSACTION_ID => $transactionId,
+            PaymentDataBuilder::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject))
+        ];
+    }
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Pmclain_Stripe extension
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the OSL 3.0 License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/osl-3.0.php
+ *
+ * @category  Pmclain
+ * @package   Pmclain_Stripe
+ * @copyright Copyright (c) 2017-2018
+ * @license   Open Software License (OSL 3.0)
+ */
+-->
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
+    <test name="StorefrontStripeCustomerCheckout">
+        <annotations>
+            <features value="Checkout"/>
+            <stories value="Checkout via Customer Checkout"/>
+            <title value="Customer Checkout"/>
+            <description value="Checkout as customer using Stripe"/>
+            <severity value="CRITICAL"/>
+            <group value="pmclain_stripe"/>
+        </annotations>
+        <before>
+            <createData entity="SampleStripeConfig" stepKey="createSampleStripeConfig" />
+            <createData entity="_defaultCategory" stepKey="createCategory"/>
+            <createData entity="_defaultProduct" stepKey="createProduct">
+                <requiredEntity createDataKey="createCategory"/>
+            </createData>
+            <createData entity="Simple_US_Customer" stepKey="simpleuscustomer"/>
+        </before>
+        <after>
+            <amOnPage url="admin/admin/auth/logout/" stepKey="amOnLogoutPage"/>
+            <deleteData createDataKey="createCategory" stepKey="deleteCategory"/>
+            <deleteData createDataKey="createProduct" stepKey="deleteProduct"/>
+            <createData entity="DefaultStripeConfig" stepKey="restoreDefaultStripeConfig" />
+            <deleteData createDataKey="simpleuscustomer" stepKey="deleteCustomer" />
+        </after>
+
+        <actionGroup ref="CustomerLoginOnStorefront" stepKey="customerLogin">
+            <argument name="customer" value="$$simpleuscustomer$$" />
+        </actionGroup>
+
+        <actionGroup ref="GetToCheckout" stepKey="proceedToCheckout">
+            <argument name="category" value="$$createCategory$$" />
+        </actionGroup>
+
+        <waitForElement selector="{{CheckoutShippingMethodsSection.next}}" time="30" stepKey="waitForNextButton"/>
+        <click selector="{{CheckoutShippingMethodsSection.next}}" stepKey="clickNext"/>
+
+        <actionGroup ref="CompleteStripePaymentForm" stepKey="enterPaymentDetails">
+            <argument name="card" value="stripeCardValid" />
+        </actionGroup>
+
+        <click selector="{{CheckoutPaymentSection.saveInVault}}" stepKey="uncheckSaveInVault" />
+        <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton" />
+        <waitForPageLoad stepKey="waitForSuccessPage" time="60" />
+
+        <grabTextFrom stepKey="grabOrderNumber" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
+        <see stepKey="seeOrderConfirmation" selector="{{CheckoutSuccessMainSection.success}}" userInput="Your order number is:" />
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin1"/>
+
+        <actionGroup ref="ValidateOrder" stepKey="adminCheckOrder">
+            <argument name="ordernumber" value="$grabOrderNumber" />
+            <argument name="email" value="$$simpleuscustomer.email$$" />
+            <argument name="product" value="_defaultProduct" />
+        </actionGroup>
+    </test>
+</tests>
