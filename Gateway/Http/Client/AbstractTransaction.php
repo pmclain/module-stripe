@@ -97,10 +97,6 @@ abstract class AbstractTransaction implements ClientInterface
                 $log['response'] = $response['object'];
             }
 
-            if ($this->config->isDebugOn()) {
-                $this->logger->warning(var_export($log, true));
-            }
-
             $this->customLogger->debug($log);
         }
 
