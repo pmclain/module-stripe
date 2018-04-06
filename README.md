@@ -15,6 +15,7 @@ corresponding Stripe customer profile.
 * New payments can be authorize or authorize and capture.
 * Authorized payments can be captured online during invoice creation.
 * Full and partial refund support when creating credit memos.
+* 3D Secure support for one-time and vault payments
 
 ## Installation
 #### Composer
@@ -35,10 +36,8 @@ Store->Configuration->Sales->Payment Methods->Stripe
 
 ## Feature Roadmap
 There is no ETA for implementation, but here is the list in order of priority.
-1. 3D Secure
-2. Multi-shipping address support
-3. Stripe Radar
-4. Subscriptions
+1. Multi-shipping address support
+2. Stripe Radar
 
 ## License
 Open Software License v3.0
