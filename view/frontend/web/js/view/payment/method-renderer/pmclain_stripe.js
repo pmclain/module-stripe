@@ -308,6 +308,10 @@ define(
               ownerData.owner.address.state = billingAddress.regionCode;
           }
 
+          if (stripeData.address_state == null){
+            stripeData.address_state = '';
+          }
+
           return ownerData;
       },
 
@@ -330,6 +334,10 @@ define(
 
         if (billingAddress.hasOwnProperty('regionCode')) {
           stripeData.address_state = billingAddress.regionCode;
+        }
+
+        if (stripeData.address_state == null){
+          stripeData.address_state = '';
         }
 
         return stripeData;
