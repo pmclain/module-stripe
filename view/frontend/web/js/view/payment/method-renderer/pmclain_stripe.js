@@ -332,6 +332,10 @@ define(
           stripeData.address_state = billingAddress.regionCode;
         }
 
+        if (stripeData.address_state == null){
+          stripeData.address_state = '';
+        }
+
         return stripeData;
       }
     });
