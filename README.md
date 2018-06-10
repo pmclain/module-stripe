@@ -26,7 +26,7 @@ In your Magento 2 root directory run
 ## Magento Version Requirements
 | Release | Magento Version |
 | ------- | --------------- |
-| 1.x.x   | 2.2.x           | 
+| 2.x.x   | 2.2.x           |
 | 1.x.x   | 2.1.x           |
 | None    | 2.0.x           |
 

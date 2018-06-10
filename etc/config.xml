@@ -58,6 +58,7 @@
         <active>1</active>
         <instant_purchase>
           <supported>1</supported>
+          <tokenFormat>Pmclain\Stripe\Model\InstantPurchase\CreditCard\TokenFormatter</tokenFormat>
         </instant_purchase>
       </pmclain_stripe_vault>
     </payment>
