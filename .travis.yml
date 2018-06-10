@@ -27,11 +27,11 @@ matrix:
         - TEST_SUITE=integration
     - php: 7.1
       env:
-        - MAGENTO_VERSION=2.2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=unit
     - php: 7.1
       env:
-        - MAGENTO_VERSION=2.2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=integration
     - php: 7.0
       env:
@@ -47,11 +47,11 @@ matrix:
         - TEST_SUITE=integration
     - php: 7.0
       env:
-        - MAGENTO_VERSION=2.2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=unit
     - php: 7.0
       env:
-        - MAGENTO_VERSION=2.2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=integration
 env:
   global:
