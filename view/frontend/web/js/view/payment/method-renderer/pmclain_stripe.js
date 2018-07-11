@@ -308,8 +308,8 @@ define(
               ownerData.owner.address.state = billingAddress.regionCode;
           }
 
-          if (stripeData.address_state == null){
-            stripeData.address_state = '';
+          if (ownerData.owner.address.state == null){
+            ownerData.owner.address.state = '';
           }
 
           return ownerData;
