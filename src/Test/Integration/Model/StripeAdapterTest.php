@@ -29,7 +29,7 @@ class StripeAdapterTest extends TestCase
 {
     use Formatter;
 
-    const STRIPE_MOCK_URL = 'http://localhost:12111';
+    const STRIPE_MOCK_URL = 'http://stripemock:12111';
     const STRIPE_MOCK_API_KEY = 'sk_test_123';
 
     /**

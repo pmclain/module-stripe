@@ -1,0 +1,26 @@
+#!/bin/bash
+
+MAGENTO_COMMAND="php $MAGENTO_ROOT/bin/magento"
+INSTALL_COMMAND="setup:install \
+  --admin-firstname admin \
+  --admin-lastname user \
+  --admin-email admin@mage2.docker \
+  --admin-user admin \
+  --admin-password passwd123 \
+  --base-url $MAGENTO_URL \
+  --backend-frontname admin \
+  --db-host db \
+  --db-name magento \
+  --db-user magento \
+  --db-password magento \
+  --use-rewrites 1 \
+  --use-secure 1 \
+  --base-url-secure $MAGENTO_URL \
+  --use-secure-admin 1 \
+  --admin-use-security-key 0 \
+  --session-save redis \
+  --session-save-redis-host redis \
+  --session-save-redis-db 0 \
+  --admin-use-security-key 0"
+
+$MAGENTO_COMMAND $INSTALL_COMMAND

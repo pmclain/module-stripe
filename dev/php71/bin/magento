@@ -1,0 +1,5 @@
+#!/bin/bash
+
+MAGENTO_COMMAND="php $MAGENTO_ROOT/bin/magento"
+
+$MAGENTO_COMMAND "$@"

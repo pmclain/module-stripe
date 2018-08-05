@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd $MAGENTO_ROOT
+
+cp vendor/pmclain/module-stripe/src/Test/Integration/phpunit.xml.dist dev/tests/integration/phpunit.xml
+cp vendor/pmclain/module-stripe/src/Test/Integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php
+
+cd dev/tests/integration
+
+../../../vendor/bin/phpunit

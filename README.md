@@ -39,5 +39,25 @@ There is no ETA for implementation, but here is the list in order of priority.
 1. Multi-shipping address support
 2. Stripe Radar
 
+## Testing and Local Development
+**WARNING**
+The docker setup included is intended for local development only.
+
+### Local Development
+`cd ./dev`  
+`docker-compose up -d` 
+`docker-compose exec app module-installer`  
+`docker-compose exec app magento-installer`
+
+Create the host entry `127.0.0.1 stripe.docker`
+
+### Execute Tests
+ * Setup  
+    `docker-compose -f dev/docker-compose.yml up -d`  
+    `docker-compose -f dev/docker-compose.yml exec app module-installer`  
+ * Unit - `docker-compose -f dev/docker-compose.yml exec app test-unit`
+ * Integration - `docker-compose -f dev/docker-compose.yml exec app test-integration`
+ * Acceptance - `docker-compose -f dev/docker-compose.yml exec app test-acceptance`
+
 ## License
 Open Software License v3.0
