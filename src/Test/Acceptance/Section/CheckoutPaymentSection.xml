@@ -20,7 +20,7 @@
     <section name="CheckoutPaymentSection">
         <element name="stripeSaved" type="radio" selector="[id^='pmclain_stripe_vault_']" />
         <element name="stripeMethod" type="input" selector="[value='pmclain_stripe']" />
-        <element name="stripeIframe" type="iframe" selector="__privateStripeFrame3" />
+        <element name="stripeIframe" type="iframe" selector="__privateStripeFrame4" />
         <element name="stripePlaceOrder" type="button" selector=".payment-method._active button.action.primary.checkout" />
         <element name="saveInVault" type="checkbox" selector="#pmclain_stripe_enable_vault" />
         <element name="stripeRedirectNotice" type="button" selector=".confirm button.action-primary.action-accept" />

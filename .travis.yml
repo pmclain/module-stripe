@@ -1,59 +1,27 @@
 sudo: required
-dist: trusty
-group: edge
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
-    - postfix
-  hosts:
-      - magento2.travis
-language: php
+services:
+  - docker
 matrix:
   include:
-    - php: 7.1
-      env:
-        - MAGENTO_VERSION=2.2-develop
+    - env:
+        - MAGENTO_VERSION=~2.2
         - TEST_SUITE=unit
-    - php: 7.1
-      env:
-        - MAGENTO_VERSION=2.2-develop
+    - env:
+        - MAGENTO_VERSION=~2.2
         - TEST_SUITE=integration
-    - php: 7.1
-      env:
-        - MAGENTO_VERSION=2.2.4
-        - TEST_SUITE=unit
-    - php: 7.1
-      env:
-        - MAGENTO_VERSION=2.2.4
-        - TEST_SUITE=integration
-    - php: 7.0
-      env:
-        - MAGENTO_VERSION=2.2-develop
-        - TEST_SUITE=unit
-    - php: 7.0
-      env:
-        - MAGENTO_VERSION=2.2-develop
-        - TEST_SUITE=integration
-    - php: 7.0
-      env:
-        - MAGENTO_VERSION=2.2.4
-        - TEST_SUITE=unit
-    - php: 7.0
-      env:
-        - MAGENTO_VERSION=2.2.4
-        - TEST_SUITE=integration
-env:
-  global:
-    - COMPOSER_BIN_DIR=~/bin
-    - STRIPE_MOCK_VERSION=0.5.0
-    - COMPOSER_PACKAGE_NAME=pmclain/module-stripe
+    - env:
+        - MAGENTO_VERSION=~2.2
+        - TEST_SUITE=acceptance
 cache:
-  apt: true
   directories:
     - $HOME/.composer/cache
-    - stripe-mock
-before_script: ./.travis/before_script.sh
-script: phpunit -c magento2/dev/tests/$TEST_SUITE
+before_script:
+  - echo "COMPOSER_MAGENTO_USERNAME=$COMPOSER_MAGENTO_USERNAME" >> dev/composer.env
+  - echo "COMPOSER_MAGENTO_PASSWORD=$COMPOSER_MAGENTO_PASSWORD" >> dev/composer.env
+  - echo "COMPOSER_GITHUB_TOKEN=$COMPOSER_GITHUB_TOKEN" >> dev/composer.env
+  - sed -E -i "s/MAGENTO_VERSION=.*/MAGENTO_VERSION=${MAGENTO_VERSION}/" dev/docker-compose.yml
+  - docker-compose -f dev/docker-compose.yml build
+  - docker-compose -f dev/docker-compose.yml up -d
+  - docker-compose -f dev/docker-compose.yml exec app module-installer
+script:
+  - docker-compose -f dev/docker-compose.yml exec app test-${TEST_SUITE}

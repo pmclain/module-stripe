@@ -1,0 +1,86 @@
+version: "3"
+services:
+  web:
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - app
+    networks:
+      default:
+        aliases:
+          - stripe.docker
+    volumes:
+      - ./magento:/var/www/magento
+    environment:
+      - VIRTUAL_HOST=stripe.docker
+  
+  app:
+    build: ./php71
+    links:
+      - db
+      - redis
+      - amqp
+      - mailcatcher
+      - stripemock
+    volumes:
+      - ~/.composer/cache:/root/.composer/cache
+      - ./magento:/var/www/magento:cached
+      - ..:/module
+    env_file:
+      - ./composer.env
+    environment:
+      - PHP_IDE_CONFIG=serverName=stripe.docker
+      - XDEBUG_ENABLE=true
+      - MAGENTO_RUN_MODE=developer
+      - MAGENTO_VERSION=~2.2
+      - MAGENTO_URL=https://stripe.docker
+  
+  db:
+    image: mariadb:10
+    user: mysql
+    ports:
+      - "9306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=magento
+      - MYSQL_DATABASE=magento
+      - MYSQL_USER=magento
+      - MYSQL_PASSWORD=magento
+  
+  redis:
+    image: redis
+    ports:
+      - 6379
+  
+  amqp:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASSWORD=guest
+  
+  mailcatcher:
+    image: helder/mailcatcher
+    ports:
+      - "1080:80"
+
+  chrome:
+    image: selenium/standalone-chrome-debug
+    ports:
+      - "49338:5900"
+
+  stripemock:
+    image: stripemock/stripe-mock
+    ports:
+      - 12111
+      - 12112
+
+volumes:
+  dbdata:
+
+networks:
+  default:
