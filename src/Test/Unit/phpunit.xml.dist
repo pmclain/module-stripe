@@ -14,7 +14,7 @@
     <!-- Test suites definition -->
     <testsuites>
         <testsuite name="Pmclain Stripe Unit Tests">
-            <directory suffix="Test.php">../../../vendor/pmclain/module-stripe/Test/Unit</directory>
+            <directory suffix="Test.php">../../../vendor/pmclain/module-stripe/src/Test/Unit</directory>
         </testsuite>
     </testsuites>
     <php>
@@ -23,9 +23,9 @@
     </php>
     <filter>
         <whitelist addUncoveredFilesFromWhiteList="true">
-            <directory suffix=".php">../../../vendor/pmclain/module-stripe</directory>
+            <directory suffix=".php">../../../vendor/pmclain/module-stripe/src</directory>
             <exclude>
-                <directory>../../../vendor/pmclain/module-stripe/Test</directory>
+                <directory>../../../vendor/pmclain/module-stripe/src/Test</directory>
             </exclude>
         </whitelist>
     </filter>

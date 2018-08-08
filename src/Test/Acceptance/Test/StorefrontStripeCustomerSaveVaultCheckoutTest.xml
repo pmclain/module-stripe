@@ -16,13 +16,13 @@
  */
 -->
 <tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
-    <test name="StorefrontStripeCustomerCheckout">
+       xsi:noNamespaceSchemaLocation="../../../../dev/magento/dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Test/etc/testSchema.xsd">
+    <test name="StorefrontStripeCustomerSaveVaultCheckout">
         <annotations>
             <features value="Checkout"/>
-            <stories value="Checkout via Customer Checkout"/>
+            <stories value="Checkout via Customer Checkout Save Method in Vault"/>
             <title value="Customer Checkout"/>
-            <description value="Checkout as customer using Stripe"/>
+            <description value="Checkout as customer using Stripe and store method in Vault"/>
             <severity value="CRITICAL"/>
             <group value="pmclain_stripe"/>
         </annotations>
@@ -57,17 +57,41 @@
             <argument name="card" value="stripeCardValid" />
         </actionGroup>
 
-        <click selector="{{CheckoutPaymentSection.saveInVault}}" stepKey="uncheckSaveInVault" />
         <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton" />
         <waitForPageLoad stepKey="waitForSuccessPage" time="60" />
 
-        <grabTextFrom stepKey="grabOrderNumber" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
+        <grabTextFrom stepKey="grabOrderNumberOne" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
         <see stepKey="seeOrderConfirmation" selector="{{CheckoutSuccessMainSection.success}}" userInput="Your order number is:" />
 
+        <!-- NOW WE CHECKOUT WITH STORED PAYMENT METHOD -->
+        <actionGroup ref="GetToCheckout" stepKey="returnToCheckout">
+            <argument name="category" value="$$createCategory$$" />
+        </actionGroup>
+
+        <waitForElement selector="{{CheckoutShippingMethodsSection.next}}" time="30" stepKey="waitForNextButton2"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForPaymentLoad2" />
+        <click selector="{{CheckoutShippingMethodsSection.next}}" stepKey="clickNext2"/>
+
+        <waitForElement selector="{{CheckoutPaymentSection.stripeSaved}}" time="30" stepKey="waitForSavedCards" />
+        <click selector="{{CheckoutPaymentSection.stripeSaved}}" stepKey="selectSavedCard" />
+
+        <click selector="{{CheckoutPaymentSection.stripePlaceOrder}}" stepKey="clickPlaceOrderButton2" />
+        <waitForPageLoad stepKey="waitForSuccessPage2" time="60" />
+
+        <grabTextFrom stepKey="grabOrderNumberTwo" selector="{{CheckoutSuccessMainSection.orderNumber22}}"/>
+        <see stepKey="seeOrderConfirmation2" selector="{{CheckoutSuccessMainSection.success}}" userInput="Your order number is:" />
+
+        <!-- Validate both orders in Admin -->
         <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin1"/>
 
-        <actionGroup ref="ValidateOrder" stepKey="adminCheckOrder">
-            <argument name="ordernumber" value="$grabOrderNumber" />
+        <actionGroup ref="ValidateOrder" stepKey="adminCheckOrderOne">
+            <argument name="ordernumber" value="$grabOrderNumberOne" />
+            <argument name="email" value="$$simpleuscustomer.email$$" />
+            <argument name="product" value="_defaultProduct" />
+        </actionGroup>
+
+        <actionGroup ref="ValidateOrder" stepKey="adminCheckOrderTwo">
+            <argument name="ordernumber" value="$grabOrderNumberTwo" />
             <argument name="email" value="$$simpleuscustomer.email$$" />
             <argument name="product" value="_defaultProduct" />
         </actionGroup>

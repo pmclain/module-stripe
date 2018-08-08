@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd $MAGENTO_ROOT
+
+cp vendor/pmclain/module-stripe/src/Test/Unit/phpunit.xml.dist dev/tests/unit/phpunit.xml
+cd dev/tests/unit
+
+../../../vendor/bin/phpunit

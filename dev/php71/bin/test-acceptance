@@ -1,0 +1,41 @@
+#!/bin/bash
+
+cd $MAGENTO_ROOT
+
+[ -f "${MAGENTO_ROOT}/app/etc/env.php" ] && rm ${MAGENTO_ROOT}/app/etc/env.php
+
+# Prevent RSA check when installing MFTF :(
+mkdir -p ~/.ssh
+echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+magento setup:install \
+  --admin-firstname admin \
+  --admin-lastname user \
+  --admin-email admin@mage2.docker \
+  --admin-user admin \
+  --admin-password passwd123 \
+  --base-url http://stripe.docker/ \
+  --backend-frontname admin \
+  --db-host db \
+  --db-name magento \
+  --db-user magento \
+  --db-password magento \
+  --use-rewrites 1 \
+  --use-secure 0 \
+  --use-secure-admin 0 \
+  --admin-use-security-key 0 \
+  --session-save redis \
+  --session-save-redis-host redis \
+  --session-save-redis-db 0 \
+  --admin-use-security-key 0
+
+php bin/magento deploy:mode:set production
+
+cp vendor/pmclain/module-stripe/src/Test/Acceptance/etc/.env.dist dev/tests/acceptance/.env
+
+cd dev/tests/acceptance
+composer install
+
+vendor/bin/robo build:project
+vendor/bin/robo generate:tests
+vendor/bin/codecept run functional --group pmclain_stripe

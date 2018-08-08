@@ -1,0 +1,9 @@
+#!/bin/bash
+
+[ ! -f "${MAGENTO_ROOT}/index.php" ] && \
+    echo "Creating Magento composer project" && \
+    composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition:$MAGENTO_VERSION $MAGENTO_ROOT
+
+composer config minimum-stability dev -d $MAGENTO_ROOT
+composer config repositories.stripe path /module -d $MAGENTO_ROOT
+composer require pmclain/module-stripe:@dev -d $MAGENTO_ROOT

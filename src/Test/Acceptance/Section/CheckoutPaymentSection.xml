@@ -17,7 +17,12 @@
 -->
 <sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="../../../../../../../dev/tests/acceptance/vendor/magento/magento2-functional-testing-framework/src/Magento/FunctionalTestingFramework/Page/etc/SectionObject.xsd">
-    <section name="StripeThreeDConfirmation">
-        <element name="authorize" type="button" selector="#success button.common-Button" />
+    <section name="CheckoutPaymentSection">
+        <element name="stripeSaved" type="radio" selector="[id^='pmclain_stripe_vault_']" />
+        <element name="stripeMethod" type="input" selector="[value='pmclain_stripe']" />
+        <element name="stripeIframe" type="iframe" selector="__privateStripeFrame4" />
+        <element name="stripePlaceOrder" type="button" selector=".payment-method._active button.action.primary.checkout" />
+        <element name="saveInVault" type="checkbox" selector="#pmclain_stripe_enable_vault" />
+        <element name="stripeRedirectNotice" type="button" selector=".confirm button.action-primary.action-accept" />
     </section>
 </sections>
