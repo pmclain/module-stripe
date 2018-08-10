@@ -20,14 +20,12 @@ use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Pmclain\Stripe\Gateway\Request\RefundDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
-use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Model\Order\Payment;
-use Pmclain\Stripe\Helper\Payment\Formatter;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
+use Pmclain\Stripe\Gateway\Config\Config;
 
 class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use Formatter;
-
     /**
      * @var SubjectReader|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -40,19 +38,23 @@ class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->subjectReader = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->subjectReader = $this->createMock(SubjectReader::class);
 
-        $this->dataBuilder = new RefundDataBuilder($this->subjectReader);
+        $configMock = $this->createMock(Config::class);
+        $configMock->method('getCurrencyPrecision')->willReturn('2');
+
+        $priceFormatter = new PriceFormatter($configMock);
+
+        $this->dataBuilder = new RefundDataBuilder(
+            $this->subjectReader,
+            $priceFormatter
+        );
     }
 
     public function testBuild()
     {
         $paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
-        $paymentMock = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $paymentMock = $this->createMock(Payment::class);
 
         $buildSubject = [
             'payment' => $paymentDataObject,
@@ -78,7 +80,7 @@ class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             [
                 'transaction_id' => $transactionId,
-                PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00)
+                PaymentDataBuilder::AMOUNT => '1000'
             ],
             $this->dataBuilder->build($buildSubject)
         );

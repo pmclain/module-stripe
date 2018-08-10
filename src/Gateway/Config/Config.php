@@ -25,6 +25,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const KEY_TEST_PUBLISHABLE_KEY = 'test_publishable_key';
     const KEY_TEST_SECRET_KEY = 'test_secret_key';
     const KEY_CURRENCY = 'currency';
+    const KEY_CURRENCY_PRECISION = 'currency_precision';
     const KEY_CC_TYPES = 'cctypes';
     const KEY_CC_TYPES_STRIPE_MAPPER = 'cctypes_stripe_mapper';
     const KEY_USE_CCV = 'useccv';
@@ -63,6 +64,14 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     public function getCurrency()
     {
         return $this->getValue(self::KEY_CURRENCY);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyPrecision()
+    {
+        return $this->getValue(self::KEY_CURRENCY_PRECISION);
     }
 
     /**

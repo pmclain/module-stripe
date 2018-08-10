@@ -16,16 +16,13 @@
 
 namespace Pmclain\Stripe\Gateway\Request;
 
-use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Pmclain\Stripe\Helper\Payment\Formatter;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 
 class CaptureDataBuilder implements BuilderInterface
 {
-    use Formatter;
-
     const TRANSACTION_ID = 'transaction_id';
 
     /**
@@ -33,14 +30,19 @@ class CaptureDataBuilder implements BuilderInterface
      */
     private $subjectReader;
 
+    private $priceFormatter;
+
     /**
      * CaptureDataBuilder constructor.
      * @param SubjectReader $subjectReader
+     * @param PriceFormatter $priceFormatter
      */
     public function __construct(
-        SubjectReader $subjectReader
+        SubjectReader $subjectReader,
+        PriceFormatter $priceFormatter
     ) {
         $this->subjectReader = $subjectReader;
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -60,7 +62,7 @@ class CaptureDataBuilder implements BuilderInterface
 
         return [
             self::TRANSACTION_ID => $transactionId,
-            PaymentDataBuilder::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject))
+            PaymentDataBuilder::AMOUNT => $this->priceFormatter->formatPrice($this->subjectReader->readAmount($subject))
         ];
     }
 }

@@ -23,12 +23,9 @@ use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Stripe\Stripe;
 use Pmclain\Stripe\Model\Adapter\StripeAdapter;
 use Pmclain\Stripe\Gateway\Config\Config;
-use Pmclain\Stripe\Helper\Payment\Formatter;
 
 class StripeAdapterTest extends TestCase
 {
-    use Formatter;
-
     const STRIPE_MOCK_URL = 'http://stripemock:12111';
     const STRIPE_MOCK_API_KEY = 'sk_test_123';
 
@@ -75,7 +72,7 @@ class StripeAdapterTest extends TestCase
     {
         $attributes = [
             PaymentDataBuilder::CAPTURE => false,
-            PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00),
+            PaymentDataBuilder::AMOUNT => '1000',
             PaymentDataBuilder::CURRENCY => 'USD',
             PaymentDataBuilder::ORDER_ID => '100000001',
             PaymentDataBuilder::SOURCE => 'tok_visa',
@@ -92,7 +89,7 @@ class StripeAdapterTest extends TestCase
             PaymentDataBuilder::SAVE_IN_VAULT => true,
             PaymentDataBuilder::CAPTURE => false,
             PaymentDataBuilder::CUSTOMER => 'cus_C5IP3',
-            PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00),
+            PaymentDataBuilder::AMOUNT => '1000',
             PaymentDataBuilder::CURRENCY => 'USD',
             PaymentDataBuilder::ORDER_ID => '100000001',
             PaymentDataBuilder::SOURCE => 'tok_visa',

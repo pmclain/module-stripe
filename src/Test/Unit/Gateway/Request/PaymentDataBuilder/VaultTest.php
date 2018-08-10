@@ -16,6 +16,7 @@
 
 namespace Pmclain\Stripe\Test\Unit\Gateway\PaymentDataBuilder;
 
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
@@ -111,9 +112,10 @@ class VaultTest extends \PHPUnit\Framework\TestCase
         $this->customAttributeMock = $this->getMockBuilder(AttributeInterface::class)
             ->getMockForAbstractClass();
 
-        $this->configMock = $this->getMockBuilder(Config::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->method('getCurrencyPrecision')->willReturn('2');
+
+        $priceFormatter = new PriceFormatter($this->configMock);
 
         $this->builder = $objectManager->getObject(
             Vault::class,
@@ -122,6 +124,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
                 'customerRepository' => $this->customerRepositoryMock,
                 'customerSession' => $this->sessionMock,
                 'config' => $this->configMock,
+                'priceFormatter' => $priceFormatter,
             ]
         );
     }

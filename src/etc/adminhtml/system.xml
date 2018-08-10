@@ -71,6 +71,11 @@
           <label>Accepted Currency</label>
           <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
         </field>
+        <field id="currency_precision" translate="label comment" type="select" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="0">
+          <label>Currency Precision</label>
+          <comment><![CDATA[This MUST match the smallest currency unit supported by your selected currency. More detailed information can be found in the <a href="https://stripe.com/docs/api/php#charge_object-amount">Stripe API documentation</a>.]]></comment>
+          <source_model>Pmclain\Stripe\Model\Adminhtml\Source\CurrencyPrecision</source_model>
+        </field>
         <field id="cctypes" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
           <label>Credit Card Types</label>
           <source_model>Pmclain\Stripe\Model\Adminhtml\Source\Cctype</source_model>

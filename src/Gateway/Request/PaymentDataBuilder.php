@@ -17,19 +17,18 @@
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Pmclain\Stripe\Gateway\Config\Config;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Stripe\Customer;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\App\ObjectManager;
 
+
 class PaymentDataBuilder implements BuilderInterface
 {
-    use Formatter;
-
     const AMOUNT = 'amount';
     const SOURCE = 'source';
     const ORDER_ID = 'description';
@@ -53,6 +52,9 @@ class PaymentDataBuilder implements BuilderInterface
     /** @var LoggerInterface */
     protected $logger;
 
+    /** @var PriceFormatter */
+    protected $priceFormatter;
+
     /**
      * PaymentDataBuilder constructor.
      * @param Config $config
@@ -66,12 +68,14 @@ class PaymentDataBuilder implements BuilderInterface
         SubjectReader $subjectReader,
         Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
+        PriceFormatter $priceFormatter,
         LoggerInterface $logger = null
     ) {
         $this->config = $config;
         $this->subjectReader = $subjectReader;
         $this->customerSession = $customerSession;
         $this->customerRepository = $customerRepository;
+        $this->priceFormatter = $priceFormatter;
         $this->logger = $logger ?: ObjectManager::getInstance()->get(LoggerInterface::class);
     }
 
@@ -87,7 +91,7 @@ class PaymentDataBuilder implements BuilderInterface
         $order = $paymentDataObject->getOrder();
 
         $result = [
-            self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
+            self::AMOUNT => $this->priceFormatter->formatPrice($this->subjectReader->readAmount($subject)),
             self::ORDER_ID => $order->getOrderIncrementId(),
             self::CURRENCY => $this->config->getCurrency(),
             self::SOURCE => $payment->getAdditionalInformation('cc_token'),
