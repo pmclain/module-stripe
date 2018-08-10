@@ -43,6 +43,7 @@ class SubjectReader
     }
 
     /**
+     * @codeCoverageIgnore
      * @param array $subject
      * @return \Magento\Payment\Gateway\Data\PaymentDataObjectInterface
      */
@@ -65,6 +66,7 @@ class SubjectReader
     }
 
     /**
+     * @codeCoverageIgnore
      * @param array $subject
      * @return mixed
      */

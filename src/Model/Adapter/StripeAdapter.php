@@ -50,7 +50,7 @@ class StripeAdapter
     /**
      * @param $transactionId
      * @param null $amount
-     * @return \Stripe\ApiOperations\ApiResource
+     * @return \Stripe\ApiResource
      */
     public function refund($transactionId, $amount = null)
     {
@@ -62,7 +62,7 @@ class StripeAdapter
 
     /**
      * @param $attributes
-     * @return array|\Exception|\Stripe\ApiOperations\ApiResource|\Stripe\Error\Card
+     * @return array|\Exception|\Stripe\ApiResource|\Stripe\Error\Card
      */
     public function sale($attributes)
     {
@@ -97,7 +97,7 @@ class StripeAdapter
 
     /**
      * @param $transactionId
-     * @return \Stripe\ApiOperations\ApiResource
+     * @return \Stripe\ApiResource
      */
     public function void($transactionId)
     {

@@ -19,6 +19,7 @@ namespace Pmclain\Stripe\Controller\ThreeDSecure;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Exception\LocalizedException;
 use Pmclain\Stripe\Model\Helper\OrderPlace;
 
 class Redirect extends Action
@@ -62,7 +63,7 @@ class Redirect extends Action
         } catch (\InvalidArgumentException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $resultRedirect->setPath('checkout/cart', ['_secure' => true]);
-        } catch (\Exception $e) {
+        } catch (LocalizedException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $resultRedirect->setPath('checkout/cart', ['_secure' => true]);
         }
@@ -70,6 +71,9 @@ class Redirect extends Action
         return $resultRedirect;
     }
 
+    /**
+     * @param \Magento\Quote\Model\Quote $quote
+     */
     private function validateQuote($quote)
     {
         if (!$quote || !$quote->getItemsCount()) {

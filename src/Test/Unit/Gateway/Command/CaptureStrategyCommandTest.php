@@ -108,9 +108,6 @@ class CaptureStrategyCommandTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @covers \Pmclain\Stripe\Gateway\Command\CaptureStrategyCommand::execute
-     */
     public function testSaleExecute()
     {
         $paymentData = $this->getPaymentDataObjectMock();
@@ -143,9 +140,6 @@ class CaptureStrategyCommandTest extends \PHPUnit\Framework\TestCase
         $this->strategyCommand->execute($subject);
     }
 
-    /**
-     * @covers \Pmclain\Stripe\Gateway\Command\CaptureStrategyCommand::execute
-     */
     public function testCaptureExecute()
     {
         $paymentData = $this->getPaymentDataObjectMock();

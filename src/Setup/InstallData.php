@@ -9,6 +9,9 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Eav\Model\Config;
 use Magento\Customer\Model\Customer;
 
+/**
+ * @codeCoverageIgnore
+ */
 class InstallData implements InstallDataInterface
 {
     /** @var EavSetupFactory */
