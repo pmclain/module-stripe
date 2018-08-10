@@ -18,6 +18,9 @@ namespace Pmclain\Stripe\Model\Adminhtml\Source;
 
 use Magento\Payment\Model\Source\Cctype as PaymentCctype;
 
+/**
+ * @codeCoverageIgnore
+ */
 class Cctype extends PaymentCctype
 {
     public function getAllowedTypes()

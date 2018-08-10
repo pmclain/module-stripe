@@ -47,4 +47,7 @@
         <listener class="Magento\TestFramework\Event\PhpUnit"/>
         <listener class="Magento\TestFramework\ErrorLog\Listener"/>
     </listeners>
+    <logging>
+        <log type="coverage-clover" target="{{coverage_dir}}/test-reports/phpunit.coverage.xml"/>
+    </logging>
 </phpunit>

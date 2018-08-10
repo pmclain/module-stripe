@@ -62,7 +62,6 @@ class OrderPlace
      * @param string $src
      * @param string $clientSecret
      * @throws LocalizedException
-     * @throws \InvalidArgumentException
      */
     public function execute(Quote $quote, $src, $clientSecret)
     {
@@ -80,14 +79,14 @@ class OrderPlace
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @param string $src
      * @param string $clientSecret
-     * @throws \InvalidArgumentException
+     * @throws LocalizedException
      */
     private function validatePaymentInformation($payment, $src, $clientSecret)
     {
         if ($payment->getAdditionalInformation('three_d_client_secret') !== $clientSecret
             || $payment->getAdditionalInformation('three_d_src') !== $src
         ) {
-            throw new \InvalidArgumentException(
+            throw new LocalizedException(
                 __('Your payment information could not be validated. Please try again.')
             );
         }

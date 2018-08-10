@@ -59,7 +59,8 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
-     * @return mixed
+     * @codeCoverageIgnore
+     * @return string
      */
     public function getCurrency()
     {
@@ -67,6 +68,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
+     * @codeCoverageIgnore
      * @return string
      */
     public function getCurrencyPrecision()
@@ -129,6 +131,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
+     * @codeCoverageIgnore
      * @return bool
      */
     public function isDebugOn()
@@ -137,6 +140,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
+     * @codeCoverageIgnore
      * @return bool
      */
     public function isRequireThreeDSecure()
@@ -145,6 +149,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
+     * @codeCoverageIgnore
      * @return float
      */
     public function getThreeDSecureThreshold()

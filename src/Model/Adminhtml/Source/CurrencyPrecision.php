@@ -18,6 +18,9 @@ namespace Pmclain\Stripe\Model\Adminhtml\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class CurrencyPrecision implements OptionSourceInterface
 {
     public function toOptionArray()

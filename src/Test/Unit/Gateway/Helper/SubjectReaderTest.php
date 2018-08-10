@@ -18,6 +18,8 @@ namespace Pmclain\Stripe\Test\Unit\Gateway\Helper;
 
 use InvalidArgumentException;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
+use Stripe\Error\Card;
+use Stripe\Charge;
 
 class SubjectReaderTest extends \PHPUnit\Framework\TestCase
 {
@@ -26,11 +28,72 @@ class SubjectReaderTest extends \PHPUnit\Framework\TestCase
      */
     private $subjectReader;
 
+    /**
+     * @var Card|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $cardErrorMock;
+
+    /**
+     * @var Charge|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $chargeMock;
+
     protected function setUp()
     {
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
+        $this->cardErrorMock = $this->createMock(Card::class);
+        $this->chargeMock = $this->createMock(Charge::class);
 
-        $this->subjectReader = $objectManager->getObject(SubjectReader::class);
+        $this->subjectReader = new SubjectReader();
+    }
+
+    public function testReadResponseObject()
+    {
+        $this->chargeMock->method('__toArray')->willReturn([]);
+        $result = $this->subjectReader->readResponseObject([
+            'response' => [
+                'object' => $this->chargeMock,
+            ],
+        ]);
+
+        $this->assertEquals([], $result);
+    }
+
+    public function testReadResponseObjectWithError()
+    {
+        $result = $this->subjectReader->readResponseObject([
+            'response' => [
+                'object' => $this->cardErrorMock,
+            ],
+        ]);
+
+        $this->assertArrayHasKey('error', $result);
+        $this->assertTrue($result['error']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testReadResponseObjectWithException()
+    {
+        $this->subjectReader->readResponseObject(['response' => null]);
+    }
+
+    public function testReadTransaction()
+    {
+        $this->chargeMock->method('__toArray')->willReturn([]);
+        $result = $this->subjectReader->readTransaction([
+            'object' => $this->chargeMock,
+        ]);
+
+        $this->assertEquals([], $result);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testReadTransactionWithException()
+    {
+        $this->subjectReader->readTransaction(['object' => null]);
     }
 
     /**
