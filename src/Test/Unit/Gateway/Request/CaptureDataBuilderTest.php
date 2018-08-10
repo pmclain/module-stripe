@@ -20,12 +20,11 @@ use Pmclain\Stripe\Gateway\Request\CaptureDataBuilder;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
-use Pmclain\Stripe\Helper\Payment\Formatter;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
+use Pmclain\Stripe\Gateway\Config\Config;
 
 class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use Formatter;
-
     /**
      * @var \Pmclain\Stripe\Gateway\Request\CaptureDataBuilder
      */
@@ -49,14 +48,18 @@ class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->paymentDataObject = $this->createMock(PaymentDataObjectInterface::class);
-        $this->payment = $this->getMockBuilder(Payment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->payment = $this->createMock(Payment::class);
+        $this->subjectReaderMock = $this->createMock(SubjectReader::class);
 
-        $this->builder = new CaptureDataBuilder($this->subjectReaderMock);
+        $configMock = $this->createMock(Config::class);
+        $configMock->method('getCurrencyPrecision')->willReturn('2');
+
+        $priceFormatter = new PriceFormatter($configMock);
+
+        $this->builder = new CaptureDataBuilder(
+            $this->subjectReaderMock,
+            $priceFormatter
+        );
     }
 
     /**
@@ -94,7 +97,7 @@ class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
 
         $expected = [
             'transaction_id' => $transactionId,
-            'amount' => $this->formatPrice($amount)
+            'amount' => '1000'
         ];
 
         $buildSubject = [

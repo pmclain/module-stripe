@@ -22,6 +22,7 @@ use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Backend\Model\Session\Quote;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 
 class Admin extends PaymentDataBuilder
 {
@@ -35,19 +36,22 @@ class Admin extends PaymentDataBuilder
      * @param Session $customerSession
      * @param CustomerRepositoryInterface $customerRepository
      * @param Quote $session
+     * @param PriceFormatter $priceFormatter
      */
     public function __construct(
         Config $config,
         SubjectReader $subjectReader,
         Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
-        Quote $session
+        Quote $session,
+        PriceFormatter $priceFormatter
     ) {
         parent::__construct(
             $config,
             $subjectReader,
             $customerSession,
-            $customerRepository
+            $customerRepository,
+            $priceFormatter
         );
         $this->adminSession = $session;
     }

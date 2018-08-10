@@ -16,30 +16,34 @@
 
 namespace Pmclain\Stripe\Gateway\Request;
 
-use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Sales\Api\Data\TransactionInterface;
-use Magento\Sales\Model\Order\Payment;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 
 class RefundDataBuilder implements BuilderInterface
 {
-    use Formatter;
-
     /**
      * @var SubjectReader
      */
     private $subjectReader;
 
     /**
+     * @var PriceFormatter
+     */
+    private $priceFormatter;
+
+    /**
      * RefundDataBuilder constructor.
      * @param SubjectReader $subjectReader
+     * @param PriceFormatter $priceFormatter
      */
     public function __construct(
-        SubjectReader $subjectReader
+        SubjectReader $subjectReader,
+        PriceFormatter $priceFormatter
     ) {
         $this->subjectReader = $subjectReader;
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -53,7 +57,7 @@ class RefundDataBuilder implements BuilderInterface
         $amount = null;
 
         try {
-            $amount = $this->formatPrice($this->subjectReader->readAmount($subject));
+            $amount = $this->priceFormatter->formatPrice($this->subjectReader->readAmount($subject));
         } catch (\InvalidArgumentException $e) {
             //nothing
         }
