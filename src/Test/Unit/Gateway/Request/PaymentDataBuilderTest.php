@@ -84,10 +84,8 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->configMock = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getCurrency', 'getCurrencyPrecision'])
+            ->setMethods(['getCurrency'])
             ->getMock();
-
-        $this->configMock->method('getCurrencyPrecision')->willReturn('2');
 
         $this->paymentMock = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
@@ -118,6 +116,8 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->getMockForAbstractClass();
 
         $this->orderMock = $this->createMock(OrderAdapterInterface::class);
+
+        $this->configMock->method('getCurrency')->willReturn('USD');
 
         $priceFormatter = new PriceFormatter($this->configMock);
 
@@ -215,10 +215,6 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('getOrderIncrementId')
             ->willReturn('000000101');
 
-        $this->configMock->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn('USD');
-
         $this->assertEquals(
             $expectedResult,
             $this->builder->build($buildSubject)
@@ -262,10 +258,6 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->orderMock->expects($this->once())
             ->method('getOrderIncrementId')
             ->willReturn('000000101');
-
-        $this->configMock->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn('USD');
 
         $this->paymentMock->expects($this->at(0))
             ->method('getAdditionalInformation')

@@ -107,7 +107,7 @@ class AdminTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $this->configMock = $this->createMock(Config::class);
-        $this->configMock->method('getCurrencyPrecision')->willReturn('2');
+        $this->configMock->method('getCurrency')->willReturn('USD');
 
         $priceFormatter = new PriceFormatter($this->configMock);
 
@@ -184,10 +184,6 @@ class AdminTest extends \PHPUnit\Framework\TestCase
         $this->orderMock->expects($this->once())
             ->method('getOrderIncrementId')
             ->willReturn('100000001');
-
-        $this->configMock->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn('USD');
 
         $this->paymentTokenMock->expects($this->once())
             ->method('getGatewayToken')

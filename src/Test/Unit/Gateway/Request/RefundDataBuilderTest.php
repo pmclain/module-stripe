@@ -41,7 +41,7 @@ class RefundDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->subjectReader = $this->createMock(SubjectReader::class);
 
         $configMock = $this->createMock(Config::class);
-        $configMock->method('getCurrencyPrecision')->willReturn('2');
+        $configMock->method('getCurrency')->willReturn('USD');
 
         $priceFormatter = new PriceFormatter($configMock);
 
