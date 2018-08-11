@@ -17,9 +17,12 @@
 namespace Pmclain\Stripe\Model\Adminhtml\Source;
 
 use Magento\Payment\Model\Method\AbstractMethod;
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Data\OptionSourceInterface;
 
-class PaymentAction implements ArrayInterface
+/**
+ * @codeCoverageIgnore
+ */
+class PaymentAction implements OptionSourceInterface
 {
     public function toOptionArray()
     {

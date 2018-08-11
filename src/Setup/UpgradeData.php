@@ -9,6 +9,9 @@ use Magento\Eav\Model\Config;
 use Magento\Customer\Model\Customer;
 use Magento\Framework\Setup\UpgradeDataInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class UpgradeData implements UpgradeDataInterface
 {
     /** @var EavSetupFactory */

@@ -14,11 +14,11 @@
  * @license   Open Software License (OSL 3.0)
  */
 
-namespace Pmclain\Stripe\Test\Unit\Gateway\PaymentDataBuilder;
+namespace Pmclain\Stripe\Test\Unit\Gateway\PaymentDataBuilder\Vault;
 
 use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
-use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault;
+use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault\Admin;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
@@ -31,8 +31,9 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Api\AttributeInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
+use Magento\Backend\Model\Session\Quote;
 
-class VaultTest extends \PHPUnit\Framework\TestCase
+class AdminTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SubjectReader|MockObject */
     private $subjectReaderMock;
@@ -67,19 +68,18 @@ class VaultTest extends \PHPUnit\Framework\TestCase
     /** @var Config|MockObject */
     private $configMock;
 
-    /** @var  Vault */
+    /** @var Quote|MockObject */
+    private $quoteSessionMock;
+
+    /** @var Admin */
     private $builder;
 
     protected function setUp()
     {
         $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
 
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentDataObjectMock = $this->getMockBuilder(PaymentDataObjectInterface::class)
-            ->getMockForAbstractClass();
+        $this->subjectReaderMock = $this->createMock(SubjectReader::class);
+        $this->paymentDataObjectMock = $this->createMock(PaymentDataObjectInterface::class);
 
         $this->paymentMock = $this->getMockBuilder(InfoInterface::class)
             ->setMethods(['getExtensionAttributes'])
@@ -95,21 +95,16 @@ class VaultTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['getGatewayToken'])
             ->getMock();
 
-        $this->orderMock = $this->getMockBuilder(OrderAdapterInterface::class)
-            ->getMockForAbstractClass();
+        $this->orderMock = $this->createMock(OrderAdapterInterface::class);
+        $this->sessionMock = $this->createMock(Session::class);
+        $this->customerRepositoryMock = $this->createMock(CustomerRepositoryInterface::class);
+        $this->customerMock = $this->createMock(CustomerInterface::class);
+        $this->customAttributeMock = $this->createMock(AttributeInterface::class);
 
-        $this->sessionMock = $this->getMockBuilder(Session::class)
+        $this->quoteSessionMock = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
+            ->setMethods(['getCustomerId'])
             ->getMock();
-
-        $this->customerRepositoryMock = $this->getMockBuilder(CustomerRepositoryInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->customerMock = $this->getMockBuilder(CustomerInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->customAttributeMock = $this->getMockBuilder(AttributeInterface::class)
-            ->getMockForAbstractClass();
 
         $this->configMock = $this->createMock(Config::class);
         $this->configMock->method('getCurrency')->willReturn('USD');
@@ -117,13 +112,14 @@ class VaultTest extends \PHPUnit\Framework\TestCase
         $priceFormatter = new PriceFormatter($this->configMock);
 
         $this->builder = $objectManager->getObject(
-            Vault::class,
+            Admin::class,
             [
                 'subjectReader' => $this->subjectReaderMock,
                 'customerRepository' => $this->customerRepositoryMock,
                 'customerSession' => $this->sessionMock,
                 'config' => $this->configMock,
                 'priceFormatter' => $priceFormatter,
+                'session' => $this->quoteSessionMock,
             ]
         );
     }
@@ -136,7 +132,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
         ];
 
         $expectedResult = [
-            PaymentDataBuilder::AMOUNT => 1000,
+            PaymentDataBuilder::AMOUNT => '1000',
             PaymentDataBuilder::ORDER_ID => '100000001',
             PaymentDataBuilder::CURRENCY => 'USD',
             PaymentDataBuilder::SOURCE => 'card_token',
@@ -164,8 +160,7 @@ class VaultTest extends \PHPUnit\Framework\TestCase
             ->method('getVaultPaymentToken')
             ->willReturn($this->paymentTokenMock);
 
-        $this->sessionMock->expects($this->once())
-            ->method('getCustomerId')
+        $this->quoteSessionMock->method('getCustomerId')
             ->willReturn(1);
 
         $this->customerRepositoryMock->expects($this->once())

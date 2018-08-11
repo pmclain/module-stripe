@@ -16,7 +16,6 @@
 
 namespace Pmclain\Stripe\Model\Ui;
 
-use Pmclain\Stripe\Model\Ui\ConfigProvider;
 use Pmclain\Stripe\Gateway\Config\Config;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Model\Ui\TokenUiComponentInterface;

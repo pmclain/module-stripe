@@ -23,16 +23,14 @@ use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
-use Pmclain\Stripe\Helper\Payment\Formatter;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Session;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Api\AttributeInterface;
+use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 
 class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use Formatter;
-
     /**
      * @var PaymentDataBuilder
      */
@@ -119,13 +117,18 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->orderMock = $this->createMock(OrderAdapterInterface::class);
 
+        $this->configMock->method('getCurrency')->willReturn('USD');
+
+        $priceFormatter = new PriceFormatter($this->configMock);
+
         $this->builder = $objectManager->getObject(
             PaymentDataBuilder::class,
             [
                 'subjectReader' => $this->subjectReaderMock,
                 'config' => $this->configMock,
                 'customerRepository' => $this->customerRespositoryMock,
-                'customerSession' => $this->customerSessionMock
+                'customerSession' => $this->customerSessionMock,
+                'priceFormatter' => $priceFormatter,
             ]
         );
     }
@@ -170,7 +173,7 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuildWithToken()
     {
         $expectedResult = [
-            PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00),
+            PaymentDataBuilder::AMOUNT => '1000',
             PaymentDataBuilder::ORDER_ID => '000000101',
             PaymentDataBuilder::CURRENCY => 'USD',
             PaymentDataBuilder::SOURCE => 'token_number',
@@ -212,10 +215,6 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->method('getOrderIncrementId')
             ->willReturn('000000101');
 
-        $this->configMock->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn('USD');
-
         $this->assertEquals(
             $expectedResult,
             $this->builder->build($buildSubject)
@@ -225,7 +224,7 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuildWithSavePayment()
     {
         $expectedResult = [
-            PaymentDataBuilder::AMOUNT => $this->formatPrice(10.00),
+            PaymentDataBuilder::AMOUNT => '1000',
             PaymentDataBuilder::ORDER_ID => '000000101',
             PaymentDataBuilder::CURRENCY => 'USD',
             PaymentDataBuilder::SOURCE => 'token_number',
@@ -259,10 +258,6 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->orderMock->expects($this->once())
             ->method('getOrderIncrementId')
             ->willReturn('000000101');
-
-        $this->configMock->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn('USD');
 
         $this->paymentMock->expects($this->at(0))
             ->method('getAdditionalInformation')

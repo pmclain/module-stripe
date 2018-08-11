@@ -36,7 +36,7 @@ class Vault extends PaymentDataBuilder
         $stripeCustomerId = $this->getStripeCustomerId();
 
         $result = [
-            self::AMOUNT => $this->formatPrice($this->subjectReader->readAmount($subject)),
+            self::AMOUNT => $this->priceFormatter->formatPrice($this->subjectReader->readAmount($subject)),
             self::ORDER_ID => $order->getOrderIncrementId(),
             self::CURRENCY => $this->config->getCurrency(),
             self::SOURCE => $paymentToken->getGatewayToken(),

@@ -1,5 +1,10 @@
 # Magento 2 Stripe Integration
-[![Build Status](https://travis-ci.org/pmclain/module-stripe.svg?branch=master)](https://travis-ci.org/pmclain/module-stripe)  
+
+[![Build Status](https://travis-ci.org/pmclain/module-stripe.svg?branch=master)](https://travis-ci.org/pmclain/module-stripe)
+[![Coverage Status](https://coveralls.io/repos/github/pmclain/module-stripe/badge.svg?branch=master)](https://coveralls.io/github/pmclain/module-stripe?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/pmclain/module-stripe/v/stable)](https://packagist.org/packages/pmclain/module-stripe)
+[![Total Downloads](https://poser.pugx.org/pmclain/module-stripe/downloads)](https://packagist.org/packages/pmclain/module-stripe)
+[![License](https://poser.pugx.org/pmclain/module-stripe/license)](https://packagist.org/packages/pmclain/module-stripe)
 
 Accept credit card payments through the Stripe payment gateway.
 
