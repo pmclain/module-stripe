@@ -27,10 +27,13 @@ class PriceFormatterTest extends TestCase
 
     /**
      * @dataProvider formatPriceDataProvider
+     * @param string $expected
+     * @param string $price
+     * @param string $currency
      */
-    public function testFormatPrice($expected, $price, $precision)
+    public function testFormatPrice($expected, $price, $currency)
     {
-        $this->configMock->method('getCurrencyPrecision')->willReturn($precision);
+        $this->configMock->method('getCurrency')->willReturn($currency);
 
         $this->assertEquals($expected, $this->priceFormatter->formatPrice($price));
     }
@@ -39,10 +42,10 @@ class PriceFormatterTest extends TestCase
     {
         return [
             [
-                '123', '123', '0',
+                '123', '123', 'JPY',
             ],
             [
-                '12300', '123', '2',
+                '12300', '123', 'USD',
             ]
         ];
     }

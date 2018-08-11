@@ -52,7 +52,7 @@ class CaptureDataBuilderTest extends \PHPUnit\Framework\TestCase
         $this->subjectReaderMock = $this->createMock(SubjectReader::class);
 
         $configMock = $this->createMock(Config::class);
-        $configMock->method('getCurrencyPrecision')->willReturn('2');
+        $configMock->method('getCurrency')->willReturn('USD');
 
         $priceFormatter = new PriceFormatter($configMock);
 

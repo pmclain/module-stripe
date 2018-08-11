@@ -68,15 +68,6 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
-     * @codeCoverageIgnore
-     * @return string
-     */
-    public function getCurrencyPrecision()
-    {
-        return $this->getValue(self::KEY_CURRENCY_PRECISION);
-    }
-
-    /**
      * @return bool
      */
     public function isCcvEnabled()

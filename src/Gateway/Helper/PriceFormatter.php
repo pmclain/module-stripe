@@ -41,8 +41,41 @@ class PriceFormatter
      */
     public function formatPrice($price)
     {
-        $price = sprintf('%.' . $this->config->getCurrencyPrecision() . 'F', $price);
+        $price = sprintf('%.' . ($this->isZeroDecimalCurrency() ? '0' : '2') . 'F', $price);
 
         return str_replace('.', '', $price);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isZeroDecimalCurrency()
+    {
+        return in_array($this->config->getCurrency(), $this->getZeroDecimalCurrencies(), true);
+    }
+
+    /**
+     * @return array
+     */
+    private function getZeroDecimalCurrencies()
+    {
+        return [
+            'BIF',
+            'CLP',
+            'DJF',
+            'GNF',
+            'JPY',
+            'KMF',
+            'KRW',
+            'MGA',
+            'PYG',
+            'RWF',
+            'UGX',
+            'VND',
+            'VUV',
+            'XAF',
+            'XOF',
+            'XPF',
+        ];
     }
 }
