@@ -48,6 +48,6 @@
         <listener class="Magento\TestFramework\ErrorLog\Listener"/>
     </listeners>
     <logging>
-        <log type="coverage-clover" target="{{coverage_dir}}/test-reports/phpunit.coverage.xml"/>
+        <log type="coverage-clover" target="coverage/clover.xml"/>
     </logging>
 </phpunit>

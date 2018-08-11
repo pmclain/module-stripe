@@ -1,6 +1,9 @@
 sudo: required
 services:
   - docker
+language: php
+php:
+  - 7.1
 matrix:
   include:
     - env:
@@ -15,13 +18,18 @@ matrix:
 cache:
   directories:
     - $HOME/.composer/cache
+install:
+  - mkdir -p build/logs && cd build && composer init --no-interaction && composer require php-coveralls/php-coveralls --no-interaction && cd ..
 before_script:
   - echo "COMPOSER_MAGENTO_USERNAME=$COMPOSER_MAGENTO_USERNAME" >> dev/composer.env
   - echo "COMPOSER_MAGENTO_PASSWORD=$COMPOSER_MAGENTO_PASSWORD" >> dev/composer.env
   - echo "COMPOSER_GITHUB_TOKEN=$COMPOSER_GITHUB_TOKEN" >> dev/composer.env
   - sed -E -i "s/MAGENTO_VERSION=.*/MAGENTO_VERSION=${MAGENTO_VERSION}/" dev/docker-compose.yml
-  - docker-compose -f dev/docker-compose.yml build
   - docker-compose -f dev/docker-compose.yml up -d
   - docker-compose -f dev/docker-compose.yml exec app module-installer
 script:
   - docker-compose -f dev/docker-compose.yml exec app test-${TEST_SUITE}
+after_success:
+  - cp dev/magento/dev/tests/${TEST_SUITE}/coverage/clover.xml build/logs/clover.xml
+  - sed -E -i "s/\/module/\./" build/logs/clover.xml
+  - travis_retry php build/vendor/bin/php-coveralls -v
