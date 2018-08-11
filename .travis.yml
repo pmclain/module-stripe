@@ -4,13 +4,13 @@ services:
 matrix:
   include:
     - env:
-        - MAGENTO_VERSION=~2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=unit
     - env:
-        - MAGENTO_VERSION=~2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=integration
     - env:
-        - MAGENTO_VERSION=~2.2
+        - MAGENTO_VERSION=2.2.4
         - TEST_SUITE=acceptance
 cache:
   directories:

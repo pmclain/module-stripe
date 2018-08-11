@@ -5,7 +5,7 @@
   "license": "OSL-3.0",
   "require": {
     "php": "~7.0.0||~7.1.0||~7.2.0",
-    "magento/framework": "~101.0.0||~100.3.0-dev",
+    "magento/framework": ">=101.0.0 <=101.0.4||~100.3.0-dev",
     "stripe/stripe-php": "~6.7.0"
   },
   "autoload": {
