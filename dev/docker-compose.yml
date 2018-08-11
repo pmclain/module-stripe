@@ -1,7 +1,7 @@
 version: "3"
 services:
   web:
-    build: ./nginx
+    image: dfaarc44/m2-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -17,7 +17,7 @@ services:
       - VIRTUAL_HOST=stripe.docker
   
   app:
-    build: ./php71
+    image: dfaarc44/m2-stripe-app:php71
     links:
       - db
       - redis
