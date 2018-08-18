@@ -6,7 +6,7 @@
   "require": {
     "php": "~7.0.0||~7.1.0||~7.2.0",
     "magento/framework": "~101.0.5||~100.3.0-dev",
-    "stripe/stripe-php": "~6.7.0"
+    "stripe/stripe-php": "~6.15.0"
   },
   "autoload": {
     "files": [
