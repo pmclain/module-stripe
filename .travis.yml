@@ -9,9 +9,9 @@ matrix:
     - env:
         - MAGENTO_VERSION=~2.2
         - TEST_SUITE=unit
-    - env:
-        - MAGENTO_VERSION=~2.2
-        - TEST_SUITE=integration
+#    - env:
+#        - MAGENTO_VERSION=~2.2
+#        - TEST_SUITE=integration
     - env:
         - MAGENTO_VERSION=~2.2
         - TEST_SUITE=acceptance
