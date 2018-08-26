@@ -16,6 +16,7 @@
 
 namespace Pmclain\Stripe\Test\Unit\Gateway\Request;
 
+use Pmclain\Stripe\Api\StripeCustomerManagementInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
 use \PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
@@ -23,9 +24,7 @@ use Pmclain\Stripe\Gateway\Request\PaymentDataBuilder;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Sales\Model\Order\Payment;
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Session;
-use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Api\AttributeInterface;
 use Pmclain\Stripe\Gateway\Helper\PriceFormatter;
 
@@ -59,24 +58,18 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var  Session|MockObject */
     private $customerSessionMock;
 
-    /** @var  CustomerRepositoryInterface|MockObject */
-    private $customerRespositoryMock;
-
-    /** @var CustomerInterface|MockObject */
-    private $customerInterfaceMock;
-
     /**
      * @var OrderAdapterInterface|MockObject
      */
     private $orderMock;
 
-    /** @var AttributeInterface|MockObject */
-    private $attributeInterfaceMock;
+    /**
+     * @var StripeCustomerManagementInterface|MockObject
+     */
+    private $stripeCustomerManagementMock;
 
     protected function setUp()
     {
-        $objectManager = new \Magento\Framework\TestFramework\Unit\Helper\ObjectManager($this);
-
         $this->paymentDataObjectMock = $this->getMockBuilder(PaymentDataObjectInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['getPayment'])
@@ -98,38 +91,21 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             ])
             ->getMock();
 
-        $this->subjectReaderMock = $this->getMockBuilder(SubjectReader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->customerSessionMock = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->customerRespositoryMock = $this->getMockBuilder(CustomerRepositoryInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->customerInterfaceMock = $this->getMockBuilder(CustomerInterface::class)
-            ->getMockForAbstractClass();
-
-        $this->attributeInterfaceMock = $this->getMockBuilder(AttributeInterface::class)
-            ->getMockForAbstractClass();
-
+        $this->subjectReaderMock = $this->createMock(SubjectReader::class);
+        $this->customerSessionMock = $this->createMock(Session::class);
         $this->orderMock = $this->createMock(OrderAdapterInterface::class);
+        $this->stripeCustomerManagementMock = $this->createMock(StripeCustomerManagementInterface::class);
 
         $this->configMock->method('getCurrency')->willReturn('USD');
 
         $priceFormatter = new PriceFormatter($this->configMock);
 
-        $this->builder = $objectManager->getObject(
-            PaymentDataBuilder::class,
-            [
-                'subjectReader' => $this->subjectReaderMock,
-                'config' => $this->configMock,
-                'customerRepository' => $this->customerRespositoryMock,
-                'customerSession' => $this->customerSessionMock,
-                'priceFormatter' => $priceFormatter,
-            ]
+        $this->builder = new PaymentDataBuilder(
+            $this->configMock,
+            $this->subjectReaderMock,
+            $this->customerSessionMock,
+            $priceFormatter,
+            $this->stripeCustomerManagementMock
         );
     }
 
@@ -185,12 +161,10 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             'amount' => 10.00
         ];
 
-        $this->subjectReaderMock->expects($this->once())
-            ->method('readPayment')
+        $this->subjectReaderMock->method('readPayment')
             ->willReturn($this->paymentDataObjectMock);
 
-        $this->subjectReaderMock->expects($this->once())
-            ->method('readAmount')
+        $this->subjectReaderMock->method('readAmount')
             ->willReturn(10.00);
 
         $this->paymentMock->expects($this->at(0))
@@ -203,16 +177,13 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->with('is_active_payment_token_enabler')
             ->willReturn(false);
 
-        $this->paymentDataObjectMock->expects($this->any())
-            ->method('getPayment')
+        $this->paymentDataObjectMock->method('getPayment')
             ->willReturn($this->paymentMock);
 
-        $this->paymentDataObjectMock->expects($this->once())
-            ->method('getOrder')
+        $this->paymentDataObjectMock->method('getOrder')
             ->willReturn($this->orderMock);
 
-        $this->orderMock->expects($this->once())
-            ->method('getOrderIncrementId')
+        $this->orderMock->method('getOrderIncrementId')
             ->willReturn('000000101');
 
         $this->assertEquals(
@@ -230,7 +201,6 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             PaymentDataBuilder::SOURCE => 'token_number',
             PaymentDataBuilder::CAPTURE => 'false',
             PaymentDataBuilder::CUSTOMER => 'cus_token',
-            PaymentDataBuilder::SAVE_IN_VAULT => true
         ];
 
         $buildSubject = [
@@ -238,25 +208,20 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             'amount' => 10.00
         ];
 
-        $this->subjectReaderMock->expects($this->once())
-            ->method('readPayment')
+        $this->subjectReaderMock->method('readPayment')
             ->with($buildSubject)
             ->willReturn($this->paymentDataObjectMock);
 
-        $this->paymentDataObjectMock->expects($this->once())
-            ->method('getPayment')
+        $this->paymentDataObjectMock->method('getPayment')
             ->willReturn($this->paymentMock);
 
-        $this->paymentDataObjectMock->expects($this->once())
-            ->method('getOrder')
+        $this->paymentDataObjectMock->method('getOrder')
             ->willReturn($this->orderMock);
 
-        $this->subjectReaderMock->expects($this->once())
-            ->method('readAmount')
+        $this->subjectReaderMock->method('readAmount')
             ->willReturn(10.00);
 
-        $this->orderMock->expects($this->once())
-            ->method('getOrderIncrementId')
+        $this->orderMock->method('getOrderIncrementId')
             ->willReturn('000000101');
 
         $this->paymentMock->expects($this->at(0))
@@ -269,21 +234,11 @@ class PaymentDataBuilderTest extends \PHPUnit\Framework\TestCase
             ->with('is_active_payment_token_enabler')
             ->willReturn(true);
 
-        $this->customerRespositoryMock->expects($this->once())
-            ->method('getById')
-            ->willReturn($this->customerInterfaceMock);
-
-        $this->customerSessionMock->expects($this->once())
-            ->method('getCustomerId')
-            ->willReturn(1);
-
-        $this->customerInterfaceMock->expects($this->once())
-            ->method('getCustomAttribute')
-            ->willReturn($this->attributeInterfaceMock);
-
-        $this->attributeInterfaceMock->expects($this->once())
-            ->method('getValue')
+        $this->stripeCustomerManagementMock->method('getStripeCustomerId')
             ->willReturn('cus_token');
+
+        $this->stripeCustomerManagementMock->method('addCustomerCard')
+            ->willReturn('token_number');
 
         $this->assertEquals(
             $expectedResult,

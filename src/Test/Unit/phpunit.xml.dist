@@ -33,6 +33,7 @@
         <listener class="Magento\Framework\TestFramework\Unit\Listener\ReplaceObjectManager"/>
     </listeners>
     <logging>
+        <log type="coverage-html" target="coverage" charset="UTF-8" yui="true" highlight="true"/>
         <log type="coverage-clover" target="coverage/clover.xml"/>
     </logging>
 </phpunit>

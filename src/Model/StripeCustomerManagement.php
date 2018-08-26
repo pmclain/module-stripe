@@ -49,7 +49,7 @@ class StripeCustomerManagement implements StripeCustomerManagementInterface
 
             $this->customerRepository->save($customer);
 
-            return $stripeCustomerId;
+            return $stripeCustomer->id;
         }
 
         return $stripeCustomerId->getValue();
