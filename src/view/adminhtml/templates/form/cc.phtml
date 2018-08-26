@@ -38,9 +38,10 @@ $ccExpYear = $block->getInfoData('cc_exp_year');
     </div>
   <?php endif; ?>
   <input type="hidden" name="payment[cc_token]" id="<?php echo $code ?>_cc_token" />
-  <input type="hidden" name="payment[expiration]" id="<?php echo $code ?>_expiration" />
-  <input type="hidden" name="payment[expiration_yr]" id="<?php echo $code ?>_expiration_yr" />
+  <input type="hidden" name="payment[cc_exp_month]" id="<?php echo $code ?>_cc_exp_month" />
+  <input type="hidden" name="payment[cc_exp_year]" id="<?php echo $code ?>_cc_exp_year" />
   <input type="hidden" name="payment[cc_type]" id="<?php echo $code ?>_cc_type" />
+  <input type="hidden" name="payment[cc_last4]" id="<?php echo $code ?>_cc_last4" />
 
   <input type="submit" name="Submit" style="display: none;">
 </fieldset>

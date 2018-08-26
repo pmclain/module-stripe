@@ -102,6 +102,7 @@ define([
         self.stripe = window.Stripe(self.publishableKey);
         self.stripeCardElement = self.stripe.elements();
         self.stripeCard = self.stripeCardElement.create('card', {
+          hidePostalCode: true,
           style: {
             base: {
               fontSize: '20px'
@@ -182,13 +183,14 @@ define([
 
       self.stripe.createToken(self.stripeCard).then(function(response) {
         if (response.error) {
-          deffer.reject(response.error.message);
+          defer.reject(response.error.message);
         }else {
           var card = response.token.card;
-          container.find('#' + self.code + '_expiration').val(card.exp_month);
-          container.find('#' + self.code + '_expiration_yr').val(card.exp_year);
+          container.find('#' + self.code + '_cc_exp_month').val(card.exp_month);
+          container.find('#' + self.code + '_cc_exp_year').val(card.exp_year);
           container.find('#' + self.code + '_cc_type').val(card.brand);
           container.find('#' + self.code + '_cc_token').val(response.token.id);
+          container.find('#' + self.code + '_cc_last4').val(card.last4);
           defer.resolve();
         }
       });

@@ -38,6 +38,11 @@ class Info extends ConfigurableInfo
     private $serializer;
 
     /**
+     * @var \Magento\Vault\Api\Data\PaymentTokenInterface
+     */
+    private $token;
+
+    /**
      * Info constructor.
      * @param Context $context
      * @param ConfigInterface $config
@@ -103,9 +108,13 @@ class Info extends ConfigurableInfo
         }
 
         $token = $this->getPaymentToken($payment);
-        $details = $this->serializer->unserialize($token->getTokenDetails());
-
         $last4 = '';
+
+        if (!$token) {
+            return $last4;
+        }
+
+        $details = $this->serializer->unserialize($token->getTokenDetails());
         if (!empty($details['maskedCC'])) {
             $last4 = $details['maskedCC'];
         }
@@ -124,9 +133,13 @@ class Info extends ConfigurableInfo
         }
 
         $token = $this->getPaymentToken($payment);
-        $details = $this->serializer->unserialize($token->getTokenDetails());
-
         $type = '';
+
+        if (!$token) {
+            return $type;
+        }
+
+        $details = $this->serializer->unserialize($token->getTokenDetails());
         if (!empty($details['type'])) {
             $type = $details['type'];
         }
@@ -144,9 +157,15 @@ class Info extends ConfigurableInfo
      */
     private function getPaymentToken(InfoInterface $payment)
     {
-        return $this->paymentTokenManagement->getByPublicHash(
+        if (isset($this->token)) {
+            return $this->token;
+        }
+
+        $this->token = $this->paymentTokenManagement->getByPublicHash(
             $payment->getAdditionalInformation('public_hash'),
             $payment->getAdditionalInformation('customer_id')
         );
+
+        return $this->token;
     }
 }
