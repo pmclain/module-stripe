@@ -23,7 +23,7 @@ use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Framework\Session\SessionManager;
 
-class PaymentDataBuilder implements BuilderInterface
+class VaultPaymentDataBuilder implements BuilderInterface
 {
     const AMOUNT = 'amount';
     const SOURCE = 'source';
@@ -82,7 +82,6 @@ class PaymentDataBuilder implements BuilderInterface
     /**
      * @param array $subject
      * @return array
-     * @throws \Magento\Framework\Validator\Exception
      */
     public function build(array $subject)
     {
@@ -90,23 +89,17 @@ class PaymentDataBuilder implements BuilderInterface
         $payment = $paymentDataObject->getPayment();
         $order = $paymentDataObject->getOrder();
 
+        $extensionAttributes = $payment->getExtensionAttributes();
+        $paymentToken = $extensionAttributes->getVaultPaymentToken();
+
         $result = [
             self::AMOUNT => $this->priceFormatter->formatPrice($this->subjectReader->readAmount($subject)),
             self::ORDER_ID => $order->getOrderIncrementId(),
             self::CURRENCY => $this->config->getCurrency(),
-            self::SOURCE => $payment->getAdditionalInformation('cc_token'),
-            self::CAPTURE => 'false'
+            self::SOURCE => $paymentToken->getGatewayToken(),
+            self::CAPTURE => 'false',
+            self::CUSTOMER => $this->stripeCustomerManagement->getStripeCustomerId($this->session->getCustomerId()),
         ];
-
-        if ($payment->getAdditionalInformation('is_active_payment_token_enabler')) {
-            $result[self::CUSTOMER] = $this->stripeCustomerManagement->getStripeCustomerId(
-                $this->session->getCustomerId()
-            );
-            $result[self::SOURCE] = $this->stripeCustomerManagement->addCustomerCard(
-                $result[self::CUSTOMER],
-                $payment->getAdditionalInformation('cc_src') ?? $payment->getAdditionalInformation('cc_token')
-            );
-        }
 
         return $result;
     }

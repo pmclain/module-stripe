@@ -17,6 +17,7 @@
 namespace Pmclain\Stripe\Model\Adapter;
 
 use Stripe\Customer;
+use Stripe\Source;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\Refund;
@@ -66,22 +67,7 @@ class StripeAdapter
      */
     public function sale($attributes)
     {
-        if (isset($attributes[PaymentDataBuilder::SAVE_IN_VAULT])) {
-            unset($attributes[PaymentDataBuilder::SAVE_IN_VAULT]);
-            $attributes = $this->saveCustomerCard($attributes);
-
-            if ($attributes instanceof \Stripe\Error\Card) {
-                return $attributes;
-            }
-        } elseif (isset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT])) {
-            unset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT]);
-        }
-
-        try {
-            return Charge::create($attributes);
-        } catch (\Stripe\Error\Card $e) {
-            return $e;
-        }
+        return Charge::create($attributes);
     }
 
     /**
@@ -105,34 +91,29 @@ class StripeAdapter
     }
 
     /**
-     * @param $attributes
-     * @return \Exception|\Stripe\Error\Card|array
-     * @throws \Magento\Framework\Validator\Exception
+     * @param string $customerId
+     * @return \Stripe\Customer
      */
-    protected function saveCustomerCard($attributes)
+    public function retrieveCustomer($customerId)
     {
-        try {
-            $stripeCustomer = Customer::retrieve($attributes[PaymentDataBuilder::CUSTOMER]);
+        return Customer::retrieve($customerId);
+    }
 
-            if (isset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT])) {
-                $stripeCustomer->sources->create([
-                    'source' => $attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT]
-                ]);
+    /**
+     * @param array $params
+     * @return \Stripe\ApiResource
+     */
+    public function createCustomer($params)
+    {
+        return Customer::create($params);
+    }
 
-                unset($attributes[ThreeDSecureBuilder::SOURCE_FOR_VAULT]);
-            } else {
-                $card = $stripeCustomer->sources->create([
-                    'source' => $attributes[PaymentDataBuilder::SOURCE]
-                ]);
-
-                $attributes[PaymentDataBuilder::SOURCE] = $card->id;
-            }
-
-            return $attributes;
-        } catch (\Stripe\Error\Card $e) {
-            return $e;
-        } catch (\Exception $e) {
-            throw new \Magento\Framework\Validator\Exception(__($e->getMessage()));
-        }
+    /**
+     * @param string $sourceId
+     * @return \Stripe\Source
+     */
+    public function retrieveSource($sourceId)
+    {
+        return Source::retrieve($sourceId);
     }
 }

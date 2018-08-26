@@ -17,34 +17,51 @@
 namespace Pmclain\Stripe\Gateway\Request;
 
 use Magento\Payment\Model\InfoInterface;
+use Pmclain\Stripe\Api\StripeCustomerManagementInterface;
 use Pmclain\Stripe\Gateway\Config\Config;
 use Pmclain\Stripe\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use Stripe\Stripe;
-use Stripe\Source;
+use Pmclain\Stripe\Model\Adapter\StripeAdapter;
 
 class ThreeDSecureBuilder implements BuilderInterface
 {
-    const SOURCE = 'source';
-    const SOURCE_FOR_VAULT = 'source_for_vault';
-
-    /** @var Config */
-    protected $config;
-
-    /** @var SubjectReader */
-    protected $subjectReader;
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
-     * PaymentDataBuilder constructor.
+     * @var SubjectReader
+     */
+    private $subjectReader;
+
+    /**
+     * @var StripeCustomerManagementInterface
+     */
+    private $stripeCustomerManagement;
+
+    /**
+     * @var StripeAdapter
+     */
+    private $stripeAdapter;
+
+    /**
+     * ThreeDSecureBuilder constructor.
      * @param Config $config
      * @param SubjectReader $subjectReader
+     * @param StripeCustomerManagementInterface $stripeCustomerManagement
+     * @param StripeAdapter $stripeAdapter
      */
     public function __construct(
         Config $config,
-        SubjectReader $subjectReader
+        SubjectReader $subjectReader,
+        StripeCustomerManagementInterface $stripeCustomerManagement,
+        StripeAdapter $stripeAdapter
     ) {
         $this->config = $config;
         $this->subjectReader = $subjectReader;
+        $this->stripeCustomerManagement = $stripeCustomerManagement;
+        $this->stripeAdapter = $stripeAdapter;
     }
 
     /**
@@ -61,15 +78,12 @@ class ThreeDSecureBuilder implements BuilderInterface
             return $result;
         }
 
-        Stripe::setApiKey($this->config->getSecretKey());
-
         $paymentDataObject = $this->subjectReader->readPayment($subject);
         $payment = $paymentDataObject->getPayment();
 
         $source = $this->getSourceForCharge($payment);
         if ($source) {
-            $result[self::SOURCE] = $source;
-            $result[self::SOURCE_FOR_VAULT] = $payment->getAdditionalInformation('cc_src');
+            $result[PaymentDataBuilder::SOURCE] = $source;
         }
 
         return $result;
@@ -81,8 +95,7 @@ class ThreeDSecureBuilder implements BuilderInterface
      */
     private function getSourceForCharge($payment)
     {
-        /** @var Source $threeDSource */
-        $threeDSource = Source::retrieve($payment->getAdditionalInformation('three_d_src'));
+        $threeDSource = $this->stripeAdapter->retrieveSource($payment->getAdditionalInformation('three_d_src'));
         if ($threeDSource->status === 'failed') {
             return $payment->getAdditionalInformation('cc_src') ?: false;
         }

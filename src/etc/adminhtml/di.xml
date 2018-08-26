@@ -31,22 +31,15 @@
     </arguments>
   </type>
 
-  <!-- Admin Payment Config -->
-  <virtualType name="StripeVaultAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+  <type name="Pmclain\Stripe\Gateway\Request\PaymentDataBuilder">
     <arguments>
-      <argument name="builders" xsi:type="array">
-        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault\Admin</item>
-        <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
-      </argument>
+      <argument name="session" xsi:type="object">Magento\Backend\Model\Session\Quote</argument>
     </arguments>
-  </virtualType>
-  <virtualType name="StripeAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+  </type>
+
+  <type name="Pmclain\Stripe\Gateway\Request\VaultPaymentDataBuilder">
     <arguments>
-      <argument name="builders" xsi:type="array">
-        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Admin</item>
-        <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
-        <!--<item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>-->
-      </argument>
+      <argument name="session" xsi:type="object">Magento\Backend\Model\Session\Quote</argument>
     </arguments>
-  </virtualType>
+  </type>
 </config>

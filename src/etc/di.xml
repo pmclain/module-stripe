@@ -16,6 +16,20 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+  <preference for="Pmclain\Stripe\Api\StripeCustomerManagementInterface" type="Pmclain\Stripe\Model\StripeCustomerManagement"/>
+
+  <type name="Pmclain\Stripe\Gateway\Request\PaymentDataBuilder">
+    <arguments>
+      <argument name="session" xsi:type="object">Magento\Customer\Model\Session</argument>
+    </arguments>
+  </type>
+
+  <type name="Pmclain\Stripe\Gateway\Request\VaultPaymentDataBuilder">
+    <arguments>
+      <argument name="session" xsi:type="object">Magento\Customer\Model\Session</argument>
+    </arguments>
+  </type>
+
   <!-- Payment Method Facade configuration -->
   <virtualType name="StripeFacade" type="Magento\Payment\Model\Method\Adapter">
     <arguments>
@@ -141,7 +155,6 @@
         <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder</item>
         <item name="threeDSecure" xsi:type="string">Pmclain\Stripe\Gateway\Request\ThreeDSecureBuilder</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
-        <!--<item name="vault" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultDataBuilder</item>-->
       </argument>
     </arguments>
   </virtualType>
@@ -192,7 +205,7 @@
   <virtualType name="StripeVaultAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
     <arguments>
       <argument name="builders" xsi:type="array">
-        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\PaymentDataBuilder\Vault</item>
+        <item name="payment" xsi:type="string">Pmclain\Stripe\Gateway\Request\VaultPaymentDataBuilder</item>
         <item name="threeDSecure" xsi:type="string">Pmclain\Stripe\Gateway\Request\ThreeDSecureBuilder</item>
         <item name="address" xsi:type="string">Pmclain\Stripe\Gateway\Request\AddressDataBuilder</item>
       </argument>
